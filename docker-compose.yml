@@ -15,8 +15,10 @@ services:
     container_name: blazor-nginx
     ports:
       - "${NGINX_HTTP_PORT}:80"
+    environment:
+      - UPSTREAM=${UPSTREAM}
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     depends_on:
       - blazorapp
     restart: unless-stopped
