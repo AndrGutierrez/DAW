@@ -1,0 +1,22 @@
+services:
+  blazorapp:
+    build: .
+    container_name: blazorapp
+    expose:
+      - "8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=${ASPNETCORE_FORWARDEDHEADERS_ENABLED}
+      - DisableHttpsRedirection=${DISABLE_HTTPS_REDIRECTION}
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: blazor-nginx
+    ports:
+      - "${NGINX_HTTP_PORT}:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - blazorapp
+    restart: unless-stopped
