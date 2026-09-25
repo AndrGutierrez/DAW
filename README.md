@@ -40,14 +40,27 @@ dotnet run --project src/Presentation.API --launch-profile http
 
 The local URL is `http://localhost:5269`. Change the Postman collection's `baseUrl` variable to this URL.
 
-With Docker:
+On Windows with Git Bash and Docker Desktop, start Docker and confirm that the engine is ready:
+
+```bash
+docker desktop start
+docker version
+```
+
+`docker version` must show both a client and a server version. If it only shows the client, wait for Docker Desktop to finish starting and run `docker version` again. Then run the tests:
+
+```bash
+MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/src" -w /src mcr.microsoft.com/dotnet/sdk:10.0 dotnet test DAW.slnx -c Release
+```
+
+Then build and run the application:
 
 ```bash
 docker build -t daw-phase1 .
-docker run --rm -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Development -e DisableHttpsRedirection=true daw-phase1
+docker run --rm -p 18080:8080 -e ASPNETCORE_ENVIRONMENT=Development -e DisableHttpsRedirection=true daw-phase1
 ```
 
-The Docker URL is `http://localhost:8080`, which matches the included Postman collection.
+The Docker URL is `http://localhost:18080`, which matches the included Postman collection. Stop the foreground container with Ctrl+C.
 
 ## API and error handling
 
@@ -66,9 +79,9 @@ The Docker URL is `http://localhost:8080`, which matches the included Postman co
 For a quick cURL check:
 
 ```bash
-curl -i http://localhost:8080/api/demo/errors/not-found
-curl -i http://localhost:8080/api/demo/errors/invalid-operation
-curl -i http://localhost:8080/api/demo/errors/unexpected
+curl -i http://localhost:18080/api/demo/errors/not-found
+curl -i http://localhost:18080/api/demo/errors/invalid-operation
+curl -i http://localhost:18080/api/demo/errors/unexpected
 ```
 
 The expected status codes are 404, 400, and 500. The last response contains only a generic `detail`.

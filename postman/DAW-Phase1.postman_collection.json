@@ -175,7 +175,7 @@
     }
   ],
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "baseUrl", "value": "http://localhost:18080" },
     { "key": "runId", "value": "" },
     { "key": "categoryId", "value": "" },
     { "key": "assetId", "value": "" }
