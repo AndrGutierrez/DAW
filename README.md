@@ -30,6 +30,14 @@ The solution contains four production projects and one test project:
 
 In `Presentation.API/Program.cs`, the stateless ear-tag normalizer is a singleton, the registration validator is transient, and the catalog service and repository are scoped to an HTTP request. The repository depends on a thread-safe singleton in-memory store so a created animal can be read in a later request. This temporary store has no scoped dependencies. Phase 1 has no `DbContext`; the Phase 2 persistence implementation should register it as scoped. No CI workflow is defined here.
 
+## Phase 1 foundations
+
+**Onion Architecture and dependency inversion.** Business rules belong at the center, so `Core.Domain` contains `Herd`, `Animal`, and `BaseEntity` without references to ASP.NET Core or persistence packages. `Core.Application` depends on the domain and defines `ICattleRepository`, the contract its use case needs. `Infrastructure` implements that contract, while `Presentation.API` connects the implementation and HTTP controllers in `Program.cs`. The HTTP call flows from controller to use case to repository, but the compiled project references point toward the core. A later database implementation can replace the in-memory repository without changing the domain model. This follows the dependency direction described in [Palermo's Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/).
+
+**Dependency injection and lifetimes.** ASP.NET Core creates a scope for each request. The catalog service and repository are `Scoped` because they coordinate one request; the validator is `Transient` because it has no shared state and can be created for each resolution; the tag normalizer is `Singleton` because it is stateless and safe to reuse. The temporary `InMemoryCattleStore` is also a singleton so separate requests see the same demo data. It is synchronized and depends on no scoped service, avoiding a captive dependency. It is not persistent storage and will be replaced during Phase 2. The integration test resolves services in two scopes to verify these lifetimes. See [Microsoft's service lifetime guidance](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection/service-lifetimes).
+
+**Centralized RFC 7807 errors.** `ExceptionMiddleware` runs before controller endpoints, catches their unhandled exceptions, and maps missing resources to 404, invalid operations to 400, and unexpected failures to 500. Every mapped response uses `application/problem+json` and the standard `type`, `title`, `status`, `detail`, and `instance` members. For 500, `detail` is generic so the response does not reveal the exception message or stack trace. The demo controller, HTTP integration tests, and Postman collection show this behavior. See [RFC 7807](https://www.rfc-editor.org/info/rfc7807/).
+
 ## Run the API
 
 With the .NET 10 SDK:
