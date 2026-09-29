@@ -1,6 +1,6 @@
 using Presentation.API.Components;
-using Core.Application.Assets;
-using Infrastructure.Assets;
+using Core.Application.Cattle;
+using Infrastructure.Cattle;
 using Presentation.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,11 +9,12 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddControllers();
 
-// Stateless normalization is transient; the use case is scoped to a request.
-// The thread-safe in-memory store must survive across requests.
-builder.Services.AddTransient<IAssetTagNormalizer, AssetTagNormalizer>();
-builder.Services.AddScoped<IAssetCatalogService, AssetCatalogService>();
-builder.Services.AddSingleton<IAssetRepository, InMemoryAssetRepository>();
+builder.Services.AddSingleton<IAnimalTagNormalizer, AnimalTagNormalizer>();
+builder.Services.AddTransient<IAnimalRegistrationValidator, AnimalRegistrationValidator>();
+builder.Services.AddScoped<ICattleCatalogService, CattleCatalogService>();
+builder.Services.AddScoped<ICattleRepository, InMemoryCattleRepository>();
+// The temporary store survives across HTTP requests until Phase 2 adds persistence.
+builder.Services.AddSingleton<InMemoryCattleStore>();
 
 var app = builder.Build();
 
