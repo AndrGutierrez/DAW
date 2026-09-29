@@ -1,6 +1,6 @@
-# IT Asset Inventory
+# Cattle Management
 
-This repository contains the Phase 1 foundation for an IT equipment inventory system in .NET 10 and C# 14. It models equipment and categories, exposes a small HTTP API, and returns centralized RFC 7807 Problem Details responses for errors.
+This repository contains the Phase 1 foundation for the cattle management system selected for Group 3. It uses .NET 10 and C# 14, models herds and animals, exposes a small HTTP API, and returns centralized RFC 7807 Problem Details responses for errors.
 
 ## Requirements
 
@@ -22,13 +22,13 @@ The solution contains four production projects and one test project:
 | --- | --- | --- |
 | `Core.Domain` | Pure entities and business state | None |
 | `Core.Application` | Use cases and repository interface | `Core.Domain` |
-| `Infrastructure` | Thread-safe in-memory repository | `Core.Application`, `Core.Domain` |
+| `Infrastructure` | Scoped repository backed by a thread-safe in-memory store | `Core.Application`, `Core.Domain` |
 | `Presentation.API` | HTTP controllers, middleware, and the existing Blazor host | `Core.Application`, `Infrastructure` |
-| `Core.Tests` | Unit tests | Production projects under test |
+| `Core.Tests` | Unit and HTTP integration tests | Production projects under test |
 
-`AssetCategory` and `ITAsset` inherit from `BaseEntity`, which assigns a GUID and a UTC creation timestamp. Each asset references its category. The in-memory repository is sufficient for this phase; data is reset when the process restarts.
+`Herd` and `Animal` inherit from `BaseEntity`, which assigns a GUID and a UTC creation timestamp. Each animal references its herd and starts with a healthy status. The in-memory store is temporary for Phase 1; data is reset when the process restarts.
 
-In `Presentation.API/Program.cs`, the stateless asset-tag normalizer is transient, the catalog use case is scoped to a request, and the thread-safe in-memory repository is a singleton so data survives across requests. No CI workflow is defined here.
+In `Presentation.API/Program.cs`, the stateless ear-tag normalizer is a singleton, the registration validator is transient, and the catalog service and repository are scoped to an HTTP request. The repository depends on a thread-safe singleton in-memory store so a created animal can be read in a later request. This temporary store has no scoped dependencies. Phase 1 has no `DbContext`; the Phase 2 persistence implementation should register it as scoped. No CI workflow is defined here.
 
 ## Run the API
 
@@ -66,15 +66,25 @@ The Docker URL is `http://localhost:18080`, which matches the included Postman c
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| `POST` | `/api/categories` | Create an asset category |
-| `GET` | `/api/categories` | List categories |
-| `GET` | `/api/categories/{id}` | Get one category |
-| `POST` | `/api/assets` | Register equipment linked to a category |
-| `GET` | `/api/assets` | List equipment |
-| `GET` | `/api/assets/{id}` | Get one asset |
+| `POST` | `/api/herds` | Create a herd |
+| `GET` | `/api/herds` | List herds |
+| `GET` | `/api/herds/{id}` | Get one herd |
+| `POST` | `/api/animals` | Register an animal linked to a herd |
+| `GET` | `/api/animals` | List animals |
+| `GET` | `/api/animals/{id}` | Get one animal |
+| `PATCH` | `/api/animals/{id}/health-status` | Change an animal's health status (`0` healthy, `1` under observation, `2` in treatment) |
 | `GET` | `/api/demo/errors/{kind}` | Trigger a sample error in Development only |
 
-`ExceptionMiddleware` maps `KeyNotFoundException` to 404, `InvalidOperationException` and invalid arguments to 400, and unexpected exceptions to 500. Responses have the `application/problem+json` content type and include `type`, `title`, `status`, `detail`, and `instance`. HTTP 500 responses hide exception messages and stack traces.
+`ExceptionMiddleware` is registered before the controllers in `Program.cs`. It maps `KeyNotFoundException` to 404, `InvalidOperationException` and invalid arguments to 400, and unexpected exceptions to 500. Responses have the `application/problem+json` content type and include `type`, `title`, `status`, `detail`, and `instance`. HTTP 500 responses hide exception messages and stack traces. `ApiIntegrationTests` starts the real ASP.NET Core application in memory and verifies all three responses through HTTP, as well as the DI lifetimes and cattle endpoints.
+
+## Phase 1 rubric evidence
+
+| Requirement | Implementation | Verification |
+| --- | --- | --- |
+| Four Onion layers and a pure domain | Four production projects in `DAW.slnx`; `Core.Domain` has no project references | `dotnet build DAW.slnx` |
+| Related entities with GUID and UTC creation | `BaseEntity`, `Herd`, and `Animal` | `DomainAndApplicationTests` |
+| Appropriate DI lifetimes | Registrations in `Presentation.API/Program.cs` | `DependencyInjectionUsesExpectedLifetimes` |
+| Registered RFC 7807 middleware | `ExceptionMiddleware` before controllers in `Program.cs` | `RegisteredPipelineReturnsProblemDetails` and the Postman collection |
 
 For a quick cURL check:
 
@@ -88,6 +98,12 @@ The expected status codes are 404, 400, and 500. The last response contains only
 
 ## Postman evidence
 
-Import [the Phase 1 Postman collection](postman/DAW-Phase1.postman_collection.json), set `baseUrl` for your run mode, and run the requests in order. The collection creates a category and an asset, then checks business and sample errors. The demo endpoint is available only when `ASPNETCORE_ENVIRONMENT=Development`.
+Import [the Phase 1 Postman collection](postman/DAW-Phase1.postman_collection.json), set `baseUrl` for your run mode, and run the requests in order. The collection creates a herd and an animal, then checks business and sample errors. The demo endpoint is available only when `ASPNETCORE_ENVIRONMENT=Development`.
+
+To run the same collection from a terminal while the application is running on port 18080:
+
+```bash
+npx --yes newman run postman/DAW-Phase1.postman_collection.json
+```
 
 For the assignment screenshot, open the **Unexpected exception returns safe 500 Problem Details** request in Postman after running it. Capture the status, `Content-Type: application/problem+json`, and JSON body in the same image. Attach the collection file and repository URL to the course submission.
