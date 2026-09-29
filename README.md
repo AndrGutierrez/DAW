@@ -2,6 +2,12 @@
 
 This repository contains the Phase 1 foundation for the cattle management system selected for Group 3. It uses .NET 10 and C# 14, models herds and animals, exposes a small HTTP API, and returns centralized RFC 7807 Problem Details responses for errors.
 
+## Product at a glance
+
+The product is intended to help a cattle operation keep an identifiable record of each animal, its herd, and its current health status. Phase 1 is a working API prototype: it can register herds and animals, reject duplicate ear tags, change an animal's health status, and return predictable error responses. Data currently lives in memory and disappears when the process restarts. The existing Blazor page is an overview, not a complete management interface.
+
+For the product explanation, architecture rationale, exact API behavior, rubric traceability, and a defense walkthrough, read the [Phase 1 product and technical guide](docs/phase1-product-and-technical-guide.md). The [engineering decision log](docs/engineering-decisions.md) records what changed, why, what it enables, how it was verified, and its limits. Update both documents when subsequent phases change these claims.
+
 ## Requirements
 
 - .NET 10 SDK for local builds, or Docker Desktop for container builds
