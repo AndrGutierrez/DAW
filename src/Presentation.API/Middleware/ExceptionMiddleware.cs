@@ -26,6 +26,7 @@ public sealed class ExceptionMiddleware(
             var statusCode = exception switch
             {
                 KeyNotFoundException => StatusCodes.Status404NotFound,
+                UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
                 InvalidOperationException or ArgumentException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };

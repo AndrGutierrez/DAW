@@ -1,6 +1,16 @@
-using Presentation.API.Components;
+using System.Text;
 using Core.Application.Cattle;
+using Core.Application.Security;
+using Infrastructure;
 using Infrastructure.Cattle;
+using Infrastructure.Security;
+using Infrastructure.Storage;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Presentation.API.Authorization;
+using Presentation.API.Components;
 using Presentation.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +18,33 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddControllers();
+
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+
+builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+    .Configure<IOptions<JwtOptions>>((bearer, jwtOptions) =>
+    {
+        var options = jwtOptions.Value;
+
+        bearer.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = options.Issuer,
+            ValidAudience = options.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddSingleton<IAnimalTagNormalizer, AnimalTagNormalizer>();
 builder.Services.AddTransient<IAnimalRegistrationValidator, AnimalRegistrationValidator>();
@@ -17,6 +54,12 @@ builder.Services.AddScoped<ICattleRepository, InMemoryCattleRepository>();
 builder.Services.AddSingleton<InMemoryCattleStore>();
 
 var app = builder.Build();
+
+if (args.Contains("--seed"))
+{
+    await app.Services.SeedDatabaseAsync();
+    return;
+}
 
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -30,6 +73,18 @@ if (!app.Configuration.GetValue<bool>("DisableHttpsRedirection"))
 {
     app.UseHttpsRedirection();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+var storageOptions = app.Services.GetRequiredService<IOptions<StorageOptions>>().Value;
+var uploadsRoot = Path.GetFullPath(storageOptions.RootPath);
+Directory.CreateDirectory(uploadsRoot);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsRoot),
+    RequestPath = storageOptions.RequestPath
+});
 
 app.UseAntiforgery();
 app.MapControllers();

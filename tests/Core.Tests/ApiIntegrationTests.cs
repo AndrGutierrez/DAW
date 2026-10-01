@@ -112,7 +112,8 @@ public sealed class ApiIntegrationTests
             builder.ConfigureAppConfiguration((_, config) =>
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    ["DisableHttpsRedirection"] = "true"
+                    ["DisableHttpsRedirection"] = "true",
+                    ["Jwt:Key"] = new string('t', 64)
                 }));
         });
 }
