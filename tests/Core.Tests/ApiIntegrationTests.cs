@@ -113,7 +113,7 @@ public sealed class ApiIntegrationTests
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     ["DisableHttpsRedirection"] = "true",
-                    ["Jwt:Key"] = "REMOVED-SECRET"
+                    ["Jwt:Key"] = new string('t', 64)
                 }));
         });
 }
