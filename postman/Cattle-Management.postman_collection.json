@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "DAW Phase 1 - Cattle Management",
+    "name": "Cattle Management API",
     "description": "Run in order against the Development environment. The collection verifies the domain endpoints and RFC 7807 error responses.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },

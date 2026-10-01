@@ -13,7 +13,7 @@ builder.Services.AddSingleton<IAnimalTagNormalizer, AnimalTagNormalizer>();
 builder.Services.AddTransient<IAnimalRegistrationValidator, AnimalRegistrationValidator>();
 builder.Services.AddScoped<ICattleCatalogService, CattleCatalogService>();
 builder.Services.AddScoped<ICattleRepository, InMemoryCattleRepository>();
-// The temporary store survives across HTTP requests until Phase 2 adds persistence.
+// The in-memory store keeps cattle records available across HTTP requests.
 builder.Services.AddSingleton<InMemoryCattleStore>();
 
 var app = builder.Build();
