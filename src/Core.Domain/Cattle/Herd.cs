@@ -1,14 +1,14 @@
 using Core.Domain.Common;
 
-namespace Core.Domain.Assets;
+namespace Core.Domain.Cattle;
 
-public sealed class AssetCategory : BaseEntity
+public sealed class Herd : BaseEntity
 {
-    public AssetCategory(string name, string? description = null)
+    public Herd(string name, string? description = null)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("A category name is required.", nameof(name));
+            throw new ArgumentException("A herd name is required.", nameof(name));
         }
 
         Name = name.Trim();
@@ -16,6 +16,5 @@ public sealed class AssetCategory : BaseEntity
     }
 
     public string Name { get; }
-
     public string? Description { get; }
 }
