@@ -1,55 +1,55 @@
-# Engineering Decision Log
+# Registro de decisiones técnicas
 
-This log records what changed, why it was chosen, what it enables, how it was checked, and what remains limited. Update it with each substantive implementation change so the repository's explanation stays aligned with the code. Do not convert planned features into claims of completed work.
+Este registro explica qué se decidió, por qué, para qué sirve, cómo se comprobó y qué limitaciones permanecen. Debe actualizarse con cada cambio relevante de la implementación para mantener la documentación alineada con el código. Las funcionalidades planificadas deben distinguirse de las que ya están disponibles.
 
-## Cattle identity, herd membership, and health status
+## Identidad del ganado, pertenencia a un hato y estado de salud
 
-**Decision:** Model `Herd` and `Animal` as domain entities with a GUID and UTC creation timestamp. Identify animals by ear tag, associate each animal with one herd, and represent its current health status explicitly.
+**Decisión:** Modelar `Herd` y `Animal` como entidades del dominio con un GUID y una fecha de creación UTC. Identificar a los animales por su arete, asociar cada animal con un hato y representar explícitamente su estado de salud actual.
 
-**Why:** A cattle operation needs to distinguish individual animals, know their herd membership, and consult their current condition. Keeping these concepts in the domain makes the model independent of HTTP and storage technology. Normalizing ear tags and rejecting case-insensitive duplicates prevents multiple registrations for the same tag.
+**Por qué:** Una explotación ganadera necesita distinguir a cada animal, conocer su pertenencia a un hato y consultar su condición actual. Mantener estos conceptos en el dominio independiza el modelo de HTTP y de la tecnología de almacenamiento. Normalizar los aretes y rechazar duplicados sin distinguir mayúsculas y minúsculas evita registrar varias veces el mismo identificador.
 
-**For:** A cattle record workflow: create a herd, register an animal, retrieve its information, and update its health status.
+**Para qué:** Ofrecer un flujo de registro ganadero: crear un hato, registrar un animal, consultar su información y actualizar su estado de salud.
 
-**Evidence:** [`Core.Domain/Cattle`](../src/Core.Domain/Cattle), [`CattleCatalogService`](../src/Core.Application/Cattle/CattleCatalogService.cs), [animal controller](../src/Presentation.API/Controllers/AnimalsController.cs), [Postman collection](../postman/Cattle-Management.postman_collection.json), and [`DomainAndApplicationTests`](../tests/Core.Tests/DomainAndApplicationTests.cs).
+**Evidencias:** [`Core.Domain/Cattle`](../src/Core.Domain/Cattle), [`CattleCatalogService`](../src/Core.Application/Cattle/CattleCatalogService.cs), [controlador de animales](../src/Presentation.API/Controllers/AnimalsController.cs), [colección de Postman](../postman/Cattle-Management.postman_collection.json) y [`DomainAndApplicationTests`](../tests/Core.Tests/DomainAndApplicationTests.cs).
 
-**Limits:** The model stores each animal's current status; it does not retain a history of treatments or health changes. Records are held in memory and are not durable.
+**Limitaciones:** El modelo conserva el estado actual de cada animal; no mantiene un historial de tratamientos o cambios de salud. Los registros se almacenan en memoria y no son persistentes.
 
-## Dependency injection and shared in-memory records
+## Inyección de dependencias y registros compartidos en memoria
 
-**Decision:** Register the catalog service and repository as scoped, registration validator as transient, and stateless tag normalizer as singleton. Keep one synchronized in-memory store singleton so records remain available across requests.
+**Decisión:** Registrar el servicio de catálogo y el repositorio como scoped, el validador de registros como transient y el normalizador de aretes sin estado mutable como singleton. Mantener un almacén singleton en memoria con acceso sincronizado para compartir los registros entre peticiones.
 
-**Why:** A scoped business workflow should not be captured by a singleton. Independent HTTP requests still need to observe records created in earlier requests until persistent storage exists.
+**Por qué:** Un singleton no debe retener un servicio de negocio scoped. Mientras no exista almacenamiento persistente, las peticiones HTTP independientes necesitan consultar los registros creados en peticiones anteriores.
 
-**For:** Correct request lifetimes, consistent access to registered cattle records, and a substitution point for a future persistence adapter.
+**Para qué:** Mantener ciclos de vida adecuados por petición, permitir un acceso consistente a los registros ganaderos y disponer de un punto donde sustituir el almacenamiento mediante un futuro adaptador de persistencia.
 
-**Evidence:** [`Program.cs`](../src/Presentation.API/Program.cs), [`InMemoryCattleStore`](../src/Infrastructure/Cattle/InMemoryCattleStore.cs), and [`DependencyInjectionUsesExpectedLifetimes`](../tests/Core.Tests/ApiIntegrationTests.cs).
+**Evidencias:** [`Program.cs`](../src/Presentation.API/Program.cs), [`InMemoryCattleStore`](../src/Infrastructure/Cattle/InMemoryCattleStore.cs) y [`DependencyInjectionUsesExpectedLifetimes`](../tests/Core.Tests/ApiIntegrationTests.cs).
 
-**Limits:** The store is mutable despite being singleton; its lock protects dictionary operations, but process restart erases data. It provides neither database transactions nor durable storage. There is no `DbContext` yet.
+**Limitaciones:** El almacén es mutable aunque sea singleton. Su bloqueo protege las operaciones sobre los diccionarios, pero reiniciar el proceso elimina los datos. No ofrece transacciones de base de datos ni almacenamiento duradero. Todavía no existe un `DbContext`.
 
-## A predictable HTTP error contract
+## Un contrato de errores HTTP predecible
 
-**Decision:** Keep `ExceptionMiddleware` registered before controllers and add integration tests that send HTTP requests through the real application host.
+**Decisión:** Mantener `ExceptionMiddleware` registrado antes de los controladores y verificar su integración mediante pruebas que envían peticiones HTTP a la aplicación real.
 
-**Why:** API consumers need consistent error responses regardless of which endpoint fails. Calling the middleware class directly verifies its own logic but does not prove that the deployed request pipeline uses it. HTTP integration tests exercise the actual registrations in `Program.cs` and detect that integration gap.
+**Por qué:** Quienes consumen la API necesitan respuestas de error consistentes, independientemente del endpoint que falle. Invocar directamente la clase del middleware comprueba su lógica, pero no demuestra que la cadena de procesamiento HTTP la utilice. Las pruebas de integración HTTP verifican los registros reales de `Program.cs` y detectan posibles problemas de integración.
 
-**For:** Repeatable proof of 404/400/500 mappings, RFC 7807 fields, `application/problem+json`, and safe 500 responses.
+**Para qué:** Comprobar de forma reproducible el mapeo a 404/400/500, los campos de RFC 7807, el tipo de contenido `application/problem+json` y las respuestas 500 que ocultan detalles internos.
 
-**Evidence:** [`Program.cs`](../src/Presentation.API/Program.cs), [`ExceptionMiddleware`](../src/Presentation.API/Middleware/ExceptionMiddleware.cs), [`ApiIntegrationTests`](../tests/Core.Tests/ApiIntegrationTests.cs), and the [Postman collection](../postman/Cattle-Management.postman_collection.json).
+**Evidencias:** [`Program.cs`](../src/Presentation.API/Program.cs), [`ExceptionMiddleware`](../src/Presentation.API/Middleware/ExceptionMiddleware.cs), [`ApiIntegrationTests`](../tests/Core.Tests/ApiIntegrationTests.cs) y la [colección de Postman](../postman/Cattle-Management.postman_collection.json).
 
-**Limits:** The middleware handles exceptions thrown downstream. It does not redefine every response generated by routing or automatic model validation. The deliberate error endpoint is enabled only in Development. Unexpected errors retain their diagnostic detail in server logs and expose a generic message to the client.
+**Limitaciones:** El middleware maneja las excepciones generadas por componentes posteriores de la cadena de procesamiento. No redefine todas las respuestas del enrutamiento o de la validación automática de modelos. El endpoint de errores deliberados solo está habilitado en Development. Los errores inesperados conservan su detalle de diagnóstico en los registros del servidor y muestran un mensaje genérico al cliente.
 
-## Documentation maintenance
+## Mantenimiento de la documentación
 
-For each substantive change, add or revise an entry that answers: **What changed? Why? Which operational or engineering need does it address? Where is the code? How was it verified? What remains limited?** Then update the [product and technical guide](product-and-technical-guide.md) and [README](../README.md) wherever their current claims would otherwise become inaccurate. Describe planned capabilities separately from available behavior.
+Por cada cambio relevante, añadir o revisar una entrada que responda: **¿Qué cambió? ¿Por qué? ¿Qué necesidad operativa o técnica atiende? ¿Dónde está el código? ¿Cómo se verificó? ¿Qué limitaciones permanecen?** Después, actualizar la [guía del producto y su implementación técnica](product-and-technical-guide.md) y el [README](../README.md) cuando sus descripciones dejen de corresponder con el sistema. Las capacidades planificadas deben explicarse por separado del comportamiento disponible.
 
-## Explain the product and its architectural decisions
+## Explicar el producto y sus decisiones de arquitectura
 
-**Decision:** Maintain a detailed product and technical guide, a product summary and execution instructions in the README, and this decision log.
+**Decisión:** Mantener una guía detallada del producto y su implementación técnica, un resumen e instrucciones de ejecución en el README y este registro de decisiones.
 
-**Why:** Readers need to understand the cattle workflow, the reasons behind the architecture, and how to reproduce the system's behavior. Documentation connects product needs to implementation decisions and executable checks so maintainers can change the system without losing that context.
+**Por qué:** Quien lee el repositorio necesita comprender el flujo ganadero, las razones de la arquitectura y cómo reproducir el comportamiento del sistema. La documentación conecta las necesidades del producto con las decisiones de implementación y las comprobaciones ejecutables. Así, quienes mantienen el sistema pueden modificarlo sin perder ese contexto.
 
-**For:** Help API consumers run the cattle workflow and help maintainers trace functional and quality objectives to code and tests.
+**Para qué:** Ayudar a quienes consumen la API a ejecutar el flujo ganadero y permitir que quienes mantienen el sistema relacionen los objetivos funcionales y de calidad con el código y las pruebas.
 
-**Evidence:** [Product and technical guide](product-and-technical-guide.md), [README](../README.md), and the implementation and verification map in the guide. Documentation links and whitespace are checked before the change is published.
+**Evidencias:** [Guía del producto y su implementación técnica](product-and-technical-guide.md), [README](../README.md) y tabla de objetivos, implementación y verificación de la guía. Los enlaces y el formato de la documentación se comprueban antes de publicar el cambio.
 
-**Limits:** Documentation describes the current implementation and recorded checks. It does not make in-memory records durable or add unimplemented capabilities. It must be updated when behavior or architecture changes.
+**Limitaciones:** La documentación describe la implementación actual y las comprobaciones registradas. No convierte los registros en memoria en datos persistentes ni incorpora funcionalidades pendientes. Debe actualizarse cuando cambie el comportamiento o la arquitectura.
