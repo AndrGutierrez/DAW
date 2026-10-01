@@ -262,3 +262,9 @@ __pycache__/
 
 # Docker env
 .env
+
+# Generated ERD output (Liam ERD)
+db/erd/
+
+# Local file uploads
+uploads/

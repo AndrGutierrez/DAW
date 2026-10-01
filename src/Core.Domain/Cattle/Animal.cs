@@ -4,6 +4,13 @@ namespace Core.Domain.Cattle;
 
 public sealed class Animal : BaseEntity
 {
+    private Animal()
+    {
+        EarTag = null!;
+        Breed = null!;
+        Herd = null!;
+    }
+
     public Animal(string earTag, string breed, Herd herd, DateOnly? dateOfBirth = null)
     {
         if (string.IsNullOrWhiteSpace(earTag))
