@@ -2,7 +2,7 @@ using Core.Domain.Cattle;
 
 namespace Infrastructure.Cattle;
 
-// Temporary shared state for the Phase 1 demo. Persistent storage belongs to Phase 2.
+// Shared in-memory cattle records; process restart clears the data.
 public sealed class InMemoryCattleStore
 {
     internal object Gate { get; } = new();

@@ -31,7 +31,7 @@ La lógica de negocio está descrita en la [guía de negocio](docs/guia-de-negoc
 docker compose up -d db          # levanta PostgreSQL
 dotnet tool restore              # habilita dotnet-ef
 dotnet ef database update --project src/Infrastructure --startup-project src/Presentation.API
-dotnet run --project src/Presentation.API -- --seed   # siembra permisos, grupos, especies y admin
+dotnet run --project src/Presentation.API -- --seed   # siembra permisos, roles, especies y admin
 dotnet build DAW.slnx
 dotnet test DAW.slnx
 dotnet run --project src/Presentation.API --launch-profile http
