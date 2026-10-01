@@ -38,11 +38,31 @@ La lógica de negocio del sistema ampliado está descrita en la [guía de negoci
 - PostgreSQL (se levanta con el `docker-compose` del proyecto).
 - Postman o Newman para ejecutar la colección de pruebas de la API.
 
+## Configuración de secretos
+
+Los secretos (contraseña de PostgreSQL, clave de firma JWT y contraseña del admin) **no se versionan**. Copia el ejemplo y define valores reales:
+
+```bash
+cp .env.example .env
+# edita .env: POSTGRES_PASSWORD, JWT_KEY (mínimo 32 caracteres) y SEED_ADMIN_PASSWORD
+```
+
+`docker compose` lee `.env` automáticamente y pasa los valores a la aplicación como `Jwt__Key`, `ConnectionStrings__Default` y `Seed__AdminPassword`. La aplicación **no arranca** si `Jwt:Key` falta o sigue siendo el placeholder.
+
+Para ejecutar localmente con `dotnet run` (sin Docker), define esas variables con `dotnet user-secrets`:
+
+```bash
+dotnet user-secrets --project src/Presentation.API set "Jwt:Key" "<clave-larga>"
+dotnet user-secrets --project src/Presentation.API set "ConnectionStrings:Default" "Host=localhost;Port=5432;Database=daw;Username=daw;Password=<password>"
+dotnet user-secrets --project src/Presentation.API set "Seed:AdminPassword" "<password-admin>"
+```
+
 ## Clonar, compilar y ejecutar las pruebas
 
 ```bash
 git clone https://github.com/AndrGutierrez/DAW.git
 cd DAW
+cp .env.example .env             # define tus secretos (ver arriba)
 docker compose up -d db          # levanta PostgreSQL
 dotnet tool restore              # habilita dotnet-ef
 dotnet ef database update --project src/Infrastructure --startup-project src/Presentation.API
@@ -51,7 +71,7 @@ dotnet build DAW.slnx
 dotnet test DAW.slnx
 ```
 
-El seed crea los roles (Administrador, Veterinario, Capataz, Operario, Solo lectura), los permisos por acción, las especies y razas, y el usuario `admin` (`REMOVED-SECRET` en desarrollo). Las fotos se suben con `POST /api/animals/{id}/photo` (multipart) y se sirven en `/uploads`; en Docker persisten en el volumen `daw-uploads`.
+El seed crea los roles (Administrador, Veterinario, Capataz, Operario, Solo lectura), los permisos por acción, las especies y razas, y el usuario administrador con la contraseña de `SEED_ADMIN_PASSWORD`. Las fotos se suben con `POST /api/animals/{id}/photo` (multipart) y se sirven en `/uploads`; en Docker persisten en el volumen `daw-uploads`.
 
 La solución contiene cuatro proyectos de la aplicación y un proyecto de pruebas:
 
@@ -121,11 +141,22 @@ docker version
 MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/src" -w /src mcr.microsoft.com/dotnet/sdk:10.0 dotnet test DAW.slnx -c Release
 ```
 
-Luego, construye la imagen y ejecuta la aplicación:
+Luego, levanta la aplicación con Docker Compose, que lee `.env` y aplica los secretos y la conexión:
+
+```bash
+docker compose up --build
+```
+
+Si prefieres construir la imagen por separado, pásale las variables que la app espera (no los nombres de `.env`):
 
 ```bash
 docker build -t cattle-management .
-docker run --rm -p 18080:8080 -e ASPNETCORE_ENVIRONMENT=Development -e DisableHttpsRedirection=true cattle-management
+docker run --rm -p 18080:8080 \
+  -e ASPNETCORE_ENVIRONMENT=Development \
+  -e DisableHttpsRedirection=true \
+  -e Jwt__Key="$JWT_KEY" \
+  -e "ConnectionStrings__Default=Host=host.docker.internal;Port=5432;Database=$POSTGRES_DB;Username=$POSTGRES_USER;Password=$POSTGRES_PASSWORD" \
+  cattle-management
 ```
 
 La dirección con Docker es `http://localhost:18080`, que coincide con la colección de Postman incluida. Detén el contenedor que se ejecuta en primer plano con Ctrl+C.

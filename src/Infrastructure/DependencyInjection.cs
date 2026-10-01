@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Infrastructure;
 
@@ -32,7 +33,11 @@ public static class DependencyInjection
             .AddRoles<Role>()
             .AddEntityFrameworkStores<AppDbContext>();
 
-        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .ValidateOnStart();
+
+        services.AddSingleton<IValidateOptions<JwtOptions>, JwtOptionsValidator>();
         services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
 
         services.AddSingleton<ITokenService, JwtTokenService>();

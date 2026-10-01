@@ -66,3 +66,27 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
     public string CreateRefreshToken() =>
         Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 }
+
+public sealed class JwtOptionsValidator : IValidateOptions<JwtOptions>
+{
+    public ValidateOptionsResult Validate(string? name, JwtOptions options)
+    {
+        if (string.IsNullOrWhiteSpace(options.Key))
+        {
+            return ValidateOptionsResult.Fail(
+                "Jwt:Key is not configured. Set the Jwt__Key environment variable (see .env.example) or use user secrets.");
+        }
+
+        if (options.Key.Contains("change-me", StringComparison.OrdinalIgnoreCase))
+        {
+            return ValidateOptionsResult.Fail("Jwt:Key must not use the placeholder value from .env.example.");
+        }
+
+        if (options.Key.Length < 32)
+        {
+            return ValidateOptionsResult.Fail("Jwt:Key must be at least 32 characters long.");
+        }
+
+        return ValidateOptionsResult.Success;
+    }
+}

@@ -115,3 +115,11 @@ Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negoc
 **Por qué:** cubre casos puntuales sin crear un rol nuevo, y es parte del modelo de spatie que se adoptó.
 
 **Impacto:** `IPermissionChecker` considera permisos directos y de roles; al cambiar de rol, los permisos directos se mantienen.
+
+## Secretos fuera del repositorio (`.env`)
+
+**Decisión:** sacar la contraseña de PostgreSQL, la clave de firma JWT y la contraseña del admin de `appsettings`. Se definen en un archivo `.env` (no versionado) que `docker compose` consume y pasa a la app como variables de entorno (`Jwt__Key`, `ConnectionStrings__Default`, `Seed__AdminPassword`). Se versiona `.env.example` como plantilla.
+
+**Por qué:** los secretos en el código quedan públicos; con `.env` cada entorno usa los suyos y no se filtran al repositorio ni a la imagen Docker.
+
+**Impacto:** la app valida al arrancar y **no inicia** si `Jwt:Key` falta o es el placeholder. Para ejecución local sin Docker se usan `dotnet user-secrets`.

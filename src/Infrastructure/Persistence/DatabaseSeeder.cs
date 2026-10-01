@@ -153,7 +153,14 @@ public static class DatabaseSeeder
                 IsActive = true
             };
 
-            var password = configuration["Seed:AdminPassword"] ?? "REMOVED-SECRET";
+            var password = configuration["Seed:AdminPassword"];
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new InvalidOperationException(
+                    "Seed:AdminPassword is not configured. Set the Seed__AdminPassword environment variable (see .env.example).");
+            }
+
             var result = await userManager.CreateAsync(admin, password);
 
             if (!result.Succeeded)
