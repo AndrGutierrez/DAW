@@ -2,54 +2,54 @@
 
 This log records what changed, why it was chosen, what it enables, how it was checked, and what remains limited. Update it with each substantive implementation change so the repository's explanation stays aligned with the code. Do not convert planned features into claims of completed work.
 
-## Phase 1: Cattle domain replaces the provisional IT example
+## Cattle identity, herd membership, and health status
 
-**Decision:** Model `Herd` and `Animal`, including an ear tag, herd relationship, and health status. Replace the IT inventory API paths with cattle paths.
+**Decision:** Model `Herd` and `Animal` as domain entities with a GUID and UTC creation timestamp. Identify animals by ear tag, associate each animal with one herd, and represent its current health status explicitly.
 
-**Why:** Group 3 reported cattle management as the selected project topic. The first iteration used IT inventory only while the topic was unconfirmed. The Phase 1 rubric requires business entities that fit the assigned project, so leaving IT entities would make the architecture demonstration irrelevant to the selected product.
+**Why:** A cattle operation needs to distinguish individual animals, know their herd membership, and consult their current condition. Keeping these concepts in the domain makes the model independent of HTTP and storage technology. Normalizing ear tags and rejecting case-insensitive duplicates prevents multiple registrations for the same tag.
 
-**For:** A demonstrable cattle inventory and status workflow: create a herd, register an animal, retrieve it, and update its health status.
+**For:** A cattle record workflow: create a herd, register an animal, retrieve its information, and update its health status.
 
-**Evidence:** [`Core.Domain/Cattle`](../src/Core.Domain/Cattle), [`CattleCatalogService`](../src/Core.Application/Cattle/CattleCatalogService.cs), [controllers](../src/Presentation.API/Controllers/AnimalsController.cs), [Postman collection](../postman/DAW-Phase1.postman_collection.json), and [`DomainAndApplicationTests`](../tests/Core.Tests/DomainAndApplicationTests.cs).
+**Evidence:** [`Core.Domain/Cattle`](../src/Core.Domain/Cattle), [`CattleCatalogService`](../src/Core.Application/Cattle/CattleCatalogService.cs), [animal controller](../src/Presentation.API/Controllers/AnimalsController.cs), [Postman collection](../postman/Cattle-Management.postman_collection.json), and [`DomainAndApplicationTests`](../tests/Core.Tests/DomainAndApplicationTests.cs).
 
-**Limits:** The topic selection is based on the team's report. The instructor's Phase 2 email uses hardware-store examples, so those example entities have not been added to this cattle product. The API is a prototype and data is not durable.
+**Limits:** The model stores each animal's current status; it does not retain a history of treatments or health changes. Records are held in memory and are not durable.
 
-## Phase 1: DI registrations and temporary shared state
+## Dependency injection and shared in-memory records
 
-**Decision:** Register the catalog service and repository as scoped, registration validator as transient, and stateless tag normalizer as singleton. Keep one synchronized in-memory store singleton for cross-request demo state.
+**Decision:** Register the catalog service and repository as scoped, registration validator as transient, and stateless tag normalizer as singleton. Keep one synchronized in-memory store singleton so records remain available across requests.
 
 **Why:** A scoped business workflow should not be captured by a singleton. Independent HTTP requests still need to observe records created in earlier requests until persistent storage exists.
 
-**For:** Correct request lifetimes, visible demo data, and a clean substitution point for a future persistence adapter.
+**For:** Correct request lifetimes, consistent access to registered cattle records, and a substitution point for a future persistence adapter.
 
 **Evidence:** [`Program.cs`](../src/Presentation.API/Program.cs), [`InMemoryCattleStore`](../src/Infrastructure/Cattle/InMemoryCattleStore.cs), and [`DependencyInjectionUsesExpectedLifetimes`](../tests/Core.Tests/ApiIntegrationTests.cs).
 
-**Limits:** The store is mutable despite being singleton; its lock protects dictionary operations, but process restart erases data. It is a Phase 1 compromise, not the target persistence architecture. There is no `DbContext` yet.
+**Limits:** The store is mutable despite being singleton; its lock protects dictionary operations, but process restart erases data. It provides neither database transactions nor durable storage. There is no `DbContext` yet.
 
-## Phase 1: Verify the HTTP exception pipeline
+## A predictable HTTP error contract
 
 **Decision:** Keep `ExceptionMiddleware` registered before controllers and add integration tests that send HTTP requests through the real application host.
 
-**Why:** Calling the middleware class directly proves its own logic but does not prove that `Program.cs` registers it in the correct place. The instructor specifically identified that evidence gap.
+**Why:** API consumers need consistent error responses regardless of which endpoint fails. Calling the middleware class directly verifies its own logic but does not prove that the deployed request pipeline uses it. HTTP integration tests exercise the actual registrations in `Program.cs` and detect that integration gap.
 
 **For:** Repeatable proof of 404/400/500 mappings, RFC 7807 fields, `application/problem+json`, and safe 500 responses.
 
-**Evidence:** [`Program.cs`](../src/Presentation.API/Program.cs), [`ExceptionMiddleware`](../src/Presentation.API/Middleware/ExceptionMiddleware.cs), [`ApiIntegrationTests`](../tests/Core.Tests/ApiIntegrationTests.cs), and the [Postman collection](../postman/DAW-Phase1.postman_collection.json).
+**Evidence:** [`Program.cs`](../src/Presentation.API/Program.cs), [`ExceptionMiddleware`](../src/Presentation.API/Middleware/ExceptionMiddleware.cs), [`ApiIntegrationTests`](../tests/Core.Tests/ApiIntegrationTests.cs), and the [Postman collection](../postman/Cattle-Management.postman_collection.json).
 
-**Limits:** The middleware handles exceptions thrown downstream. It does not redefine every response generated by routing or automatic model validation. The deliberate error endpoint is enabled only in Development.
+**Limits:** The middleware handles exceptions thrown downstream. It does not redefine every response generated by routing or automatic model validation. The deliberate error endpoint is enabled only in Development. Unexpected errors retain their diagnostic detail in server logs and expose a generic message to the client.
 
-## Documentation rule for subsequent work
+## Documentation maintenance
 
-For each substantive change, add or revise an entry that answers: **What changed? Why? For which user or rubric need? Where is the code? How was it verified? What remains limited?** Then update the [product and technical guide](phase1-product-and-technical-guide.md) and [README](../README.md) wherever their current claims would otherwise become inaccurate. Keep future-phase plans explicitly separate from delivered behavior.
+For each substantive change, add or revise an entry that answers: **What changed? Why? Which operational or engineering need does it address? Where is the code? How was it verified? What remains limited?** Then update the [product and technical guide](product-and-technical-guide.md) and [README](../README.md) wherever their current claims would otherwise become inaccurate. Describe planned capabilities separately from available behavior.
 
-## Phase 1: Document the product and its theoretical basis
+## Explain the product and its architectural decisions
 
-**Decision:** Add a detailed Phase 1 guide, a short product summary in the README, and this decision log.
+**Decision:** Maintain a detailed product and technical guide, a product summary and execution instructions in the README, and this decision log.
 
-**Why:** The earlier README showed implementation evidence but did not explain the product value, the theory behind the layers and lifetimes, or a defense sequence in enough detail for a reader to reproduce the argument.
+**Why:** Readers need to understand the cattle workflow, the reasons behind the architecture, and how to reproduce the system's behavior. Documentation connects product needs to implementation decisions and executable checks so maintainers can change the system without losing that context.
 
-**For:** Let a reviewer trace each rubric item to code and tests, and let the team present a useful cattle workflow without overstating what the prototype currently does.
+**For:** Help API consumers run the cattle workflow and help maintainers trace functional and quality objectives to code and tests.
 
-**Evidence:** [Product and technical guide](phase1-product-and-technical-guide.md), [README](../README.md), and the Phase 1 rubric traceability table in the guide. Documentation links and whitespace are checked before the change is published.
+**Evidence:** [Product and technical guide](product-and-technical-guide.md), [README](../README.md), and the implementation and verification map in the guide. Documentation links and whitespace are checked before the change is published.
 
-**Limits:** Documentation is an explanation of code, not a substitute for running the tests, capturing the Postman screenshot, or obtaining the instructor's evaluation. It must be updated when implementation changes.
+**Limits:** Documentation describes the current implementation and recorded checks. It does not make in-memory records durable or add unimplemented capabilities. It must be updated when behavior or architecture changes.
