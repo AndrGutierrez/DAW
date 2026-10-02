@@ -57,3 +57,11 @@ npx --yes newman run postman/Cattle-Management.postman_collection.json \
 - **Reiniciar datos**: `docker compose down -v` (borra el volumen de PostgreSQL) y vuelve a migrar/sembrar.
 - **Rotar la contraseña del admin**: edita `SEED_ADMIN_PASSWORD` y ejecuta el seed otra vez.
 - **Ver SQL de EF Core**: sube `Microsoft.EntityFrameworkCore.Database.Command` a `Information` en los `appsettings`.
+
+## 8. CI (GitHub Actions)
+Cada **pull request** ejecuta `.github/workflows/ci.yml`:
+- **Unit/integration tests**: `dotnet test DAW.slnx`.
+- **Postman (Newman)**: levanta PostgreSQL efímero, aplica migraciones, siembra datos y corre la colección con el entorno.
+
+El workflow genera los secretos en tiempo de ejecución (Postgres, JWT y admin), así que no hace falta configurar secrets en el repositorio.
+

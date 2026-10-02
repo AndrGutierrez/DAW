@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Unit and integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore DAW.slnx
+
+      - name: Test
+        run: dotnet test DAW.slnx --no-restore --configuration Release
+
+  postman-tests:
+    name: Postman tests (Newman)
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start PostgreSQL
+        run: |
+          PG_PASSWORD="$(openssl rand -hex 16)"
+          echo "PG_PASSWORD=$PG_PASSWORD" >> "$GITHUB_ENV"
+          docker run -d --name postgres \
+            -e POSTGRES_DB=daw \
+            -e POSTGRES_USER=daw \
+            -e POSTGRES_PASSWORD="$PG_PASSWORD" \
+            -p 5432:5432 postgres:17-alpine
+          for _ in $(seq 1 30); do
+            if docker exec postgres pg_isready -U daw -d daw >/dev/null 2>&1; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "PostgreSQL did not become ready in time" >&2
+          exit 1
+
+      - name: Configure runtime environment
+        run: |
+          echo "ASPNETCORE_ENVIRONMENT=Development" >> "$GITHUB_ENV"
+          echo "DisableHttpsRedirection=true" >> "$GITHUB_ENV"
+          echo "Jwt__Key=$(openssl rand -base64 48)" >> "$GITHUB_ENV"
+          echo "Seed__AdminPassword=$(openssl rand -base64 24)Aa1!" >> "$GITHUB_ENV"
+          echo "ConnectionStrings__Default=Host=localhost;Port=5432;Database=daw;Username=daw;Password=$PG_PASSWORD" >> "$GITHUB_ENV"
+
+      - name: Restore
+        run: dotnet restore DAW.slnx
+
+      - name: Migrations and seed
+        run: |
+          dotnet tool restore
+          dotnet ef database update --project src/Infrastructure --startup-project src/Presentation.API
+          dotnet run --project src/Presentation.API --no-launch-profile -- --seed
+
+      - name: Run API and Postman collection
+        run: |
+          dotnet run --project src/Presentation.API --no-launch-profile --urls http://127.0.0.1:5000 > /tmp/app.log 2>&1 &
+          APP_PID=$!
+          for _ in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/api/auth/me || true)
+            if [ "$code" != "000" ]; then
+              break
+            fi
+            sleep 1
+          done
+
+          set +e
+          npx --yes newman run postman/Cattle-Management.postman_collection.json \
+            -e postman/Daw.postman_environment.json \
+            --env-var baseUrl=http://127.0.0.1:5000 \
+            --env-var adminPassword="$Seed__AdminPassword"
+          STATUS=$?
+          set -e
+
+          if [ "$STATUS" -ne 0 ]; then
+            echo "----- API log -----"
+            tail -n 100 /tmp/app.log || true
+          fi
+
+          kill "$APP_PID" 2>/dev/null || true
+          exit "$STATUS"
