@@ -20,6 +20,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Supplier> Suppliers => Set<Supplier>();
     public DbSet<Animal> Animals => Set<Animal>();
+    public DbSet<AnimalPhoto> AnimalPhotos => Set<AnimalPhoto>();
     public DbSet<WeightRecord> WeightRecords => Set<WeightRecord>();
     public DbSet<HealthEvent> HealthEvents => Set<HealthEvent>();
     public DbSet<HealthStatusChange> HealthStatusChanges => Set<HealthStatusChange>();
@@ -51,6 +52,29 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     {
         configurationBuilder.Properties<decimal>().HavePrecision(14, 4);
         base.ConfigureConventions(configurationBuilder);
+    }
+
+    public override int SaveChanges()
+    {
+        TouchUpdatedAnimals();
+        return base.SaveChanges();
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        TouchUpdatedAnimals();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void TouchUpdatedAnimals()
+    {
+        foreach (var entry in ChangeTracker.Entries<Animal>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
+            }
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

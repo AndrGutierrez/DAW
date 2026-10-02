@@ -4,35 +4,33 @@ public static class PermissionCatalog
 {
     public const string GuardName = "web";
 
-    public static readonly string[] Actions = ["add", "change", "delete", "view"];
+    public static readonly string[] Actions = ["list", "get"];
 
-    public static readonly (string Module, string Entity)[] Resources =
+    public static readonly string[] Resources =
     [
-        ("animals", "animal"),
-        ("herds", "herd"),
-        ("farms", "farm"),
-        ("users", "user"),
-        ("roles", "role"),
-        ("permissions", "permission")
+        "animals",
+        "farms",
+        "lots",
+        "paddocks",
+        "species",
+        "breeds",
+        "users",
+        "roles",
+        "permissions"
     ];
 
     public static IEnumerable<PermissionDefinition> All()
     {
-        foreach (var (module, entity) in Resources)
+        foreach (var resource in Resources)
         {
             foreach (var action in Actions)
             {
-                yield return new PermissionDefinition(
-                    $"{module}.{action}_{entity}",
-                    module,
-                    action,
-                    GuardName);
+                yield return new PermissionDefinition($"{resource}.{action}", resource, action, GuardName);
             }
         }
     }
 
-    public static string Name(string module, string action, string entity) =>
-        $"{module}.{action}_{entity}";
+    public static string Name(string resource, string action) => $"{resource}.{action}";
 }
 
-public sealed record PermissionDefinition(string Name, string Module, string Action, string GuardName);
+public sealed record PermissionDefinition(string Name, string Resource, string Action, string GuardName);

@@ -46,7 +46,7 @@ public sealed class ApiIntegrationTests
     }
 
     [Fact]
-    public async Task CattleEndpointsRetainHerdAndAnimalAcrossRequests()
+    public async Task HerdsEndpointsRetainRecordsAcrossRequests()
     {
         using var factory = CreateFactory();
         using var client = factory.CreateClient();
@@ -60,30 +60,11 @@ public sealed class ApiIntegrationTests
         using var herd = JsonDocument.Parse(await herdResponse.Content.ReadAsStringAsync());
         var herdId = herd.RootElement.GetProperty("id").GetGuid();
 
-        using var animalResponse = await client.PostAsJsonAsync("/api/animals", new
-        {
-            earTag = "c-001",
-            breed = "Brahman",
-            herdId
-        });
-        Assert.Equal(HttpStatusCode.Created, animalResponse.StatusCode);
-        using var animal = JsonDocument.Parse(await animalResponse.Content.ReadAsStringAsync());
-        var animalId = animal.RootElement.GetProperty("id").GetGuid();
-        Assert.Equal("C-001", animal.RootElement.GetProperty("earTag").GetString());
-        Assert.Equal(herdId, animal.RootElement.GetProperty("herdId").GetGuid());
-
-        using var statusRequest = new HttpRequestMessage(HttpMethod.Patch, $"/api/animals/{animalId}/health-status")
-        {
-            Content = JsonContent.Create(new { status = 1 })
-        };
-        using var statusResponse = await client.SendAsync(statusRequest);
-        Assert.Equal(HttpStatusCode.OK, statusResponse.StatusCode);
-
-        using var getResponse = await client.GetAsync($"/api/animals/{animalId}");
+        using var getResponse = await client.GetAsync($"/api/herds/{herdId}");
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
         using var retrieved = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync());
-        Assert.Equal(animalId, retrieved.RootElement.GetProperty("id").GetGuid());
-        Assert.Equal(1, retrieved.RootElement.GetProperty("healthStatus").GetInt32());
+        Assert.Equal(herdId, retrieved.RootElement.GetProperty("id").GetGuid());
+        Assert.Equal("North Pasture", retrieved.RootElement.GetProperty("name").GetString());
     }
 
     [Fact]

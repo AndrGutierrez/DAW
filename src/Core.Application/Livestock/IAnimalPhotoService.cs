@@ -1,6 +1,6 @@
 namespace Core.Application.Livestock;
 
-public sealed record AnimalPhotoResult(Guid AnimalId, string PhotoUrl);
+public sealed record AnimalPhotoResult(Guid AnimalId, Guid PhotoId, string Url, DateTime UploadedAt);
 
 public interface IAnimalPhotoService
 {
@@ -13,5 +13,5 @@ public interface IAnimalPhotoService
         Guid? userId,
         CancellationToken cancellationToken = default);
 
-    Task DeleteAsync(Guid animalId, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Guid animalId, Guid photoId, CancellationToken cancellationToken = default);
 }

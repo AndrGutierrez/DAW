@@ -46,6 +46,8 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAccessAdministration, AccessAdministration>();
         services.AddScoped<IAnimalPhotoService, AnimalPhotoService>();
+        services.AddScoped<IAnimalQueryService, AnimalQueryService>();
+        services.AddScoped<IAnimalWeightReader, AnimalWeightReader>();
 
         return services;
     }

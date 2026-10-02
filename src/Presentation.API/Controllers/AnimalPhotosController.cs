@@ -12,7 +12,7 @@ public sealed class AnimalPhotosController(IAnimalPhotoService photoService, ICu
 {
     [HttpPost("{id:guid}/photo")]
     [Authorize]
-    [HasPermission("animals.change_animal")]
+    [HasPermission("animals.get")]
     public async Task<ActionResult<AnimalPhotoResult>> Upload(Guid id, IFormFile file, CancellationToken cancellationToken)
     {
         if (file is null || file.Length == 0)
@@ -34,12 +34,12 @@ public sealed class AnimalPhotosController(IAnimalPhotoService photoService, ICu
         return Ok(result);
     }
 
-    [HttpDelete("{id:guid}/photo")]
+    [HttpDelete("{id:guid}/photos/{photoId:guid}")]
     [Authorize]
-    [HasPermission("animals.change_animal")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    [HasPermission("animals.get")]
+    public async Task<IActionResult> Delete(Guid id, Guid photoId, CancellationToken cancellationToken)
     {
-        await photoService.DeleteAsync(id, cancellationToken);
+        await photoService.DeleteAsync(id, photoId, cancellationToken);
         return NoContent();
     }
 }

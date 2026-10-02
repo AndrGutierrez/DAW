@@ -4,6 +4,8 @@ El sistema de gestión de ganado ofrece una API HTTP para organizar hatos, ident
 
 Además de la base anterior, el sistema evoluciona hacia una **gestión ganadera multi-finca** con persistencia en PostgreSQL, autenticación con roles y permisos, y un modelo de negocio que cubre salud, reproducción, producción, nutrición, inventario, trazabilidad, tareas, finanzas y auditoría.
 
+¿Primera vez? Sigue la [**guía de setup**](docs/setup.md) (secretos `.env`, migraciones, seed y comandos).
+
 ## Resumen del producto
 
 Las personas responsables de una explotación ganadera pueden registrar hatos y animales, consultar a qué hato pertenece un animal y actualizar su estado de salud cuando cambie su condición. La comprobación de aretes sin distinguir mayúsculas y minúsculas evita registros duplicados. La validación rechaza datos obligatorios ausentes y fechas de nacimiento futuras.
@@ -71,7 +73,7 @@ dotnet build DAW.slnx
 dotnet test DAW.slnx
 ```
 
-El seed crea los roles (Administrador, Veterinario, Capataz, Operario, Solo lectura), los permisos por acción, las especies y razas, y el usuario administrador con la contraseña de `SEED_ADMIN_PASSWORD`. Las fotos se suben con `POST /api/animals/{id}/photo` (multipart) y se sirven en `/uploads`; en Docker persisten en el volumen `daw-uploads`.
+El seed crea los roles (Administrador, Veterinario, Capataz, Operario, Solo lectura), los permisos con nombres estilo Django (`tabla.list`, `tabla.get`), las especies y razas, el usuario administrador con la contraseña de `SEED_ADMIN_PASSWORD`, y **datos de ejemplo** (finca demo, potreros, lotes y animales con pesajes). Si el usuario `admin` ya existe, el seed **sincroniza su contraseña** con `SEED_ADMIN_PASSWORD`. Las fotos se suben con `POST /api/animals/{id}/photo` (multipart) y se sirven en `/uploads`; en Docker persisten en el volumen `daw-uploads`.
 
 La solución contiene cuatro proyectos de la aplicación y un proyecto de pruebas:
 
@@ -105,7 +107,11 @@ En `Presentation.API/Program.cs`, el normalizador de aretes sin estado compartid
 
 **Autenticación y permisos.** ASP.NET Core Identity con **JWT** para la API. Los permisos siguen la estructura de **Laravel Permission** (spatie): `Roles`, `Permissions`, `RolePermissions`, `UserPermissions` y `UserRoles`, con `guard_name`. Un usuario obtiene permisos por sus roles y también de forma directa; el superusuario no tiene restricciones. Los endpoints protegidos usan `[Authorize]` y el atributo `[HasPermission("...")]`.
 
-**Fotos y archivos.** Las imágenes del animal se guardan en disco (`Storage:RootPath`), se referencian desde `Animal.PhotoUrl` y se registran como `Attachment`. En Docker persisten en el volumen nombrado `daw-uploads` y se sirven bajo `/uploads`.
+**Fotos y archivos.** Un animal puede tener **varias fotos** (`AnimalPhoto`, relación 1—N) con su fecha de subida (`UploadedAt`). Los archivos se guardan en disco (`Storage:RootPath`) y se sirven bajo `/uploads`; en Docker persisten en el volumen nombrado `daw-uploads`. La lista expone `coverPhotoUrl` (la más reciente) y `photoCount`, y el detalle incluye la colección `photos`.
+
+**Actualización y seguimiento.** `Animal.UpdatedAt` registra la última modificación (subida/borrado de foto o cualquier cambio del animal, vía `SaveChanges`). El endpoint `GET /api/animals/stale?days=X` lista los animales que no se actualizaron en más de X días, para detectar registros sin seguimiento.
+
+**Peso y edad como valores derivados.** El peso actual se obtiene con la abstracción `IAnimalWeightReader` (último `WeightRecord`, `Core.Application`, implementada en `Infrastructure`); la edad se calcula desde `BirthDate` con la lógica de dominio `AnimalAge`. Por eso los endpoints devuelven `birthDate` y no la edad: el cálculo se hace fuera de la consulta.
 
 ## Diagrama entidad-relación
 
@@ -115,8 +121,9 @@ El esquema se volca desde PostgreSQL y se visualiza con [Liam ERD](https://liamb
 docker exec daw-postgres pg_dump -U daw -d daw --schema-only --no-owner --no-privileges \
   --exclude-table='public."__EFMigrationsHistory"' | grep -v '^\\' > db/schema.sql
 npx @liam-hq/cli erd build --input db/schema.sql --format postgres --output-dir db/erd
-npx serve db/erd
 ```
+
+Con Docker Compose, Nginx sirve el diagrama generado en **`http://localhost:<NGINX_HTTP_PORT>/erd/`** (por defecto `http://localhost:18080/erd/`), montando `db/erd` como volumen. Genera `db/erd` antes de levantar los contenedores. Sin Docker, puedes servirlo con `npx serve db/erd`.
 
 ## Ejecutar la API
 
@@ -165,29 +172,30 @@ La dirección con Docker es `http://localhost:18080`, que coincide con la colecc
 
 | Método | Ruta | Propósito |
 | --- | --- | --- |
-| `POST` | `/api/herds` | Crear un hato |
+| `POST` | `/api/herds` | Crear un hato (prototipo en memoria) |
 | `GET` | `/api/herds` | Listar los hatos |
 | `GET` | `/api/herds/{id}` | Consultar un hato |
-| `POST` | `/api/animals` | Registrar un animal asociado a un hato |
-| `GET` | `/api/animals` | Listar los animales |
-| `GET` | `/api/animals/{id}` | Consultar un animal |
-| `PATCH` | `/api/animals/{id}/health-status` | Cambiar el estado de salud de un animal (`0` sano, `1` en observación, `2` en tratamiento) |
 | `GET` | `/api/demo/errors/{kind}` | Provocar un error de ejemplo únicamente en el entorno Development |
 
-Endpoints nuevos (autenticación, permisos y archivos):
+Endpoints del modelo persistente (autenticación, permisos, animales y archivos). El acceso requiere un token JWT y el permiso indicado (nombres estilo Django `tabla.accion`):
 
-| Método | Ruta | Propósito |
-| --- | --- | --- |
-| `POST` | `/api/auth/register` | Registrar un usuario |
-| `POST` | `/api/auth/login` | Iniciar sesión y obtener un token JWT |
-| `POST` | `/api/auth/refresh` | Renovar el token de acceso |
-| `GET` | `/api/auth/me` | Datos del usuario autenticado y sus permisos |
-| `POST` | `/api/animals/{id}/photo` | Subir la foto de un animal |
-| `DELETE` | `/api/animals/{id}/photo` | Eliminar la foto de un animal |
-| `GET` | `/api/admin/permissions` | Listar los permisos (requiere `permissions.view_permission`) |
-| `GET` | `/api/admin/roles` | Listar roles y sus permisos (requiere `roles.view_role`) |
-| `POST` | `/api/admin/roles/{roleId}/permissions/{permissionId}` | Otorgar un permiso a un rol |
-| `DELETE` | `/api/admin/roles/{roleId}/permissions/{permissionId}` | Quitar un permiso a un rol |
+| Método | Ruta | Permiso | Propósito |
+| --- | --- | --- | --- |
+| `POST` | `/api/auth/register` | — | Registrar un usuario |
+| `POST` | `/api/auth/login` | — | Iniciar sesión y obtener un token JWT |
+| `POST` | `/api/auth/refresh` | — | Renovar el token de acceso |
+| `GET` | `/api/auth/me` | (autenticado) | Datos del usuario autenticado y sus permisos |
+| `GET` | `/api/animals` | `animals.list` | Listar animales con información relevante (`birthDate`, peso más reciente, `coverPhotoUrl`, `photoCount`, `updatedAt`) |
+| `GET` | `/api/animals/stale?days=X` | `animals.list` | Listar animales sin actualizar en más de X días |
+| `GET` | `/api/animals/{id}` | `animals.get` | Consultar un animal (detalle con `photos` y `updatedAt`) |
+| `POST` | `/api/animals/{id}/photo` | `animals.get` | Subir una foto del animal (se permiten varias) |
+| `DELETE` | `/api/animals/{id}/photos/{photoId}` | `animals.get` | Eliminar una foto del animal |
+| `GET` | `/api/admin/permissions` | `permissions.list` | Listar los permisos |
+| `GET` | `/api/admin/roles` | `roles.list` | Listar roles y sus permisos |
+| `POST` | `/api/admin/roles/{roleId}/permissions/{permissionId}` | `roles.list` | Otorgar un permiso a un rol |
+| `DELETE` | `/api/admin/roles/{roleId}/permissions/{permissionId}` | `roles.list` | Quitar un permiso a un rol |
+
+**Documentación interactiva (Swagger).** Con la aplicación en marcha, Swagger UI está en **`/swagger`** (por ejemplo `http://localhost:18080/swagger`) y el documento OpenAPI en `/swagger/v1/swagger.json`. Usa el botón **Authorize** con el token JWT obtenido en `POST /api/auth/login` para probar los endpoints protegidos.
 
 `ExceptionMiddleware` se registra antes de los controladores en `Program.cs`. Convierte `KeyNotFoundException` en 404, `UnauthorizedAccessException` en 401, `InvalidOperationException` y los argumentos inválidos en 400, y las excepciones inesperadas en 500. Las respuestas tienen el tipo de contenido `application/problem+json` e incluyen `type`, `title`, `status`, `detail` e `instance`. Las respuestas HTTP 500 ocultan los mensajes internos y las trazas de las excepciones. `ApiIntegrationTests` inicia la aplicación real de ASP.NET Core en memoria y comprueba las tres respuestas mediante HTTP, además de los ciclos de vida de DI y los endpoints de ganado.
 
@@ -202,6 +210,8 @@ Endpoints nuevos (autenticación, permisos y archivos):
 | Persistencia con EF Core y LINQ | `AppDbContext`, configuraciones Fluent API y migraciones | `dotnet ef database update` |
 | Autenticación y permisos | Identity + JWT y estructura Laravel Permission | `POST /api/auth/login` y endpoints `/api/admin` |
 | Diagrama entidad-relación | Volcado del esquema y Liam ERD | `db/schema.sql` y `db/erd` |
+| Documentación de la API | Swashbuckle + Swagger UI (esquema Bearer) | `GET /swagger` y `/swagger/v1/swagger.json` |
+| Autenticación, permisos y documentos | Pruebas unitarias (JWT, validador, almacenamiento, catálogo, edad, lector de peso, consulta de animales) e integración (login, refresh, `/me`, 401/403, animales con RBAC, fotos, stale, Swagger) | `dotnet test DAW.slnx` (46 pruebas) |
 
 Para una comprobación rápida con cURL:
 
@@ -215,12 +225,22 @@ Los códigos de estado esperados son 404, 400 y 500. En la última respuesta, el
 
 ## Verificación de la API con Postman
 
-Importa [la colección de la API de gestión de ganado](postman/Cattle-Management.postman_collection.json), ajusta `baseUrl` según la forma de ejecución y ejecuta las peticiones en orden. La colección crea un hato y un animal, consulta el animal, cambia su estado de salud y comprueba los errores de negocio y de ejemplo. El endpoint de demostración está disponible únicamente cuando `ASPNETCORE_ENVIRONMENT=Development`.
+Importa [la colección](postman/Cattle-Management.postman_collection.json) **y** el [entorno](postman/Daw.postman_environment.json), selecciona el entorno **DAW (local)** y ajusta `baseUrl`/`adminPassword` según los datos sembrados. Al ejecutar **Login as admin**, el script guarda `accessToken` y `refreshToken` en las **variables del entorno** (también en las de la colección como respaldo), y las peticiones siguientes los usan automáticamente. La colección cubre:
 
-Para ejecutar la misma colección desde una terminal mientras la aplicación está disponible en el puerto 18080:
+- **Autenticación y permisos**: login del admin, refresh de token, `GET /api/auth/me`, listado de roles y permisos con permiso, **401** sin token, registro de un usuario sin roles y **403** al intentar un endpoint sin permiso.
+- **Animales y archivos**: lista, detalle y `stale` con RBAC, **subida** de varias fotos, consulta y **borrado** por `photoId`, y **404** RFC 7807 para un animal inexistente.
+- **Errores**: `GET /api/demo/errors/unexpected` verifica el 500 seguro.
+
+El endpoint de demostración está disponible únicamente cuando `ASPNETCORE_ENVIRONMENT=Development`.
+
+Para ejecutar la misma colección desde una terminal mientras la aplicación está disponible en el puerto 18080 (el `--export-environment` guarda el token capturado en el entorno):
 
 ```bash
-npx --yes newman run postman/Cattle-Management.postman_collection.json
+npx --yes newman run postman/Cattle-Management.postman_collection.json \
+  -e postman/Daw.postman_environment.json \
+  --export-environment /tmp/daw-env-out.json
 ```
 
-La petición **Unexpected exception returns safe 500 Problem Details** comprueba el estado de la respuesta, `Content-Type: application/problem+json`, los campos estándar y la ausencia de detalles internos de la excepción. Se conserva su nombre exacto para localizarla en la colección. Estas comprobaciones permiten que quienes consumen o mantienen la API verifiquen su contrato de errores de forma reproducible.
+Para subir colección y entorno a tu cuenta de Postman, define `POSTMAN_API_KEY` (y opcionalmente `POSTMAN_WORKSPACE_ID`, `POSTMAN_COLLECTION_UID`, `POSTMAN_ENVIRONMENT_UID`) en `.env` y ejecuta `bash scripts/push-postman.sh`.
+
+Resultado esperado: **16 peticiones y 16 aserciones aprobadas**. La petición **Unexpected exception returns safe 500 Problem Details** comprueba el estado de la respuesta, `Content-Type: application/problem+json`, los campos estándar y la ausencia de detalles internos de la excepción. Se conserva su nombre exacto para localizarla en la colección. Estas comprobaciones permiten que quienes consumen o mantienen la API verifiquen su contrato de errores de forma reproducible.
