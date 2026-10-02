@@ -50,6 +50,18 @@ server {
 
     set $upstream "${UPSTREAM}";
 
+    # Liam ERD static viewer, served from the mounted ./db/erd directory.
+    location = /erd {
+        return 301 /erd/;
+    }
+
+    location /erd/ {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files $uri $uri/ /erd/index.html;
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+
     location / {
         proxy_pass http://$upstream;
         proxy_http_version 1.1;

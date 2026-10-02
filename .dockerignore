@@ -9,3 +9,4 @@
 **/nginx
 **/.env
 **/*.user
+**/db/erd

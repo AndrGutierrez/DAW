@@ -33,46 +33,42 @@ public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage) : 
             contentType,
             cancellationToken);
 
-        animal.PhotoUrl = stored.RelativeUrl;
-
-        db.Attachments.Add(new Attachment
+        var photo = new AnimalPhoto
         {
             FarmId = animal.FarmId,
-            OwnerType = nameof(Animal),
-            OwnerId = animal.Id,
-            FileName = fileName,
+            AnimalId = animal.Id,
             Url = stored.RelativeUrl,
+            FileName = fileName,
             ContentType = contentType,
             SizeBytes = stored.SizeBytes,
-            UploadedByUserId = userId
-        });
+            UploadedByUserId = userId,
+            UploadedAt = DateTime.UtcNow
+        };
+
+        db.AnimalPhotos.Add(photo);
+        animal.UpdatedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync(cancellationToken);
 
-        return new AnimalPhotoResult(animal.Id, stored.RelativeUrl);
+        return new AnimalPhotoResult(animal.Id, photo.Id, photo.Url, photo.UploadedAt);
     }
 
-    public async Task DeleteAsync(Guid animalId, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid animalId, Guid photoId, CancellationToken cancellationToken = default)
     {
         var animal = await db.Animals
             .FirstOrDefaultAsync(candidate => candidate.Id == animalId, cancellationToken)
             ?? throw new KeyNotFoundException("The requested animal was not found.");
 
-        if (string.IsNullOrWhiteSpace(animal.PhotoUrl))
-        {
-            return;
-        }
+        var photo = await db.AnimalPhotos
+            .FirstOrDefaultAsync(
+                candidate => candidate.Id == photoId && candidate.AnimalId == animalId,
+                cancellationToken)
+            ?? throw new KeyNotFoundException("The requested photo was not found.");
 
-        await storage.DeleteAsync(animal.PhotoUrl, cancellationToken);
+        await storage.DeleteAsync(photo.Url, cancellationToken);
 
-        var attachments = await db.Attachments
-            .Where(attachment => attachment.OwnerType == nameof(Animal)
-                && attachment.OwnerId == animal.Id
-                && attachment.Url == animal.PhotoUrl)
-            .ToListAsync(cancellationToken);
-
-        db.Attachments.RemoveRange(attachments);
-        animal.PhotoUrl = null;
+        db.AnimalPhotos.Remove(photo);
+        animal.UpdatedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync(cancellationToken);
     }

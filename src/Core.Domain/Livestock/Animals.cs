@@ -60,11 +60,34 @@ public sealed class Animal : BaseEntity
 
     public ICollection<Animal> Offspring { get; set; } = [];
 
-    public string? PhotoUrl { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public string? Notes { get; set; }
 
+    public ICollection<AnimalPhoto> Photos { get; set; } = [];
+
     public ICollection<WeightRecord> WeightRecords { get; set; } = [];
+}
+
+public sealed class AnimalPhoto : BaseEntity
+{
+    public Guid FarmId { get; set; }
+
+    public Guid AnimalId { get; set; }
+
+    public Animal Animal { get; set; } = null!;
+
+    public string Url { get; set; } = null!;
+
+    public string FileName { get; set; } = null!;
+
+    public string? ContentType { get; set; }
+
+    public long? SizeBytes { get; set; }
+
+    public Guid? UploadedByUserId { get; set; }
+
+    public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 }
 
 public sealed class WeightRecord : BaseEntity

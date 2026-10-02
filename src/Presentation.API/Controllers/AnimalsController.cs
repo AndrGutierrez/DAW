@@ -1,42 +1,34 @@
-using Core.Application.Cattle;
-using Core.Domain.Cattle;
+using Core.Application.Livestock;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.API.Authorization;
 
 namespace Presentation.API.Controllers;
 
 [ApiController]
 [Route("api/animals")]
-public sealed class AnimalsController(ICattleCatalogService catalog) : ControllerBase
+public sealed class AnimalsController(IAnimalQueryService animals) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IReadOnlyList<AnimalResult>> List() =>
-        Ok(catalog.ListAnimals());
+    [HasPermission("animals.list")]
+    public async Task<ActionResult<IReadOnlyList<AnimalListItem>>> List(CancellationToken cancellationToken) =>
+        Ok(await animals.ListAsync(cancellationToken));
 
-    [HttpGet("{id:guid}")]
-    public ActionResult<AnimalResult> Get(Guid id) =>
-        Ok(catalog.GetAnimal(id));
-
-    [HttpPost]
-    public ActionResult<AnimalResult> Create(CreateAnimalRequest request)
+    [HttpGet("stale")]
+    [HasPermission("animals.list")]
+    public async Task<ActionResult<IReadOnlyList<AnimalListItem>>> ListStale(
+        [FromQuery] int days = 30,
+        CancellationToken cancellationToken = default)
     {
-        var animal = catalog.RegisterAnimal(
-            request.EarTag,
-            request.Breed,
-            request.HerdId,
-            request.DateOfBirth);
+        if (days <= 0)
+        {
+            throw new ArgumentException("The 'days' query parameter must be greater than zero.", nameof(days));
+        }
 
-        return CreatedAtAction(nameof(Get), new { id = animal.Id }, animal);
+        return Ok(await animals.ListStaleAsync(days, cancellationToken));
     }
 
-    [HttpPatch("{id:guid}/health-status")]
-    public ActionResult<AnimalResult> UpdateHealthStatus(Guid id, UpdateHealthStatusRequest request) =>
-        Ok(catalog.UpdateAnimalHealthStatus(id, request.Status));
+    [HttpGet("{id:guid}")]
+    [HasPermission("animals.get")]
+    public async Task<ActionResult<AnimalDetail>> Get(Guid id, CancellationToken cancellationToken) =>
+        Ok(await animals.GetAsync(id, cancellationToken));
 }
-
-public sealed record CreateAnimalRequest(
-    string EarTag,
-    string Breed,
-    Guid HerdId,
-    DateOnly? DateOfBirth);
-
-public sealed record UpdateHealthStatusRequest(AnimalHealthStatus Status);

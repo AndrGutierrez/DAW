@@ -14,7 +14,7 @@ Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negoc
 
 ## Roles y permisos con estructura de Laravel Permission
 
-**Decisión:** adoptar la estructura de Laravel Permission (spatie): `Roles`, `Permissions`, `RolePermissions`, `UserPermissions` y `UserRoles`, con `guard_name`.
+**Decisión:** adoptar la estructura de Laravel Permission (spatie): `Roles`, `Permissions`, `RolePermissions`, `UserPermissions` y `UserRoles`, con `guard_name`, y nombrar los permisos al estilo Django (`tabla.accion`), empezando por `list` y `get`.
 
 **Por qué:** es un modelo de permisos probado y flexible, que permite otorgar permisos a roles y también directo a un usuario.
 
@@ -100,13 +100,21 @@ Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negoc
 
 **Impacto:** el esquema actual nace de una migración limpia; los datos Phase 1 eran descartables.
 
-## Foto del animal en disco con volumen persistente
+## Fotos del animal (múltiples) en disco con volumen persistente
 
-**Decisión:** guardar las fotos de los animales en el sistema de archivos (`Storage:RootPath`), referenciadas desde `Animal.PhotoUrl` y registradas como `Attachment`; en Docker se monta un volumen nombrado (`daw-uploads`) para que persistan.
+**Decisión:** modelar las fotos como la entidad `AnimalPhoto` (relación 1—N con `Animal`), cada una con su fecha de subida (`UploadedAt`). Los archivos se guardan en el sistema de archivos (`Storage:RootPath`) y, en Docker, en el volumen nombrado (`daw-uploads`).
 
-**Por qué:** las imágenes no conviene almacenarlas en la base de datos y deben sobrevivir a los reinicios del contenedor.
+**Por qué:** un animal suele tener varias fotos a lo largo del tiempo y conviene saber cuándo se subió cada una; las imágenes no deben guardarse en la base de datos.
 
-**Impacto:** subir/borrar la foto se hace por `POST`/`DELETE /api/animals/{id}/photo`, y el archivo se sirve en `/uploads`. No requiere migración: `PhotoUrl` y `Attachments` ya existían.
+**Impacto:** `POST /api/animals/{id}/photo` agrega una foto y `DELETE /api/animals/{id}/photos/{photoId}` elimina una concreta; los archivos se sirven en `/uploads`. La lista expone `coverPhotoUrl` y `photoCount`, y el detalle la colección `photos`.
+
+## Seguimiento de actualizaciones (`updatedAt`) y animales sin registrar
+
+**Decisión:** agregar `Animal.UpdatedAt` (se refresca con cada cambio del animal, vía `SaveChanges`, y al subir/borrar fotos) y un endpoint `GET /api/animals/stale?days=X` que lista los animales sin actualizar en más de X días.
+
+**Por qué:** permite detectar animales cuyo registro se ha dejado de mantener.
+
+**Impacto:** el listado y el detalle exponen `updatedAt`; `stale` habilita tareas de control y alertas.
 
 ## Permisos directos al usuario además de por rol
 

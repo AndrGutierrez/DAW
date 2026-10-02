@@ -50,7 +50,8 @@ Datos principales de la ficha:
 - **Peso actual**: se obtiene del último pesaje registrado.
 - **Genealogía**: madre (dam) y padre (sire), lo que permite armar el árbol familiar.
 - **Ubicación**: finca, potrero y lote.
-- **Foto y adjuntos**: una imagen principal del animal y documentos asociados (certificados, análisis).
+- **Fotos y adjuntos**: un animal puede tener **varias fotos**, cada una con su fecha de subida, y documentos asociados (certificados, análisis).
+- **Última actualización**: se registra cuándo se actualizó el animal por última vez, para detectar registros sin seguimiento (animales sin cambios en más de X días).
 
 El crecimiento se mide con **pesajes** frecuentes; la diferencia de peso en el tiempo da la **ganancia diaria de peso (GDP)**, indicador de salud y productividad. Además del peso se registra el **estado corporal (ECC)** en escala 1 a 5.
 
@@ -122,7 +123,7 @@ Registra **compras, ventas y gastos** vinculados a animales, lotes o insumos. Pe
 Modelo basado en **Laravel Permission** (spatie), dividido en **roles**, **permisos** y sus asignaciones:
 
 - Un **rol** agrupa usuarios y permisos; un usuario puede tener varios roles.
-- Un **permiso** corresponde a una acción sobre un módulo: `agregar`, `editar`, `eliminar` o `ver` (por ejemplo, "editar animales"). Cada permiso tiene un **guard** (`web` por defecto).
+- Un **permiso** se nombra al estilo Django (`tabla.accion`, por ejemplo `animals.list` y `animals.get`). Por ahora solo se usan las acciones de lectura `list` y `get`. Cada permiso tiene un **guard** (`web` por defecto).
 - Un permiso se otorga a un **rol** (todos sus miembros lo heredan) o **directamente a un usuario**.
 - El **superusuario** puede hacer todo sin restricciones.
 

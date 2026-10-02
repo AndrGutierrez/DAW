@@ -90,6 +90,24 @@ CREATE TABLE public."AnimalMovements" (
 
 
 --
+-- Name: AnimalPhotos; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."AnimalPhotos" (
+    "Id" uuid NOT NULL,
+    "FarmId" uuid NOT NULL,
+    "AnimalId" uuid NOT NULL,
+    "Url" character varying(500) NOT NULL,
+    "FileName" character varying(255) NOT NULL,
+    "ContentType" character varying(100),
+    "SizeBytes" bigint,
+    "UploadedByUserId" uuid,
+    "UploadedAt" timestamp with time zone NOT NULL,
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: Animals; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -115,9 +133,9 @@ CREATE TABLE public."Animals" (
     "HealthStatus" integer NOT NULL,
     "DamId" uuid,
     "SireId" uuid,
-    "PhotoUrl" character varying(500),
     "Notes" character varying(2000),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "UpdatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 
 
@@ -807,6 +825,14 @@ ALTER TABLE ONLY public."AnimalMovements"
 
 
 --
+-- Name: AnimalPhotos PK_AnimalPhotos; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."AnimalPhotos"
+    ADD CONSTRAINT "PK_AnimalPhotos" PRIMARY KEY ("Id");
+
+
+--
 -- Name: Animals PK_Animals; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1172,6 +1198,13 @@ CREATE INDEX "IX_AnimalMovements_ToLotId" ON public."AnimalMovements" USING btre
 --
 
 CREATE INDEX "IX_AnimalMovements_ToPaddockId" ON public."AnimalMovements" USING btree ("ToPaddockId");
+
+
+--
+-- Name: IX_AnimalPhotos_AnimalId_UploadedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AnimalPhotos_AnimalId_UploadedAt" ON public."AnimalPhotos" USING btree ("AnimalId", "UploadedAt");
 
 
 --
@@ -1744,6 +1777,14 @@ ALTER TABLE ONLY public."AnimalMovements"
 
 ALTER TABLE ONLY public."AnimalMovements"
     ADD CONSTRAINT "FK_AnimalMovements_Paddocks_ToPaddockId" FOREIGN KEY ("ToPaddockId") REFERENCES public."Paddocks"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: AnimalPhotos FK_AnimalPhotos_Animals_AnimalId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."AnimalPhotos"
+    ADD CONSTRAINT "FK_AnimalPhotos_Animals_AnimalId" FOREIGN KEY ("AnimalId") REFERENCES public."Animals"("Id") ON DELETE CASCADE;
 
 
 --

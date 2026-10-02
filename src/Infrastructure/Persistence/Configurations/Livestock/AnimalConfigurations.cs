@@ -17,7 +17,7 @@ public sealed class AnimalConfiguration : IEntityTypeConfiguration<Animal>
         builder.Property(animal => animal.Name).HasMaxLength(100);
         builder.Property(animal => animal.Color).HasMaxLength(50);
         builder.Property(animal => animal.Markings).HasMaxLength(200);
-        builder.Property(animal => animal.PhotoUrl).HasMaxLength(500);
+        builder.Property(animal => animal.UpdatedAt).IsRequired().HasDefaultValueSql("now()");
         builder.Property(animal => animal.Notes).HasMaxLength(2000);
 
         builder.Property(animal => animal.Sex).HasConversion<int>().IsRequired();
@@ -64,6 +64,27 @@ public sealed class AnimalConfiguration : IEntityTypeConfiguration<Animal>
             .WithMany()
             .HasForeignKey(animal => animal.SireId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(animal => animal.Photos)
+            .WithOne(photo => photo.Animal)
+            .HasForeignKey(photo => photo.AnimalId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public sealed class AnimalPhotoConfiguration : IEntityTypeConfiguration<AnimalPhoto>
+{
+    public void Configure(EntityTypeBuilder<AnimalPhoto> builder)
+    {
+        builder.ToTable("AnimalPhotos");
+        builder.HasKey(photo => photo.Id);
+
+        builder.Property(photo => photo.Url).IsRequired().HasMaxLength(500);
+        builder.Property(photo => photo.FileName).IsRequired().HasMaxLength(255);
+        builder.Property(photo => photo.ContentType).HasMaxLength(100);
+        builder.Property(photo => photo.UploadedAt).IsRequired();
+
+        builder.HasIndex(photo => new { photo.AnimalId, photo.UploadedAt });
     }
 }
 
