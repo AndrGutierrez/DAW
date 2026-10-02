@@ -74,7 +74,7 @@ public sealed class ProductRequestValidator : AbstractValidator<ProductRequest>
 {
     public ProductRequestValidator()
     {
-        RuleFor(x => x.SKU).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.SKU).NotEmpty().MaximumLength(50).Matches("^[a-zA-Z0-9-]+$");
         RuleFor(x => x.Name).NotEmpty().MaximumLength(150);
         RuleFor(x => x.CategoryId).NotEmpty();
         RuleFor(x => x.Price).GreaterThan(0).PrecisionScale(18, 2, false);

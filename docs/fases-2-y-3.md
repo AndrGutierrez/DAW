@@ -24,6 +24,9 @@ Un mapeo correcto en C# no demuestra que la migración esté aplicada en una bas
 | `Fase 3/03_Tarea_Asignacion_Fase3_y_Rubrica.docx` | JWT, RBAC, FluentValidation, escenarios Postman y rúbrica de 80 puntos |
 | `Fase 3/DAW-0423807T Fase 3.pdf` | Material de exposición del subsistema de seguridad |
 | Feedback del 27 de septiembre de 2026 | Verificación de pipeline, ciclos DI, índices de usuario/producto, precisión monetaria, categorías, siembra y lecturas sin seguimiento |
+| `Auditoría y Verificación de Repositorio (Fases 1, 2 y 3).docx` | Doce comprobaciones: cuatro por fase, diez puntos por comprobación; `HasData` de categorías, correo en JWT, restricciones administrativas de productos y expresión regular de SKU explícitos |
+
+La guía de auditoría posterior distribuye **40 puntos por fase, 120 en total**. Las tablas de 80 puntos que aparecen más abajo conservan la ponderación de las asignaciones originales de Fase 2 y Fase 3; son instrumentos diferentes. El [guion de defensa](guion-defensa-fases-1-2-3.md) sigue los doce puntos de la guía más reciente, sin adjudicar una nota al proyecto.
 
 Las consignas emplean una ferretería como ejemplo de categorías, precios, costos y existencias. La adaptación mantiene esos requisitos técnicos dentro de una explotación ganadera: los productos son insumos agropecuarios, las categorías corresponden a alimentación/sanidad y el stock se administra por finca.
 
@@ -120,6 +123,10 @@ Un `CHECK` de inventario exige stock/mínimo no negativos y máximo mayor que m�
 
 ### 3.7. Siembra representativa
 
+`InventoryCategoryConfiguration`, en [ProductionConfigurations.cs](../src/Infrastructure/Persistence/Configurations/Livestock/ProductionConfigurations.cs), declara las dos categorías con **`HasData`**, UUID y fecha constantes. EF incorpora esos datos al snapshot y a la migración `ManagedInventoryCategorySeed`. No se utilizan valores aleatorios ni la fecha actual al construir el modelo. La migración conserva categorías preexistentes con el mismo nombre mediante `ON CONFLICT ("Name") DO NOTHING`, evitando reemplazar sus UUID y referencias. En una base nueva se insertan los UUID definidos por el modelo.
+
+El resto de los datos y las identidades se crean con el proceso explícito `--seed`. Identity genera el hash de las contraseñas configuradas en el ambiente; no se versionan contraseñas ni hashes de cuentas de acceso dentro de `HasData`. Las categorías son datos administrados por el modelo y las cuentas requieren inicialización mediante servicios. La diferencia sigue las recomendaciones de [siembra de datos de EF Core](https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding).
+
 El seeder declara los siguientes insumos y sus existencias de demostración. La tabla describe los datos previstos por el código; su presencia real debe confirmarse después de ejecutar la siembra en la base seleccionada.
 
 | SKU | Producto | Categoría | Precio | Costo | Stock | Mínimo | Máximo | Unidad |
@@ -206,7 +213,7 @@ La fase 3 tiene un máximo independiente de **80 puntos**.
 
 La respuesta contiene `accessToken`, `refreshToken`, `accessTokenExpiresAt` y `user`. El usuario de la respuesta incluye identificador, nombre, correo, nombre completo, indicador de superusuario, lista de roles y lista de permisos.
 
-Este contrato admite varios roles. El campo de correo está en la representación del usuario de la respuesta; no se afirma que el JWT tenga un claim de correo que el emisor actual no genera.
+Este contrato admite varios roles. El correo aparece en la representación del usuario y también en el claim `email` del JWT emitido por el flujo de autenticación.
 
 ### 4.3. Contraseñas y firma son mecanismos distintos
 
@@ -216,7 +223,7 @@ La firma del token usa `HmacSha256` y una clave secreta del servidor. Firmar un 
 
 ### 4.4. Claims y verificación del token
 
-`JwtTokenService` emite identificador (`sub` y NameIdentifier), nombre de usuario, roles y, cuando corresponde, indicador de superusuario. El token incluye emisor, audiencia y expiración.
+`JwtTokenService` emite identificador (`sub` y NameIdentifier), correo (`email`), nombre de usuario, roles y, cuando corresponde, indicador de superusuario. El token incluye emisor, audiencia y expiración. `AuthService` transmite el correo persistido al emisor; las pruebas comprueban el claim tanto en la utilidad de tokens como en un login HTTP.
 
 `Program.cs` configura `ValidateIssuer`, `ValidateAudience`, `ValidateLifetime` y `ValidateIssuerSigningKey`. El margen de reloj se establece en cero. Los tiempos de vida se obtienen de `JwtOptions`; los valores base del producto son 30 minutos para acceso y 7 días para refresh, y pueden configurarse por ambiente.
 
@@ -240,7 +247,7 @@ El catálogo define acciones `list`, `get`, `create`, `update` y `delete` para l
 | --- | --- | --- | --- |
 | Consultar catálogos permitidos | Sí | Sí | Sí |
 | Consultar datos de finca | Todas las fincas existentes | Fincas asignadas | Fincas asignadas |
-| Registrar/editar productos | Sí | Sí | No |
+| Registrar/editar productos | Sí | No | No |
 | Registrar operaciones diarias autorizadas | Sí | Sí | No |
 | Crear/editar categorías | Sí | No | No |
 | Mantener fincas, especies y razas | Sí | No | No |
@@ -251,7 +258,9 @@ El catálogo define acciones `list`, `get`, `create`, `update` y `delete` para l
 
 Los roles españoles especializados se mantienen junto a `Admin` y `Employee`. Sus permisos se declaran en el seeder. El rol `SoloLectura` obtiene únicamente lectura; modificar un archivo no se considera una operación de consulta.
 
-Todos los `DELETE` de los recursos operativos y fotografías requieren rol `Admin` o `Administrador`. Crear/modificar categorías, especies, razas y fincas también tiene guarda de rol administrativa. `HasPermission` añade el control de la acción concreta.
+Todos los `DELETE` de los recursos operativos y fotografías requieren rol `Admin` o `Administrador`. Crear/modificar productos, categorías, especies, razas y fincas también tiene guarda de rol administrativa. `HasPermission` añade el control de la acción concreta.
+
+La consigna original permitía a Employee registrar productos, mientras la guía de auditoría posterior pide que `POST /api/products` y `DELETE /api/products/{id}` rechacen a Employee. Se aplica la regla posterior: mantenimiento del catálogo reservado a administración, con POST/PUT/DELETE protegidos. Employee conserva consultas y operaciones diarias autorizadas sobre animales e inventario de su finca. Se verifica la denegación en .NET y Postman.
 
 Una identidad que sólo tenga el permiso `roles.manage` sin rol administrativo no puede otorgar permisos a un rol. Las reglas de negocio y las claves foráneas siguen aplicándose después de superar RBAC: el rol no habilita destruir un sacrificio o una referencia protegida.
 
@@ -266,6 +275,8 @@ Los archivos de animales se descargan mediante `/api/animals/{id}/photos/{photoI
 ### 4.8. Validación desacoplada y ciclos de vida
 
 Los validadores se encuentran en `Core.Application.Management` y `Core.Application.Security`. Incluyen DTOs de creación/edición, cambios de salud, registro, login y refresh.
+
+`ProductRequestValidator` exige SKU alfanumérico con guiones mediante `^[a-zA-Z0-9-]+$`, y precio/costo mayores que cero con hasta dos decimales. `InventoryRequestValidator` exige máximo mayor que mínimo. Los DTO de entrada omiten identificadores y fechas de creación: el cliente no puede asignar esos campos mediante JSON adicional. Las pruebas comprueban SKU inválidos y preservación de identidad/fecha en alta y edición.
 
 `RequestValidationFilter` resuelve `IValidator<T>` y ejecuta `ValidateAsync` antes de la acción. Las guardas de autorización se ejecutan antes de ese filtro; una operación prohibida no se autoriza porque su cuerpo sea válido. Los casos de uso CRUD también validan su contrato, manteniendo protección si se invocan fuera del controlador.
 
@@ -359,11 +370,11 @@ Validación final ejecutada el 1 de octubre de 2026, hora de Venezuela. Los coma
 | Comprobación | Resultado ejecutado |
 | --- | --- |
 | Build de la solución | Publicación Docker exitosa con SDK .NET 10.0.401 |
-| Pruebas .NET | 87 aprobadas, 0 fallidas/omitidas; EF InMemory en pruebas de servicios/pipeline |
-| Migraciones PostgreSQL 15 | Tres migraciones aplicadas; actualización histórica y rechazo seguro de huevos por lote comprobados |
+| Pruebas .NET | 93 aprobadas, 0 fallidas/omitidas; EF InMemory en pruebas de servicios/pipeline |
+| Migraciones PostgreSQL 15 | Cuatro migraciones aplicadas; actualización histórica, rechazo seguro de huevos por lote y conservación de categorías preexistentes comprobados |
 | Esquema y siembra SQL | Exportaciones reales de esquema/datos importadas en otra base; seed dos veces sin duplicados |
 | Concurrencia serializable | Tres carreras: una respuesta 201 y una 409 por par; sin estado parcial |
-| Colección Postman/Newman | 96 solicitudes y 174 assertions; 0 fallos sobre API con PostgreSQL 15.19 |
+| Colección Postman/Newman | 97 solicitudes y 176 assertions; 0 fallos sobre API con PostgreSQL 15.19 |
 | Persistencia tras reinicio | Alta/edición/reinicio/lectura: valor editado conservado en la misma base |
 | Descarga privada | Pruebas .NET: JWT autorizado, 401 sin token y 404 fuera de finca |
 

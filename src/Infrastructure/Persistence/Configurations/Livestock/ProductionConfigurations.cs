@@ -32,6 +32,24 @@ public sealed class InventoryCategoryConfiguration : IEntityTypeConfiguration<In
         b.Property(x => x.Description).HasMaxLength(500);
         b.Property(x => x.IsActive).HasDefaultValue(true);
         b.HasIndex(x => x.Name).IsUnique();
+        // Fixed identifiers and timestamps keep model-managed data deterministic.
+        b.HasData(
+            new
+            {
+                Id = Guid.Parse("a1100000-0000-4000-8000-000000000001"),
+                Name = "Alimentación animal",
+                Description = "Insumos de la operación ganadera",
+                IsActive = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            },
+            new
+            {
+                Id = Guid.Parse("a1100000-0000-4000-8000-000000000002"),
+                Name = "Sanidad animal",
+                Description = "Insumos de la operación ganadera",
+                IsActive = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
     }
 }
 

@@ -1479,6 +1479,50 @@
           ]
         },
         {
+          "name": "Employee POST producto denegado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/products",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"EMP-FORBIDDEN-{{runId}}\",\n  \"name\": \"Catálogo no autorizado\",\n  \"categoryId\": \"{{seedCategoryId}}\",\n  \"price\": 10,\n  \"costPrice\": 5,\n  \"unit\": \"Unit\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Precio negativo detallado",
           "request": {
             "method": "POST",
@@ -1503,7 +1547,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{employeeToken}}",
+                  "value": "{{adminToken}}",
                   "type": "string"
                 }
               ]

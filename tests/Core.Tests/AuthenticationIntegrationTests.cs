@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.IdentityModel.Tokens.Jwt;
 using Core.Application.Security;
 using Core.Domain.Livestock;
 using Infrastructure.Persistence;
@@ -30,10 +31,47 @@ public sealed class AuthenticationIntegrationTests
         using var client = factory.CreateClient();
         var token = await LoginAsync(client, "admin", AdminPassword);
         Assert.False(string.IsNullOrWhiteSpace(token));
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        Assert.Contains(jwt.Claims, claim => claim.Type == JwtRegisteredClaimNames.Email && claim.Value == "admin@daw.local");
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         using var roles = await client.GetAsync("/api/admin/roles");
         Assert.Equal(HttpStatusCode.OK, roles.StatusCode);
+    }
+
+    [Fact]
+    public async Task RegistrationPersistsDifferentHashesForTheSamePasswordAndVerifiesCredentials()
+    {
+        using var factory = CreateFactory();
+        await SeedAsync(factory);
+        using var client = factory.CreateClient();
+        var prefix = "salt" + Guid.NewGuid().ToString("N")[..8];
+        const string password = "Shared123!Pass";
+        foreach (var suffix in new[] { "one", "two" })
+        {
+            using var registration = await client.PostAsJsonAsync("/api/auth/register", new
+            {
+                username = prefix + suffix,
+                email = $"{prefix}{suffix}@daw.local",
+                password,
+                fullName = "Hash verification"
+            });
+            Assert.Equal(HttpStatusCode.OK, registration.StatusCode);
+        }
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var users = await db.Users.Where(user => user.UserName!.StartsWith(prefix)).ToListAsync();
+        Assert.Equal(2, users.Count);
+        Assert.NotEqual(users[0].PasswordHash, users[1].PasswordHash);
+        var manager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        foreach (var user in users)
+        {
+            Assert.False(string.IsNullOrWhiteSpace(user.PasswordHash));
+            Assert.NotEqual(password, user.PasswordHash);
+            Assert.True(await manager.CheckPasswordAsync(user, password));
+            Assert.False(await manager.CheckPasswordAsync(user, "Wrong123!Pass"));
+        }
     }
 
     [Fact]

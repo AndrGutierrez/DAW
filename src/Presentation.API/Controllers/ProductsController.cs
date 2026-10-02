@@ -16,6 +16,7 @@ public sealed class ProductsController(ICrudService<ProductRequest> service) : C
     public async Task<IActionResult> Get(Guid id, CancellationToken ct) => Ok(await service.GetAsync(id, ct));
 
     [HttpPost, HasPermission("products.create")]
+    [Authorize(Roles = "Admin,Administrador")]
     public async Task<IActionResult> Create(ProductRequest request, CancellationToken ct)
     {
         var result = await service.CreateAsync(request, ct);
@@ -23,6 +24,7 @@ public sealed class ProductsController(ICrudService<ProductRequest> service) : C
     }
 
     [HttpPut("{id:guid}"), HasPermission("products.update")]
+    [Authorize(Roles = "Admin,Administrador")]
     public async Task<IActionResult> Update(Guid id, ProductRequest request, CancellationToken ct) => Ok(await service.UpdateAsync(id, request, ct));
 
     [HttpDelete("{id:guid}"), HasPermission("products.delete")]

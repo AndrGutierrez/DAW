@@ -78,11 +78,13 @@ public sealed class JwtTokenServiceTests
         var service = CreateService();
         var userId = Guid.NewGuid();
 
-        var (token, expiresAt) = service.CreateAccessToken(userId, "jane", ["Administrador"], isSuperuser: true);
+        var (token, expiresAt) = service.CreateAccessToken(userId, "jane", ["Administrador"], isSuperuser: true, email: "jane@daw.local");
 
         var parsed = new JwtSecurityTokenHandler().ReadJwtToken(token);
         Assert.Equal("issuer", parsed.Issuer);
         Assert.Contains(parsed.Claims, claim => claim.Type == JwtRegisteredClaimNames.Sub && claim.Value == userId.ToString());
+        Assert.Contains(parsed.Claims, claim => claim.Type == JwtRegisteredClaimNames.Email && claim.Value == "jane@daw.local");
+        Assert.Equal("HS256", parsed.Header.Alg);
         Assert.Contains(parsed.Claims, claim => claim.Type == ClaimTypes.Role && claim.Value == "Administrador");
         Assert.Contains(parsed.Claims, claim => claim.Type == "superuser" && claim.Value == "true");
         Assert.True(expiresAt > DateTime.UtcNow);

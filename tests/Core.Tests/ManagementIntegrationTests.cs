@@ -107,7 +107,7 @@ public sealed class ManagementIntegrationTests
     }
 
     [Fact]
-    public async Task EmployeeCanRegisterButCannotDeleteOrMaintainCategoriesAndNegativePriceHasDetails()
+    public async Task EmployeeCanOperateAnimalsAndInventoryButCannotMaintainCatalogs()
     {
         using var factory = Factory();
         await Seed(factory);
@@ -122,11 +122,116 @@ public sealed class ManagementIntegrationTests
         Assert.Equal(HttpStatusCode.Forbidden, category.StatusCode);
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var product = await db.Products.AsNoTracking().OrderBy(x => x.SKU).FirstAsync();
+        using var productRead = await client.GetAsync($"/api/products/{product.Id}");
+        Assert.Equal(HttpStatusCode.OK, productRead.StatusCode);
+        using var productCreate = await client.PostAsJsonAsync("/api/products", new ProductRequest("EMP-NEW-001", "Unauthorized product", product.CategoryId, 10, 5, MeasurementUnit.Unit));
+        Assert.Equal(HttpStatusCode.Forbidden, productCreate.StatusCode);
+        using var productUpdate = await client.PutAsJsonAsync($"/api/products/{product.Id}", new ProductRequest(product.SKU, "Unauthorized change", product.CategoryId, 999, 998, product.Unit, product.Brand));
+        Assert.Equal(HttpStatusCode.Forbidden, productUpdate.StatusCode);
+        var preserved = await db.Products.AsNoTracking().SingleAsync(x => x.Id == product.Id);
+        Assert.Equal(product.Name, preserved.Name);
+        Assert.Equal(product.Price, preserved.Price);
+        Assert.Equal(product.CostPrice, preserved.CostPrice);
+        Assert.False(await db.Products.AnyAsync(x => x.SKU == "EMP-NEW-001"));
+
+        var inventory = await db.FarmInventory.AsNoTracking().SingleAsync(x => x.FarmId == farm && x.ProductId == product.Id);
+        var adjustment = new InventoryRequest(farm, product.Id, inventory.Stock + 1, inventory.MinStock, inventory.MaxStock, inventory.Location);
+        using var inventoryUpdate = await client.PutAsJsonAsync($"/api/inventory/{inventory.Id}", adjustment);
+        Assert.Equal(HttpStatusCode.OK, inventoryUpdate.StatusCode);
+        Assert.Equal(adjustment.Stock, (await db.FarmInventory.AsNoTracking().SingleAsync(x => x.Id == inventory.Id)).Stock);
+    }
+
+    [Fact]
+    public async Task AdministratorReceivesFieldErrorsForNegativeProductPrice()
+    {
+        using var factory = Factory();
+        await Seed(factory);
+        using var client = factory.CreateClient();
+        await Login(client, "admin");
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var categoryId = await db.InventoryCategories.Select(x => x.Id).FirstAsync();
         using var invalid = await client.PostAsJsonAsync("/api/products", new { sku = "BAD-1", name = "Invalid", categoryId, price = -10, costPrice = 1, unit = "Unit" });
         Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
         using var problem = JsonDocument.Parse(await invalid.Content.ReadAsStringAsync());
         Assert.True(problem.RootElement.GetProperty("errors").TryGetProperty("Price", out _));
+        Assert.False(await db.Products.AnyAsync(x => x.SKU == "BAD-1"));
+    }
+
+    [Theory]
+    [InlineData("BAD SKU")]
+    [InlineData("BAD_SKU")]
+    [InlineData("BAD/001")]
+    public async Task AdministratorCannotCreateAProductWithAnInvalidSku(string sku)
+    {
+        using var factory = Factory();
+        await Seed(factory);
+        using var client = factory.CreateClient();
+        await Login(client, "admin");
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var categoryId = await db.InventoryCategories.Select(x => x.Id).FirstAsync();
+        using var response = await client.PostAsJsonAsync("/api/products", new ProductRequest(sku, "Invalid SKU", categoryId, 10, 5, MeasurementUnit.Unit));
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.True(problem.RootElement.GetProperty("errors").TryGetProperty("SKU", out _));
+        Assert.False(await db.Products.AnyAsync(x => x.SKU == sku));
+    }
+
+    [Fact]
+    public async Task ProductDtoDoesNotBindIdentityOrCreationTimestamp()
+    {
+        using var factory = Factory();
+        await Seed(factory);
+        using var client = factory.CreateClient();
+        await Login(client, "admin");
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var categoryId = await db.InventoryCategories.Select(x => x.Id).FirstAsync();
+        var injectedId = Guid.NewGuid();
+        var injectedCreatedAt = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        using var create = await client.PostAsJsonAsync("/api/products", new
+        {
+            id = injectedId,
+            createdAt = injectedCreatedAt,
+            sku = "DTO-IDENTITY-001",
+            name = "Input fields only",
+            categoryId,
+            price = 10,
+            costPrice = 5,
+            unit = "Unit"
+        });
+        Assert.Equal(HttpStatusCode.Created, create.StatusCode);
+        using var created = JsonDocument.Parse(await create.Content.ReadAsStringAsync());
+        var id = created.RootElement.GetProperty("id").GetGuid();
+        var createdAt = created.RootElement.GetProperty("createdAt").GetDateTime();
+        Assert.NotEqual(injectedId, id);
+        Assert.NotEqual(injectedCreatedAt, createdAt);
+
+        using var update = await client.PutAsJsonAsync($"/api/products/{id}", new
+        {
+            id = injectedId,
+            createdAt = injectedCreatedAt,
+            sku = "DTO-IDENTITY-001",
+            name = "Authorized name update",
+            categoryId,
+            price = 12,
+            costPrice = 6,
+            unit = "Unit"
+        });
+        Assert.Equal(HttpStatusCode.OK, update.StatusCode);
+        using var get = await client.GetAsync($"/api/products/{id}");
+        Assert.Equal(HttpStatusCode.OK, get.StatusCode);
+        using var persisted = JsonDocument.Parse(await get.Content.ReadAsStringAsync());
+        Assert.Equal(id, persisted.RootElement.GetProperty("id").GetGuid());
+        Assert.Equal(createdAt, persisted.RootElement.GetProperty("createdAt").GetDateTime());
+        Assert.Equal("Authorized name update", persisted.RootElement.GetProperty("data").GetProperty("name").GetString());
+        var stored = await db.Products.AsNoTracking().SingleAsync(x => x.Id == id);
+        Assert.Equal(createdAt, stored.CreatedAt);
+        Assert.Equal("Authorized name update", stored.Name);
+        Assert.False(await db.Products.AnyAsync(x => x.Id == injectedId));
     }
 
     [Fact]

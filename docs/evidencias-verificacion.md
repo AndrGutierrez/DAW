@@ -13,15 +13,16 @@ Los resultados describen las comprobaciones efectivamente ejecutadas. La [matriz
 | Comprobación | Entorno | Resultado obtenido |
 | --- | --- | --- |
 | Compilación/publicación Docker | SDK y runtime .NET 10 | Exit 0; imagen construida y API iniciada |
-| Pruebas .NET | xUnit; EF InMemory en pruebas de servicios/pipeline | **87 aprobadas, 0 fallidas, 0 omitidas** |
+| Pruebas .NET | xUnit; EF InMemory en pruebas de servicios/pipeline | **93 aprobadas, 0 fallidas, 0 omitidas** |
 | Correspondencia modelo–migración | EF Core/Npgsql | `has-pending-model-changes`: sin cambios pendientes |
-| Migración desde base vacía | PostgreSQL 15.19 | Tres migraciones aplicadas; 43 tablas, incluida la historia de migraciones |
+| Migración desde base vacía | PostgreSQL 15.19 | Cuatro migraciones aplicadas; 43 tablas, incluida la historia de migraciones |
+| Categorías declaradas con `HasData` | PostgreSQL 15.19 | Base nueva: UUID constantes; actualización de base sembrada: UUID anteriores y referencias conservados |
 | Actualización con producción histórica | PostgreSQL 15.19 | Leche, lana y carne conservan sus UUID y cantidades; se conserva metadata anterior en `Notes` |
 | Datos históricos sin atribución individual | PostgreSQL 15.19 | Migración rechazada; tablas anteriores, huevos, rendimientos, producto e historial de migraciones permanecen intactos |
 | Restricciones reales | PostgreSQL 15.19 | SKU/email únicos, categoría restringida, límites de inventario, defaults y dinero `numeric(18,2)` verificados |
 | Siembra repetida | PostgreSQL 15.19 | Dos ejecuciones; permanecen 2 categorías, 4 insumos, 4 inventarios, 8 animales, 4 rendimientos y 2 usuarios de prueba |
 | Exportación SQL | PostgreSQL 15.19 | Esquema y datos de negocio exportados; ambos importados correctamente en otra base vacía |
-| Colección Postman/Newman | API real con PostgreSQL 15.19 | **96 solicitudes, 174 assertions, 0 fallos** |
+| Colección Postman/Newman | API real con PostgreSQL 15.19 | **97 solicitudes, 176 assertions, 0 fallos** |
 | Colección compatible con CI de Andrés | API real con PostgreSQL 15.19 | **16 solicitudes, 16 assertions, 0 fallos**; subida, lectura autenticada y eliminación de fotografías incluidas |
 | Escrituras concurrentes | API real con PostgreSQL 15.19 | Tres escenarios; cada par obtiene una respuesta 201 y una 409, sin cambios parciales |
 | Valores explícitos iguales a cero | API real con PostgreSQL 15.19 | `MinStock = 0` y unidad `Kilogram` conservados al guardar y consultar |
@@ -38,6 +39,7 @@ La consulta de `__EFMigrationsHistory` devolvió:
 20261001043752_InitialCreate
 20261002004015_AddAnimalPhotosAndUpdatedAt
 20261002021355_UnifiedAnimalProductionAndInventory
+20261002030136_ManagedInventoryCategorySeed
 ```
 
 La prueba de actualización parte del esquema de las dos primeras migraciones y carga [LegacyProduction.sql](../tests/Core.Tests/Fixtures/LegacyProduction.sql). Tras aplicar la tercera migración, [VerifyLegacyUpgrade.sql](../tests/Core.Tests/Fixtures/VerifyLegacyUpgrade.sql) comprueba:
@@ -58,6 +60,8 @@ No animal will be invented.
 
 Las tablas separadas de leche, lana, carne y huevos ya no existen en el esquema actualizado. La migración `Down` está bloqueada porque no puede reconstruir fielmente la separación anterior. Recuperar ese estado requiere restaurar una copia verificada; no se presenta como una reversión automática sin pérdida.
 
+La cuarta migración aplica las categorías de `HasData`. Se comprobó en una base vacía y en otra que ya contenía las categorías creadas por el seeder anterior. En esta última conservó los dos identificadores anteriores; los productos mantuvieron sus referencias. La inserción por nombre no sustituye ni normaliza el UUID de una categoría existente. Los UUID constantes del modelo se usan al crear categorías ausentes en una base nueva.
+
 ## 4. Evidencia SQL disponible
 
 - [schema.sql](../db/schema.sql): exportación real del esquema PostgreSQL 15, incluidos tipos, índices y claves foráneas.
@@ -76,6 +80,7 @@ La colección ejecutó login Admin/Employee, consultas sembradas, operaciones de
 | Login Admin y Employee | 200 y JWT válido |
 | Catálogo protegido sin JWT | 401 con Problem Details |
 | DELETE de un producto como Employee | 403; el recurso sigue existiendo |
+| POST de un producto como Employee | 403 con Problem Details; catálogo reservado a administración |
 | Crear producto con precio negativo | 400 y detalle de `Price`; no se crea |
 | Repetir SKU o eliminar categoría referenciada | 409 |
 | `POST /api/animals` | 201 y animal persistido |
@@ -87,6 +92,8 @@ La colección ejecutó login Admin/Employee, consultas sembradas, operaciones de
 | Reutilizar refresh token ya rotado | 401 |
 
 Cada error comprobado utiliza `application/problem+json` y los campos `type`, `title`, `status`, `detail`, `instance`. Los errores de validación añaden `errors` por campo. El endpoint de error inesperado existe para verificar el middleware en Development.
+
+Las pruebas .NET incluyen `RegistrationPersistsDifferentHashesForTheSamePasswordAndVerifiesCredentials`: dos altas HTTP con una misma contraseña de prueba conservan hashes diferentes; Identity acepta la contraseña correcta y rechaza una incorrecta. Utiliza EF InMemory y demuestra el comportamiento del servicio de Identity, no una comparación manual de hashes. `SeededAdminCanLoginAndReadRoles` comprueba `email` en el JWT real del login. `AdministratorCannotCreateAProductWithAnInvalidSku` y `ProductDtoDoesNotBindIdentityOrCreationTimestamp` comprueban formato de SKU y campos de entrada protegidos.
 
 ### Reproducir Newman
 

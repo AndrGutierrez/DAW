@@ -28,6 +28,8 @@ docker compose up -d blazorapp nginx
 
 `--seed` ejecuta `MigrateAsync`, crea permisos y roles, verifica la cuenta Admin y carga datos. Repetirlo no duplica los registros de demostración ni reemplaza sus existencias editadas. La contraseña de Admin se sincroniza mediante el mecanismo de restablecimiento de Identity; se valida antes de cambiarla. La cuenta Employee se crea sólo si se configura su contraseña y recibe una membresía a DEMO.
 
+Las dos categorías de insumos están declaradas con `HasData` en el mapeo de EF y se insertan mediante la cuarta migración, `ManagedInventoryCategorySeed`. Si la base ya tiene una categoría con ese nombre, se conserva su UUID y sus referencias. Los demás datos y las cuentas se inicializan mediante servicios en `--seed`; el arranque HTTP normal no aplica migraciones automáticamente.
+
 Comprobar `docker compose ps`, abrir `/swagger` e iniciar sesión. Para detener sin borrar datos: `docker compose down`. Los archivos se guardan en `daw-uploads`; PostgreSQL 15 usa `daw-postgres15-data`.
 
 ## 3. Actualizar una instalación anterior

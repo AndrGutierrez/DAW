@@ -349,7 +349,7 @@ Una solicitud protegida debe superar tres controles distintos:
 2. **Acción:** permiso específico, como `animals.update` o `photos.get`; las acciones sensibles también requieren rol administrativo.
 3. **Alcance:** pertenencia a la finca del registro mediante `IFarmAccess`.
 
-Los roles `Admin` y `Administrador` ofrecen administración. `Employee` permite consultar y ejecutar operaciones diarias autorizadas, pero no eliminar registros ni mantener categorías. `SoloLectura` recibe permisos `list`/`get`; esos permisos no autorizan cargar ni borrar fotografías.
+Los roles `Admin` y `Administrador` ofrecen administración. `Employee` permite consultar y ejecutar operaciones diarias autorizadas, pero no eliminar registros ni mantener los catálogos de productos y categorías. `SoloLectura` recibe permisos `list`/`get`; esos permisos no autorizan cargar ni borrar fotografías.
 
 `FarmAccess` consulta la cuenta activa y las relaciones `UserFarm` en la base de datos. Los usuarios administradores y superusuarios activos acceden a las fincas existentes; los demás acceden únicamente a sus asignaciones. Una cuenta inactiva pierde acceso aunque conserve un token emitido previamente. Un claim de administrador desactualizado no otorga por sí solo acceso a otras fincas.
 
