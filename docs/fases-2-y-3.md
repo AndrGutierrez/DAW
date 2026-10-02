@@ -26,7 +26,7 @@ Un mapeo correcto en C# no demuestra que la migración esté aplicada en una bas
 | Feedback del 27 de septiembre de 2026 | Verificación de pipeline, ciclos DI, índices de usuario/producto, precisión monetaria, categorías, siembra y lecturas sin seguimiento |
 | `Auditoría y Verificación de Repositorio (Fases 1, 2 y 3).docx` | Doce comprobaciones: cuatro por fase, diez puntos por comprobación; `HasData` de categorías, correo en JWT, restricciones administrativas de productos y expresión regular de SKU explícitos |
 
-La guía de auditoría posterior distribuye **40 puntos por fase, 120 en total**. Las tablas de 80 puntos que aparecen más abajo conservan la ponderación de las asignaciones originales de Fase 2 y Fase 3; son instrumentos diferentes. El [guion de defensa](guion-defensa-fases-1-2-3.md) sigue los doce puntos de la guía más reciente, sin adjudicar una nota al proyecto.
+La guía de auditoría posterior distribuye **40 puntos por fase, 120 en total**. Las tablas de 80 puntos que aparecen más abajo conservan la ponderación de las asignaciones originales de Fase 2 y Fase 3; son instrumentos diferentes. Esta documentación relaciona sus criterios con la implementación, sin adjudicar una nota al proyecto.
 
 Las consignas emplean una ferretería como ejemplo de categorías, precios, costos y existencias. La adaptación mantiene esos requisitos técnicos dentro de una explotación ganadera: los productos son insumos agropecuarios, las categorías corresponden a alimentación/sanidad y el stock se administra por finca.
 

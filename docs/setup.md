@@ -96,10 +96,15 @@ No exportar tokens ni contraseñas al historial de commits. No ejecutar la colec
 ```bash
 docker compose exec -T db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < db/verification.sql
 docker compose exec -T db sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" --schema-only --no-owner --no-privileges' > db/schema.sql
-npx @liam-hq/cli erd build --input db/schema.sql --format postgres --output-dir db/erd
+npm ci --prefix scripts/erd
+npm run generate --prefix scripts/erd
 ```
 
-`db/schema.sql` representa el esquema generado desde PostgreSQL; `db/seed-evidence.sql` contiene INSERT de datos de negocio de demostración, sin identidades, contraseñas ni tokens. Es evidencia de datos, no un respaldo completo. Los [resultados ejecutados](evidencias-verificacion.md) incluyen su importación en otra base vacía. Nginx sirve el ERD generado en `/erd/`. El diagrama Mermaid del [modelo unificado](modelo-produccion-y-crud.md) puede consultarse aunque no se haya generado Liam.
+`db/schema.sql` representa el esquema generado desde PostgreSQL; `db/seed-evidence.sql` contiene INSERT de datos de negocio de demostración, sin identidades, contraseñas ni tokens. Es evidencia de datos, no un respaldo completo. Los [resultados ejecutados](evidencias-verificacion.md) incluyen su importación en otra base vacía.
+
+El [DER](../db/diagram/README.md) incluye imágenes PNG, SVG y un visor HTML con búsqueda, zoom y detalle de columnas. Los archivos generados están versionados: no hace falta instalar Node para consultarlos. Nginx los sirve en `http://localhost:18080/erd/` (ajustar al puerto configurado). Si Nginx ya estaba iniciado con el montaje anterior, aplicar `docker compose up -d nginx` para actualizarlo. Abrir `db/diagram/index.html` directamente también funciona sin conexión.
+
+Para regenerarlos después de actualizar `schema.sql`, usar Node.js 20 o posterior y los comandos npm anteriores. El generador lee tablas, claves, nulabilidad, índices únicos y restricciones del SQL; no consulta credenciales ni infiere relaciones a partir del nombre de las columnas. El [modelo unificado](modelo-produccion-y-crud.md) conserva además su vista conceptual Mermaid.
 
 ## Integración continua
 

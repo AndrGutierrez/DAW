@@ -76,7 +76,7 @@ Importar [colección Postman](postman/Cattle-Management.full.postman_collection.
 - [Producción unificada y CRUD: reglas y decisiones](docs/modelo-produccion-y-crud.md).
 - [Verificación de Fase 2 y Fase 3](docs/fases-2-y-3.md).
 - [Evidencias ejecutadas y reproducción de pruebas](docs/evidencias-verificacion.md).
-- [Guion de defensa de las fases 1, 2 y 3](docs/guion-defensa-fases-1-2-3.md).
+- [Diagrama entidad–relación: imágenes y visor interactivo](db/diagram/README.md).
 - [Decisiones técnicas](docs/engineering-decisions.md).
 - [Visión del negocio completo](docs/guia-de-negocio.md).
 

@@ -1,0 +1,4114 @@
+{
+  "source": "db/schema.sql",
+  "sourceSha256": "0ba326dbae5917ecc85e955f581ce5fcf1546ec21888dbd358eda8ee8e61902c",
+  "tableCount": 43,
+  "foreignKeyCount": 72,
+  "modules": [
+    {
+      "name": "Territorio y animales",
+      "color": "#17634d",
+      "light": "#edf7f1",
+      "tables": [
+        "Farms",
+        "Paddocks",
+        "Lots",
+        "Species",
+        "Breeds",
+        "Animals",
+        "AnimalMovements",
+        "AnimalPhotos",
+        "HealthStatusChanges",
+        "WeightRecords",
+        "AnimalProduction"
+      ]
+    },
+    {
+      "name": "Insumos y alimentación",
+      "color": "#246b9e",
+      "light": "#edf5fc",
+      "tables": [
+        "InventoryCategories",
+        "Products",
+        "FarmInventory",
+        "Suppliers",
+        "ProductBatches",
+        "StockMovements",
+        "Rations",
+        "RationIngredients",
+        "FeedingRecords"
+      ]
+    },
+    {
+      "name": "Salud y reproducción",
+      "color": "#9b5832",
+      "light": "#fff5eb",
+      "tables": [
+        "Diseases",
+        "HealthEvents",
+        "SemenBatches",
+        "ReproductiveEvents"
+      ]
+    },
+    {
+      "name": "Operación y trazabilidad",
+      "color": "#7e638f",
+      "light": "#f7f0fb",
+      "tables": [
+        "Tasks",
+        "Transactions",
+        "Alerts",
+        "AlertRules",
+        "Attachments",
+        "AuditLogs"
+      ]
+    },
+    {
+      "name": "Identidad y acceso",
+      "color": "#4155a2",
+      "light": "#f0f2fe",
+      "tables": [
+        "Users",
+        "Roles",
+        "Permissions",
+        "UserRoles",
+        "UserPermissions",
+        "RolePermissions",
+        "UserFarms",
+        "UserClaims",
+        "RoleClaims",
+        "UserLogins",
+        "UserTokens",
+        "RefreshTokens"
+      ]
+    },
+    {
+      "name": "Historial técnico",
+      "color": "#687788",
+      "light": "#f1f4f7",
+      "tables": [
+        "__EFMigrationsHistory"
+      ]
+    }
+  ],
+  "coreTables": [
+    "Farms",
+    "Species",
+    "Breeds",
+    "Paddocks",
+    "Lots",
+    "Animals",
+    "AnimalPhotos",
+    "HealthStatusChanges",
+    "WeightRecords",
+    "AnimalProduction",
+    "InventoryCategories",
+    "Products",
+    "FarmInventory"
+  ],
+  "tables": [
+    {
+      "name": "AlertRules",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Type",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "ThresholdValue",
+          "type": "numeric(12,2)",
+          "nullable": true,
+          "definition": "numeric(12,2)"
+        },
+        {
+          "name": "ThresholdDays",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "IsEnabled",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Alerts",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Type",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Severity",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Message",
+          "type": "character varying(500)",
+          "nullable": false,
+          "definition": "character varying(500) NOT NULL"
+        },
+        {
+          "name": "RelatedEntityType",
+          "type": "character varying(100)",
+          "nullable": true,
+          "definition": "character varying(100)"
+        },
+        {
+          "name": "RelatedEntityId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "DueDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "IsResolved",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "ResolvedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "AnimalMovements",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "AnimalId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FromPaddockId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "ToPaddockId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "FromLotId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "ToLotId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "Reason",
+          "type": "character varying(300)",
+          "nullable": true,
+          "definition": "character varying(300)"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "AnimalPhotos",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "AnimalId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Url",
+          "type": "character varying(500)",
+          "nullable": false,
+          "definition": "character varying(500) NOT NULL"
+        },
+        {
+          "name": "FileName",
+          "type": "character varying(255)",
+          "nullable": false,
+          "definition": "character varying(255) NOT NULL"
+        },
+        {
+          "name": "ContentType",
+          "type": "character varying(100)",
+          "nullable": true,
+          "definition": "character varying(100)"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "bigint",
+          "nullable": true,
+          "definition": "bigint"
+        },
+        {
+          "name": "UploadedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "UploadedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "AnimalProduction",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "AnimalId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "OperationId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "ProductType",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Method",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Quantity",
+          "type": "numeric(14,4)",
+          "nullable": false,
+          "definition": "numeric(14,4) NOT NULL"
+        },
+        {
+          "name": "Unit",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Notes",
+          "type": "character varying(1000)",
+          "nullable": true,
+          "definition": "character varying(1000)"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [
+        "CONSTRAINT \"CK_AnimalProduction_Quantity\" CHECK ((\"Quantity\" > (0)::numeric))"
+      ],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_AnimalProduction_OperationId_ProductType",
+          "columns": [
+            "OperationId",
+            "ProductType"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "Animals",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "SpeciesId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "BreedId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "LotId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "PaddockId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "InternalTag",
+          "type": "character varying(50)",
+          "nullable": false,
+          "definition": "character varying(50) NOT NULL"
+        },
+        {
+          "name": "OfficialId",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "Rfid",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(100)",
+          "nullable": true,
+          "definition": "character varying(100)"
+        },
+        {
+          "name": "Sex",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "BirthDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "BirthWeightKg",
+          "type": "numeric(14,4)",
+          "nullable": true,
+          "definition": "numeric(14,4)"
+        },
+        {
+          "name": "Color",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "Markings",
+          "type": "character varying(200)",
+          "nullable": true,
+          "definition": "character varying(200)"
+        },
+        {
+          "name": "Status",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Origin",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Purpose",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "HealthStatus",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "DamId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "SireId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Notes",
+          "type": "character varying(2000)",
+          "nullable": true,
+          "definition": "character varying(2000)"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "UpdatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_Animals_FarmId_InternalTag",
+          "columns": [
+            "FarmId",
+            "InternalTag"
+          ],
+          "condition": ""
+        },
+        {
+          "name": "IX_Animals_FarmId_OfficialId",
+          "columns": [
+            "FarmId",
+            "OfficialId"
+          ],
+          "condition": ""
+        },
+        {
+          "name": "IX_Animals_FarmId_Rfid",
+          "columns": [
+            "FarmId",
+            "Rfid"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "Attachments",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "OwnerType",
+          "type": "character varying(100)",
+          "nullable": false,
+          "definition": "character varying(100) NOT NULL"
+        },
+        {
+          "name": "OwnerId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FileName",
+          "type": "character varying(255)",
+          "nullable": false,
+          "definition": "character varying(255) NOT NULL"
+        },
+        {
+          "name": "Url",
+          "type": "character varying(500)",
+          "nullable": false,
+          "definition": "character varying(500) NOT NULL"
+        },
+        {
+          "name": "ContentType",
+          "type": "character varying(100)",
+          "nullable": true,
+          "definition": "character varying(100)"
+        },
+        {
+          "name": "SizeBytes",
+          "type": "bigint",
+          "nullable": true,
+          "definition": "bigint"
+        },
+        {
+          "name": "UploadedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "AuditLogs",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Action",
+          "type": "character varying(50)",
+          "nullable": false,
+          "definition": "character varying(50) NOT NULL"
+        },
+        {
+          "name": "EntityName",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "EntityId",
+          "type": "character varying(100)",
+          "nullable": true,
+          "definition": "character varying(100)"
+        },
+        {
+          "name": "OldValues",
+          "type": "jsonb",
+          "nullable": true,
+          "definition": "jsonb"
+        },
+        {
+          "name": "NewValues",
+          "type": "jsonb",
+          "nullable": true,
+          "definition": "jsonb"
+        },
+        {
+          "name": "IpAddress",
+          "type": "character varying(64)",
+          "nullable": true,
+          "definition": "character varying(64)"
+        },
+        {
+          "name": "OccurredAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Breeds",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "SpeciesId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(100)",
+          "nullable": false,
+          "definition": "character varying(100) NOT NULL"
+        },
+        {
+          "name": "Purpose",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Origin",
+          "type": "character varying(100)",
+          "nullable": true,
+          "definition": "character varying(100)"
+        },
+        {
+          "name": "IsActive",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_Breeds_SpeciesId_Name",
+          "columns": [
+            "SpeciesId",
+            "Name"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "Diseases",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "Description",
+          "type": "character varying(1000)",
+          "nullable": true,
+          "definition": "character varying(1000)"
+        },
+        {
+          "name": "IsNotifiable",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "SpeciesId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "FarmInventory",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "ProductId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Stock",
+          "type": "numeric(14,4)",
+          "nullable": false,
+          "definition": "numeric(14,4) DEFAULT 0.0 NOT NULL"
+        },
+        {
+          "name": "MinStock",
+          "type": "numeric(14,4)",
+          "nullable": false,
+          "definition": "numeric(14,4) DEFAULT 5.0 NOT NULL"
+        },
+        {
+          "name": "MaxStock",
+          "type": "numeric(14,4)",
+          "nullable": false,
+          "definition": "numeric(14,4) DEFAULT 100.0 NOT NULL"
+        },
+        {
+          "name": "Location",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) DEFAULT 'Main warehouse'::character varying NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [
+        "CONSTRAINT \"CK_FarmInventory_Stock\" CHECK (((\"Stock\" >= (0)::numeric) AND (\"MinStock\" >= (0)::numeric) AND (\"MaxStock\" > \"MinStock\")))"
+      ],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_FarmInventory_FarmId_ProductId",
+          "columns": [
+            "FarmId",
+            "ProductId"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "Farms",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "Code",
+          "type": "character varying(20)",
+          "nullable": false,
+          "definition": "character varying(20) NOT NULL"
+        },
+        {
+          "name": "Address",
+          "type": "character varying(300)",
+          "nullable": true,
+          "definition": "character varying(300)"
+        },
+        {
+          "name": "Phone",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "Email",
+          "type": "character varying(200)",
+          "nullable": true,
+          "definition": "character varying(200)"
+        },
+        {
+          "name": "IsActive",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_Farms_Code",
+          "columns": [
+            "Code"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "FeedingRecords",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "LotId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "RationId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "QuantityKg",
+          "type": "numeric(10,3)",
+          "nullable": false,
+          "definition": "numeric(10,3) NOT NULL"
+        },
+        {
+          "name": "Cost",
+          "type": "numeric(18,2)",
+          "nullable": true,
+          "definition": "numeric(18,2)"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "HealthEvents",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "AnimalId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Notes",
+          "type": "character varying(1000)",
+          "nullable": true,
+          "definition": "character varying(1000)"
+        },
+        {
+          "name": "Cost",
+          "type": "numeric(18,2)",
+          "nullable": true,
+          "definition": "numeric(18,2)"
+        },
+        {
+          "name": "EventType",
+          "type": "character varying(13)",
+          "nullable": false,
+          "definition": "character varying(13) NOT NULL"
+        },
+        {
+          "name": "ProductId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Dose",
+          "type": "numeric(10,3)",
+          "nullable": true,
+          "definition": "numeric(10,3)"
+        },
+        {
+          "name": "DiseaseId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Severity",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "IsContagious",
+          "type": "boolean",
+          "nullable": true,
+          "definition": "boolean"
+        },
+        {
+          "name": "Cause",
+          "type": "character varying(300)",
+          "nullable": true,
+          "definition": "character varying(300)"
+        },
+        {
+          "name": "NecropsyNotes",
+          "type": "character varying(1000)",
+          "nullable": true,
+          "definition": "character varying(1000)"
+        },
+        {
+          "name": "StartDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "EndDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "Reason",
+          "type": "character varying(500)",
+          "nullable": true,
+          "definition": "character varying(500)"
+        },
+        {
+          "name": "Treatment_ProductId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "ProductBatchId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Treatment_Dose",
+          "type": "numeric(10,3)",
+          "nullable": true,
+          "definition": "numeric(10,3)"
+        },
+        {
+          "name": "Route",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "Treatment_StartDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "Treatment_EndDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "WithdrawalDays",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "WithdrawalEndDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "Vaccination_ProductId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Vaccination_ProductBatchId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Vaccination_Dose",
+          "type": "numeric(10,3)",
+          "nullable": true,
+          "definition": "numeric(10,3)"
+        },
+        {
+          "name": "NextDueDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "HealthStatusChanges",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "AnimalId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "PreviousStatus",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "NewStatus",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "ChangedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone NOT NULL"
+        },
+        {
+          "name": "Reason",
+          "type": "character varying(500)",
+          "nullable": true,
+          "definition": "character varying(500)"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "InventoryCategories",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(100)",
+          "nullable": false,
+          "definition": "character varying(100) NOT NULL"
+        },
+        {
+          "name": "Description",
+          "type": "character varying(500)",
+          "nullable": true,
+          "definition": "character varying(500)"
+        },
+        {
+          "name": "IsActive",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT true NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_InventoryCategories_Name",
+          "columns": [
+            "Name"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "Lots",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "SpeciesId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "PaddockId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "Purpose",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "IsActive",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_Lots_FarmId_Name",
+          "columns": [
+            "FarmId",
+            "Name"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "Paddocks",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "Code",
+          "type": "character varying(30)",
+          "nullable": true,
+          "definition": "character varying(30)"
+        },
+        {
+          "name": "AreaHectares",
+          "type": "numeric(14,4)",
+          "nullable": true,
+          "definition": "numeric(14,4)"
+        },
+        {
+          "name": "Capacity",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "IsActive",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_Paddocks_FarmId_Name",
+          "columns": [
+            "FarmId",
+            "Name"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "Permissions",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "GuardName",
+          "type": "character varying(100)",
+          "nullable": false,
+          "definition": "character varying(100) DEFAULT 'web'::character varying NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_Permissions_Name_GuardName",
+          "columns": [
+            "Name",
+            "GuardName"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "ProductBatches",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "ProductId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "SupplierId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "BatchNumber",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "ExpirationDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "InitialQuantity",
+          "type": "numeric(12,3)",
+          "nullable": false,
+          "definition": "numeric(12,3) NOT NULL"
+        },
+        {
+          "name": "UnitCost",
+          "type": "numeric(18,2)",
+          "nullable": true,
+          "definition": "numeric(18,2)"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Products",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "Unit",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer DEFAULT 2 NOT NULL"
+        },
+        {
+          "name": "WithdrawalDays",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "RequiresPrescription",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "IsActive",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "Brand",
+          "type": "character varying(100)",
+          "nullable": false,
+          "definition": "character varying(100) DEFAULT 'Generic'::character varying NOT NULL"
+        },
+        {
+          "name": "CategoryId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid DEFAULT '00000000-0000-0000-0000-000000000000'::uuid NOT NULL"
+        },
+        {
+          "name": "CostPrice",
+          "type": "numeric(18,2)",
+          "nullable": false,
+          "definition": "numeric(18,2) DEFAULT 0.0 NOT NULL"
+        },
+        {
+          "name": "Price",
+          "type": "numeric(18,2)",
+          "nullable": false,
+          "definition": "numeric(18,2) DEFAULT 0.0 NOT NULL"
+        },
+        {
+          "name": "SKU",
+          "type": "character varying(50)",
+          "nullable": false,
+          "definition": "character varying(50) DEFAULT ''::character varying NOT NULL"
+        }
+      ],
+      "checks": [
+        "CONSTRAINT \"CK_Products_Prices\" CHECK (((NOT \"IsActive\") OR ((\"Price\" > (0)::numeric) AND (\"CostPrice\" > (0)::numeric))))"
+      ],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_Products_SKU",
+          "columns": [
+            "SKU"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "RationIngredients",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "RationId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "ProductId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Quantity",
+          "type": "numeric(10,3)",
+          "nullable": false,
+          "definition": "numeric(10,3) NOT NULL"
+        },
+        {
+          "name": "Unit",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Rations",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "SpeciesId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "Purpose",
+          "type": "character varying(200)",
+          "nullable": true,
+          "definition": "character varying(200)"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "RefreshTokens",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Token",
+          "type": "character varying(256)",
+          "nullable": false,
+          "definition": "character varying(256) NOT NULL"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone NOT NULL"
+        },
+        {
+          "name": "ExpiresAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone NOT NULL"
+        },
+        {
+          "name": "RevokedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_RefreshTokens_Token",
+          "columns": [
+            "Token"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "ReproductiveEvents",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "DamId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Notes",
+          "type": "character varying(1000)",
+          "nullable": true,
+          "definition": "character varying(1000)"
+        },
+        {
+          "name": "EventType",
+          "type": "character varying(21)",
+          "nullable": false,
+          "definition": "character varying(21) NOT NULL"
+        },
+        {
+          "name": "Reason",
+          "type": "character varying(500)",
+          "nullable": true,
+          "definition": "character varying(500)"
+        },
+        {
+          "name": "OffspringCount",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "StillbornCount",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "Difficulty",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "Heat_Method",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "SemenBatchId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Insemination_SireId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Insemination_TechnicianUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Mating_Method",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "SireId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "TechnicianUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Result",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "Method",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "ExpectedCalvingDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "OffspringId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "WeightKg",
+          "type": "numeric(8,2)",
+          "nullable": true,
+          "definition": "numeric(8,2)"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "RoleClaims",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "RoleId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "ClaimType",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        },
+        {
+          "name": "ClaimValue",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "RolePermissions",
+      "columns": [
+        {
+          "name": "RoleId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "PermissionId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "RoleId",
+        "PermissionId"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Roles",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "GuardName",
+          "type": "character varying(100)",
+          "nullable": false,
+          "definition": "character varying(100) DEFAULT 'web'::character varying NOT NULL"
+        },
+        {
+          "name": "Description",
+          "type": "character varying(300)",
+          "nullable": true,
+          "definition": "character varying(300)"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(256)",
+          "nullable": true,
+          "definition": "character varying(256)"
+        },
+        {
+          "name": "NormalizedName",
+          "type": "character varying(256)",
+          "nullable": true,
+          "definition": "character varying(256)"
+        },
+        {
+          "name": "ConcurrencyStamp",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "RoleNameIndex",
+          "columns": [
+            "NormalizedName"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "SemenBatches",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "BreedId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "SireName",
+          "type": "character varying(150)",
+          "nullable": true,
+          "definition": "character varying(150)"
+        },
+        {
+          "name": "SupplierId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "BatchNumber",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "StrawCount",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "StorageTank",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "ExpirationDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Species",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(100)",
+          "nullable": false,
+          "definition": "character varying(100) NOT NULL"
+        },
+        {
+          "name": "Code",
+          "type": "character varying(20)",
+          "nullable": false,
+          "definition": "character varying(20) NOT NULL"
+        },
+        {
+          "name": "Purpose",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "GestationDays",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
+        },
+        {
+          "name": "IsActive",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_Species_Code",
+          "columns": [
+            "Code"
+          ],
+          "condition": ""
+        },
+        {
+          "name": "IX_Species_Name",
+          "columns": [
+            "Name"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "StockMovements",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "ProductId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "ProductBatchId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Type",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Quantity",
+          "type": "numeric(12,3)",
+          "nullable": false,
+          "definition": "numeric(12,3) NOT NULL"
+        },
+        {
+          "name": "Reason",
+          "type": "character varying(300)",
+          "nullable": true,
+          "definition": "character varying(300)"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "ReferenceType",
+          "type": "character varying(100)",
+          "nullable": true,
+          "definition": "character varying(100)"
+        },
+        {
+          "name": "ReferenceId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Suppliers",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "ContactName",
+          "type": "character varying(150)",
+          "nullable": true,
+          "definition": "character varying(150)"
+        },
+        {
+          "name": "Phone",
+          "type": "character varying(50)",
+          "nullable": true,
+          "definition": "character varying(50)"
+        },
+        {
+          "name": "Email",
+          "type": "character varying(200)",
+          "nullable": true,
+          "definition": "character varying(200)"
+        },
+        {
+          "name": "Address",
+          "type": "character varying(300)",
+          "nullable": true,
+          "definition": "character varying(300)"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Tasks",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Title",
+          "type": "character varying(200)",
+          "nullable": false,
+          "definition": "character varying(200) NOT NULL"
+        },
+        {
+          "name": "Description",
+          "type": "character varying(2000)",
+          "nullable": true,
+          "definition": "character varying(2000)"
+        },
+        {
+          "name": "Type",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "DueDate",
+          "type": "date",
+          "nullable": true,
+          "definition": "date"
+        },
+        {
+          "name": "Priority",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Status",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "AssignedToUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "RelatedAnimalId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "RelatedLotId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CreatedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CompletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Transactions",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Type",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Category",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "Amount",
+          "type": "numeric(18,2)",
+          "nullable": false,
+          "definition": "numeric(18,2) NOT NULL"
+        },
+        {
+          "name": "Currency",
+          "type": "character varying(3)",
+          "nullable": false,
+          "definition": "character varying(3) NOT NULL"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "Description",
+          "type": "character varying(500)",
+          "nullable": true,
+          "definition": "character varying(500)"
+        },
+        {
+          "name": "Counterparty",
+          "type": "character varying(200)",
+          "nullable": true,
+          "definition": "character varying(200)"
+        },
+        {
+          "name": "AnimalId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "LotId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "ProductId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "UserClaims",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "ClaimType",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        },
+        {
+          "name": "ClaimValue",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "UserFarms",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "IsDefault",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "IX_UserFarms_UserId_FarmId",
+          "columns": [
+            "UserId",
+            "FarmId"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "UserLogins",
+      "columns": [
+        {
+          "name": "LoginProvider",
+          "type": "text",
+          "nullable": false,
+          "definition": "text NOT NULL"
+        },
+        {
+          "name": "ProviderKey",
+          "type": "text",
+          "nullable": false,
+          "definition": "text NOT NULL"
+        },
+        {
+          "name": "ProviderDisplayName",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        },
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "LoginProvider",
+        "ProviderKey"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "UserPermissions",
+      "columns": [
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "PermissionId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "UserId",
+        "PermissionId"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "UserRoles",
+      "columns": [
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "RoleId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "UserId",
+        "RoleId"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "UserTokens",
+      "columns": [
+        {
+          "name": "UserId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "LoginProvider",
+          "type": "text",
+          "nullable": false,
+          "definition": "text NOT NULL"
+        },
+        {
+          "name": "Name",
+          "type": "text",
+          "nullable": false,
+          "definition": "text NOT NULL"
+        },
+        {
+          "name": "Value",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "UserId",
+        "LoginProvider",
+        "Name"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "Users",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FullName",
+          "type": "character varying(200)",
+          "nullable": false,
+          "definition": "character varying(200) NOT NULL"
+        },
+        {
+          "name": "IsSuperuser",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "IsStaff",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "IsActive",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone NOT NULL"
+        },
+        {
+          "name": "UserName",
+          "type": "character varying(256)",
+          "nullable": true,
+          "definition": "character varying(256)"
+        },
+        {
+          "name": "NormalizedUserName",
+          "type": "character varying(256)",
+          "nullable": true,
+          "definition": "character varying(256)"
+        },
+        {
+          "name": "Email",
+          "type": "character varying(256)",
+          "nullable": true,
+          "definition": "character varying(256)"
+        },
+        {
+          "name": "NormalizedEmail",
+          "type": "character varying(256)",
+          "nullable": true,
+          "definition": "character varying(256)"
+        },
+        {
+          "name": "EmailConfirmed",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "PasswordHash",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        },
+        {
+          "name": "SecurityStamp",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        },
+        {
+          "name": "ConcurrencyStamp",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        },
+        {
+          "name": "PhoneNumber",
+          "type": "text",
+          "nullable": true,
+          "definition": "text"
+        },
+        {
+          "name": "PhoneNumberConfirmed",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "TwoFactorEnabled",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "LockoutEnd",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "LockoutEnabled",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean NOT NULL"
+        },
+        {
+          "name": "AccessFailedCount",
+          "type": "integer",
+          "nullable": false,
+          "definition": "integer NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": [
+        {
+          "name": "EmailIndex",
+          "columns": [
+            "NormalizedEmail"
+          ],
+          "condition": ""
+        },
+        {
+          "name": "UserNameIndex",
+          "columns": [
+            "NormalizedUserName"
+          ],
+          "condition": ""
+        }
+      ]
+    },
+    {
+      "name": "WeightRecords",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "FarmId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "AnimalId",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "WeightKg",
+          "type": "numeric(8,2)",
+          "nullable": false,
+          "definition": "numeric(8,2) NOT NULL"
+        },
+        {
+          "name": "BodyConditionScore",
+          "type": "numeric(4,2)",
+          "nullable": true,
+          "definition": "numeric(4,2)"
+        },
+        {
+          "name": "RecordedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "Notes",
+          "type": "character varying(500)",
+          "nullable": true,
+          "definition": "character varying(500)"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "__EFMigrationsHistory",
+      "columns": [
+        {
+          "name": "MigrationId",
+          "type": "character varying(150)",
+          "nullable": false,
+          "definition": "character varying(150) NOT NULL"
+        },
+        {
+          "name": "ProductVersion",
+          "type": "character varying(32)",
+          "nullable": false,
+          "definition": "character varying(32) NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "MigrationId"
+      ],
+      "uniqueIndexes": []
+    }
+  ],
+  "relationships": [
+    {
+      "name": "FK_AnimalMovements_Animals_AnimalId",
+      "child": "AnimalMovements",
+      "parent": "Animals",
+      "columns": [
+        "AnimalId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_AnimalMovements_Lots_FromLotId",
+      "child": "AnimalMovements",
+      "parent": "Lots",
+      "columns": [
+        "FromLotId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_AnimalMovements_Lots_ToLotId",
+      "child": "AnimalMovements",
+      "parent": "Lots",
+      "columns": [
+        "ToLotId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_AnimalMovements_Paddocks_FromPaddockId",
+      "child": "AnimalMovements",
+      "parent": "Paddocks",
+      "columns": [
+        "FromPaddockId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_AnimalMovements_Paddocks_ToPaddockId",
+      "child": "AnimalMovements",
+      "parent": "Paddocks",
+      "columns": [
+        "ToPaddockId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_AnimalPhotos_Animals_AnimalId",
+      "child": "AnimalPhotos",
+      "parent": "Animals",
+      "columns": [
+        "AnimalId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_AnimalProduction_Animals_AnimalId",
+      "child": "AnimalProduction",
+      "parent": "Animals",
+      "columns": [
+        "AnimalId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_AnimalProduction_Farms_FarmId",
+      "child": "AnimalProduction",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Animals_Animals_DamId",
+      "child": "Animals",
+      "parent": "Animals",
+      "columns": [
+        "DamId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Animals_Animals_SireId",
+      "child": "Animals",
+      "parent": "Animals",
+      "columns": [
+        "SireId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Animals_Breeds_BreedId",
+      "child": "Animals",
+      "parent": "Breeds",
+      "columns": [
+        "BreedId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Animals_Farms_FarmId",
+      "child": "Animals",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Animals_Lots_LotId",
+      "child": "Animals",
+      "parent": "Lots",
+      "columns": [
+        "LotId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Animals_Paddocks_PaddockId",
+      "child": "Animals",
+      "parent": "Paddocks",
+      "columns": [
+        "PaddockId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Animals_Species_SpeciesId",
+      "child": "Animals",
+      "parent": "Species",
+      "columns": [
+        "SpeciesId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Breeds_Species_SpeciesId",
+      "child": "Breeds",
+      "parent": "Species",
+      "columns": [
+        "SpeciesId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Diseases_Species_SpeciesId",
+      "child": "Diseases",
+      "parent": "Species",
+      "columns": [
+        "SpeciesId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_FarmInventory_Farms_FarmId",
+      "child": "FarmInventory",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_FarmInventory_Products_ProductId",
+      "child": "FarmInventory",
+      "parent": "Products",
+      "columns": [
+        "ProductId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_FeedingRecords_Lots_LotId",
+      "child": "FeedingRecords",
+      "parent": "Lots",
+      "columns": [
+        "LotId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_FeedingRecords_Rations_RationId",
+      "child": "FeedingRecords",
+      "parent": "Rations",
+      "columns": [
+        "RationId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthEvents_Animals_AnimalId",
+      "child": "HealthEvents",
+      "parent": "Animals",
+      "columns": [
+        "AnimalId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthEvents_Diseases_DiseaseId",
+      "child": "HealthEvents",
+      "parent": "Diseases",
+      "columns": [
+        "DiseaseId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthEvents_Farms_FarmId",
+      "child": "HealthEvents",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthEvents_ProductBatches_ProductBatchId",
+      "child": "HealthEvents",
+      "parent": "ProductBatches",
+      "columns": [
+        "ProductBatchId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthEvents_ProductBatches_Vaccination_ProductBatchId",
+      "child": "HealthEvents",
+      "parent": "ProductBatches",
+      "columns": [
+        "Vaccination_ProductBatchId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthEvents_Products_ProductId",
+      "child": "HealthEvents",
+      "parent": "Products",
+      "columns": [
+        "ProductId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthEvents_Products_Treatment_ProductId",
+      "child": "HealthEvents",
+      "parent": "Products",
+      "columns": [
+        "Treatment_ProductId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthEvents_Products_Vaccination_ProductId",
+      "child": "HealthEvents",
+      "parent": "Products",
+      "columns": [
+        "Vaccination_ProductId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_HealthStatusChanges_Animals_AnimalId",
+      "child": "HealthStatusChanges",
+      "parent": "Animals",
+      "columns": [
+        "AnimalId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_Lots_Farms_FarmId",
+      "child": "Lots",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Lots_Paddocks_PaddockId",
+      "child": "Lots",
+      "parent": "Paddocks",
+      "columns": [
+        "PaddockId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Lots_Species_SpeciesId",
+      "child": "Lots",
+      "parent": "Species",
+      "columns": [
+        "SpeciesId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Paddocks_Farms_FarmId",
+      "child": "Paddocks",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_ProductBatches_Farms_FarmId",
+      "child": "ProductBatches",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_ProductBatches_Products_ProductId",
+      "child": "ProductBatches",
+      "parent": "Products",
+      "columns": [
+        "ProductId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_ProductBatches_Suppliers_SupplierId",
+      "child": "ProductBatches",
+      "parent": "Suppliers",
+      "columns": [
+        "SupplierId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Products_InventoryCategories_CategoryId",
+      "child": "Products",
+      "parent": "InventoryCategories",
+      "columns": [
+        "CategoryId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_RationIngredients_Products_ProductId",
+      "child": "RationIngredients",
+      "parent": "Products",
+      "columns": [
+        "ProductId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_RationIngredients_Rations_RationId",
+      "child": "RationIngredients",
+      "parent": "Rations",
+      "columns": [
+        "RationId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_Rations_Farms_FarmId",
+      "child": "Rations",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_Rations_Species_SpeciesId",
+      "child": "Rations",
+      "parent": "Species",
+      "columns": [
+        "SpeciesId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_RefreshTokens_Users_UserId",
+      "child": "RefreshTokens",
+      "parent": "Users",
+      "columns": [
+        "UserId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_ReproductiveEvents_Animals_DamId",
+      "child": "ReproductiveEvents",
+      "parent": "Animals",
+      "columns": [
+        "DamId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_ReproductiveEvents_Animals_Insemination_SireId",
+      "child": "ReproductiveEvents",
+      "parent": "Animals",
+      "columns": [
+        "Insemination_SireId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_ReproductiveEvents_Animals_OffspringId",
+      "child": "ReproductiveEvents",
+      "parent": "Animals",
+      "columns": [
+        "OffspringId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_ReproductiveEvents_Animals_SireId",
+      "child": "ReproductiveEvents",
+      "parent": "Animals",
+      "columns": [
+        "SireId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_ReproductiveEvents_Farms_FarmId",
+      "child": "ReproductiveEvents",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_ReproductiveEvents_SemenBatches_SemenBatchId",
+      "child": "ReproductiveEvents",
+      "parent": "SemenBatches",
+      "columns": [
+        "SemenBatchId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_RoleClaims_Roles_RoleId",
+      "child": "RoleClaims",
+      "parent": "Roles",
+      "columns": [
+        "RoleId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_RolePermissions_Permissions_PermissionId",
+      "child": "RolePermissions",
+      "parent": "Permissions",
+      "columns": [
+        "PermissionId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_RolePermissions_Roles_RoleId",
+      "child": "RolePermissions",
+      "parent": "Roles",
+      "columns": [
+        "RoleId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_SemenBatches_Breeds_BreedId",
+      "child": "SemenBatches",
+      "parent": "Breeds",
+      "columns": [
+        "BreedId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_SemenBatches_Farms_FarmId",
+      "child": "SemenBatches",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_SemenBatches_Suppliers_SupplierId",
+      "child": "SemenBatches",
+      "parent": "Suppliers",
+      "columns": [
+        "SupplierId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_StockMovements_ProductBatches_ProductBatchId",
+      "child": "StockMovements",
+      "parent": "ProductBatches",
+      "columns": [
+        "ProductBatchId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_StockMovements_Products_ProductId",
+      "child": "StockMovements",
+      "parent": "Products",
+      "columns": [
+        "ProductId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Tasks_Animals_RelatedAnimalId",
+      "child": "Tasks",
+      "parent": "Animals",
+      "columns": [
+        "RelatedAnimalId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Tasks_Lots_RelatedLotId",
+      "child": "Tasks",
+      "parent": "Lots",
+      "columns": [
+        "RelatedLotId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Transactions_Animals_AnimalId",
+      "child": "Transactions",
+      "parent": "Animals",
+      "columns": [
+        "AnimalId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Transactions_Lots_LotId",
+      "child": "Transactions",
+      "parent": "Lots",
+      "columns": [
+        "LotId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_Transactions_Products_ProductId",
+      "child": "Transactions",
+      "parent": "Products",
+      "columns": [
+        "ProductId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": true,
+      "parentCardinality": "0..1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    },
+    {
+      "name": "FK_UserClaims_Users_UserId",
+      "child": "UserClaims",
+      "parent": "Users",
+      "columns": [
+        "UserId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_UserFarms_Farms_FarmId",
+      "child": "UserFarms",
+      "parent": "Farms",
+      "columns": [
+        "FarmId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_UserFarms_Users_UserId",
+      "child": "UserFarms",
+      "parent": "Users",
+      "columns": [
+        "UserId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_UserLogins_Users_UserId",
+      "child": "UserLogins",
+      "parent": "Users",
+      "columns": [
+        "UserId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_UserPermissions_Permissions_PermissionId",
+      "child": "UserPermissions",
+      "parent": "Permissions",
+      "columns": [
+        "PermissionId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_UserPermissions_Users_UserId",
+      "child": "UserPermissions",
+      "parent": "Users",
+      "columns": [
+        "UserId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_UserRoles_Roles_RoleId",
+      "child": "UserRoles",
+      "parent": "Roles",
+      "columns": [
+        "RoleId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_UserRoles_Users_UserId",
+      "child": "UserRoles",
+      "parent": "Users",
+      "columns": [
+        "UserId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_UserTokens_Users_UserId",
+      "child": "UserTokens",
+      "parent": "Users",
+      "columns": [
+        "UserId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "CASCADE"
+    },
+    {
+      "name": "FK_WeightRecords_Animals_AnimalId",
+      "child": "WeightRecords",
+      "parent": "Animals",
+      "columns": [
+        "AnimalId"
+      ],
+      "parentColumns": [
+        "Id"
+      ],
+      "nullable": false,
+      "parentCardinality": "1",
+      "childCardinality": "0..N",
+      "deleteBehavior": "RESTRICT"
+    }
+  ]
+}

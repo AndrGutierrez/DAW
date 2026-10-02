@@ -51,7 +51,7 @@ services:
       - UPSTREAM=${UPSTREAM}
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
-      - ./db/erd:/usr/share/nginx/html/erd:ro
+      - ./db/diagram:/usr/share/nginx/html/erd:ro
     depends_on:
       - blazorapp
     restart: unless-stopped

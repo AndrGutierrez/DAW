@@ -50,7 +50,7 @@ server {
 
     set $upstream "${UPSTREAM}";
 
-    # Liam ERD static viewer, served from the mounted ./db/erd directory.
+    # Offline database diagram viewer, served from the versioned ./db/diagram directory.
     location = /erd {
         return 301 /erd/;
     }
