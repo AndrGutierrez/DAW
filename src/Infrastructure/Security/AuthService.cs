@@ -36,7 +36,14 @@ public sealed class AuthService(
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
-        var user = await userManager.FindByNameAsync(request.Username);
+        var identifier = request.Username?.Trim();
+        if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(request.Password))
+        {
+            throw new UnauthorizedAccessException("Invalid username or password.");
+        }
+
+        var user = await userManager.FindByNameAsync(identifier)
+            ?? await userManager.FindByEmailAsync(identifier);
 
         if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
         {
@@ -57,13 +64,12 @@ public sealed class AuthService(
             .Include(refreshToken => refreshToken.User)
             .FirstOrDefaultAsync(refreshToken => refreshToken.Token == request.RefreshToken, cancellationToken);
 
-        if (token is null || !token.IsActive)
+        if (token is null || !token.IsActive || !token.User.IsActive)
         {
             throw new UnauthorizedAccessException("The refresh token is invalid or expired.");
         }
 
         token.RevokedAt = DateTime.UtcNow;
-        await db.SaveChangesAsync(cancellationToken);
 
         return await BuildResponseAsync(token.User, cancellationToken);
     }
@@ -72,6 +78,11 @@ public sealed class AuthService(
     {
         var user = await userManager.FindByIdAsync(userId.ToString())
             ?? throw new KeyNotFoundException("The requested user was not found.");
+
+        if (!user.IsActive)
+        {
+            throw new UnauthorizedAccessException("The user account is inactive.");
+        }
 
         return await BuildUserResultAsync(user, cancellationToken);
     }
@@ -84,7 +95,8 @@ public sealed class AuthService(
             user.Id,
             user.UserName!,
             userResult.Roles,
-            user.IsSuperuser);
+            user.IsSuperuser,
+            user.Email);
 
         var refreshToken = tokenService.CreateRefreshToken();
 

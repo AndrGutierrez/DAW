@@ -12,7 +12,7 @@ public sealed class HealthEventConfiguration : IEntityTypeConfiguration<HealthEv
         builder.HasKey(healthEvent => healthEvent.Id);
 
         builder.Property(healthEvent => healthEvent.Notes).HasMaxLength(1000);
-        builder.Property(healthEvent => healthEvent.Cost).HasPrecision(12, 2);
+        builder.Property(healthEvent => healthEvent.Cost).HasPrecision(18, 2);
 
         builder.HasDiscriminator<string>("EventType")
             .HasValue<Vaccination>("Vaccination")

@@ -1,55 +1,75 @@
-# Registro de decisiones técnicas
+# Decisiones de ingeniería
 
-Este registro explica qué se decidió, por qué, para qué sirve, cómo se comprobó y qué limitaciones permanecen. Debe actualizarse con cada cambio relevante de la implementación para mantener la documentación alineada con el código. Las funcionalidades planificadas deben distinguirse de las que ya están disponibles.
+Cada entrada describe qué cambió, por qué y para qué. Las reglas detalladas están en [modelo y CRUD](modelo-produccion-y-crud.md).
 
-## Identidad del ganado, pertenencia a un hato y estado de salud
+## 1. Una fuente persistente de animales
 
-**Decisión:** Modelar `Herd` y `Animal` como entidades del dominio con un GUID y una fecha de creación UTC. Identificar a los animales por su arete, asociar cada animal con un hato y representar explícitamente su estado de salud actual.
+**Cambio:** retirar el catálogo operativo en memoria y las entidades duplicadas de `Core.Domain.Cattle`. El modelo `Core.Domain.Livestock` y PostgreSQL constituyen la fuente operativa. `/api/herds` se conserva como alias de lotes, con el contrato persistente `farmId`, `speciesId`, `name`, `purpose` y potrero opcional.
 
-**Por qué:** Una explotación ganadera necesita distinguir a cada animal, conocer su pertenencia a un hato y consultar su condición actual. Mantener estos conceptos en el dominio independiza el modelo de HTTP y de la tecnología de almacenamiento. Normalizar los aretes y rechazar duplicados sin distinguir mayúsculas y minúsculas evita registrar varias veces el mismo identificador.
+**Motivo:** dos modelos de animal y almacenamiento diferente por endpoint permitían respuestas contradictorias y pérdida de registros al reiniciar.
 
-**Para qué:** Ofrecer un flujo de registro ganadero: crear un hato, registrar un animal, consultar su información y actualizar su estado de salud.
+**Resultado:** GET y las escrituras comparten la misma base. Los clientes del prototipo deben actualizar sus cuerpos; no se selecciona una finca o especie por defecto para ocultar datos faltantes.
 
-**Evidencias:** [`Core.Domain/Cattle`](../src/Core.Domain/Cattle), [`CattleCatalogService`](../src/Core.Application/Cattle/CattleCatalogService.cs), [controlador de animales](../src/Presentation.API/Controllers/AnimalsController.cs), [colección de Postman](../postman/Cattle-Management.postman_collection.json) y [`DomainAndApplicationTests`](../tests/Core.Tests/DomainAndApplicationTests.cs).
+## 2. Recuperar operaciones y completar CRUD
 
-**Limitaciones:** El modelo conserva el estado actual de cada animal; no mantiene un historial de tratamientos o cambios de salud. Los registros se almacenan en memoria y no son persistentes.
+**Cambio:** restaurar POST de animales, PUT/DELETE y PATCH sanitario. Conservar `/health-status` con `status`; `/health` recibe `healthStatus`. Proporcionar las cinco operaciones CRUD de once recursos.
 
-## Inyección de dependencias y registros compartidos en memoria
+**Motivo:** una API de gestión debe permitir administrar registros, no limitarse a leerlos. La desaparición de rutas anteriores no representa una decisión de negocio válida por sí sola.
 
-**Decisión:** Registrar el servicio de catálogo y el repositorio como scoped, el validador de registros como transient y el normalizador de aretes sin estado mutable como singleton. Mantener un almacén singleton en memoria con acceso sincronizado para compartir los registros entre peticiones.
+**Resultado:** contratos visibles en Swagger y pruebas de cada operación. Las restricciones sobre dependencia e historia se devuelven como 409. Recuperar la ruta no implica mantener entidades duplicadas ni un contrato anterior que carecía de finca y especie.
 
-**Por qué:** Un singleton no debe retener un servicio de negocio scoped. Mientras no exista almacenamiento persistente, las peticiones HTTP independientes necesitan consultar los registros creados en peticiones anteriores.
+## 3. Unificar producción
 
-**Para qué:** Mantener ciclos de vida adecuados por petición, permitir un acceso consistente a los registros ganaderos y disponer de un punto donde sustituir el almacenamiento mediante un futuro adaptador de persistencia.
+**Cambio:** `AnimalProduction` reemplaza las tablas específicas de leche, lana, sacrificio y huevos. Una fila representa un producto obtenido; `OperationId` relaciona resultados de la misma operación.
 
-**Evidencias:** [`Program.cs`](../src/Presentation.API/Program.cs), [`InMemoryCattleStore`](../src/Infrastructure/Cattle/InMemoryCattleStore.cs) y [`DependencyInjectionUsesExpectedLifetimes`](../tests/Core.Tests/ApiIntegrationTests.cs).
+**Motivo:** un mismo animal puede generar distintos productos y un sacrificio puede tener varios resultados. Separar las tablas obliga a consultar y desarrollar cada rendimiento con estructuras diferentes.
 
-**Limitaciones:** El almacén es mutable aunque sea singleton. Su bloqueo protege las operaciones sobre los diccionarios, pero reiniciar el proceso elimina los datos. No ofrece transacciones de base de datos ni almacenamiento duradero. Todavía no existe un `DbContext`.
+**Resultado:** consulta y CRUD únicos; tipos/métodos/unidades coherentes, fecha no futura y cantidad positiva. El sacrificio cambia el estado en la misma transacción y no se revierte borrando una fila. Se conserva información convertible del esquema anterior y se bloquean datos ambiguos.
 
-## Un contrato de errores HTTP predecible
+## 4. Insumos y existencias por finca
 
-**Decisión:** Mantener `ExceptionMiddleware` registrado antes de los controladores y verificar su integración mediante pruebas que envían peticiones HTTP a la aplicación real.
+**Cambio:** catálogo de categorías e insumos con SKU, marca, unidad y precios; existencias, umbrales y ubicación en `FarmInventory` por finca.
 
-**Por qué:** Quienes consumen la API necesitan respuestas de error consistentes, independientemente del endpoint que falle. Invocar directamente la clase del middleware comprueba su lógica, pero no demuestra que la cadena de procesamiento HTTP la utilice. Las pruebas de integración HTTP verifican los registros reales de `Program.cs` y detectan posibles problemas de integración.
+**Motivo:** un mismo insumo puede estar en varias fincas con cantidades diferentes. El alimento comprado y la leche producida tienen operaciones y unidades de control distintas.
 
-**Para qué:** Comprobar de forma reproducible el mapeo a 404/400/500, los campos de RFC 7807, el tipo de contenido `application/problem+json` y las respuestas 500 que ocultan detalles internos.
+**Resultado:** no se comparte un stock global por accidente. Las categorías se relacionan con insumos usando `Restrict`; cantidades no negativas y máximo mayor que mínimo se validan en API y base.
 
-**Evidencias:** [`Program.cs`](../src/Presentation.API/Program.cs), [`ExceptionMiddleware`](../src/Presentation.API/Middleware/ExceptionMiddleware.cs), [`ApiIntegrationTests`](../tests/Core.Tests/ApiIntegrationTests.cs) y la [colección de Postman](../postman/Cattle-Management.postman_collection.json).
+## 5. Separar lectura y escritura en permisos
 
-**Limitaciones:** El middleware maneja las excepciones generadas por componentes posteriores de la cadena de procesamiento. No redefine todas las respuestas del enrutamiento o de la validación automática de modelos. El endpoint de errores deliberados solo está habilitado en Development. Los errores inesperados conservan su detalle de diagnóstico en los registros del servidor y muestran un mensaje genérico al cliente.
+**Cambio:** catálogo de permisos `list/get/create/update/delete`, `roles.manage` para administración y roles Admin/Employee además de los roles ganaderos existentes. Todos los DELETE exigen rol administrativo.
 
-## Mantenimiento de la documentación
+**Motivo:** exigir `animals.get` para subir fotos o `roles.list` para asignar permisos permitía mutaciones a SoloLectura.
 
-Por cada cambio relevante, añadir o revisar una entrada que responda: **¿Qué cambió? ¿Por qué? ¿Qué necesidad operativa o técnica atiende? ¿Dónde está el código? ¿Cómo se verificó? ¿Qué limitaciones permanecen?** Después, actualizar la [guía del producto y su implementación técnica](product-and-technical-guide.md) y el [README](../README.md) cuando sus descripciones dejen de corresponder con el sistema. Las capacidades planificadas deben explicarse por separado del comportamiento disponible.
+**Resultado:** permisos de lectura no otorgan escritura. Las membresías limitan datos operativos por finca. El alcance administrativo se verifica contra la base, no sólo contra una afirmación del token.
 
-## Explicar el producto y sus decisiones de arquitectura
+## 6. Fotografías privadas
 
-**Decisión:** Mantener una guía detallada del producto y su implementación técnica, un resumen e instrucciones de ejecución en el README y este registro de decisiones.
+**Cambio:** descarga por API autenticada y finca; nombres internos aleatorios, extensión acorde al formato, validación de firma y límites de lectura.
 
-**Por qué:** Quien lee el repositorio necesita comprender el flujo ganadero, las razones de la arquitectura y cómo reproducir el comportamiento del sistema. La documentación conecta las necesidades del producto con las decisiones de implementación y las comprobaciones ejecutables. Así, quienes mantienen el sistema pueden modificarlo sin perder ese contexto.
+**Motivo:** las guardas de subida y eliminación no protegen una carpeta estática pública. Una extensión suministrada por el cliente tampoco confirma el formato real.
 
-**Para qué:** Ayudar a quienes consumen la API a ejecutar el flujo ganadero y permitir que quienes mantienen el sistema relacionen los objetivos funcionales y de calidad con el código y las pruebas.
+**Resultado:** URL utilizable únicamente con la autorización adecuada. Se mantiene almacenamiento local/volumen; la firma de formato no se presenta como una decodificación completa del archivo.
 
-**Evidencias:** [Guía del producto y su implementación técnica](product-and-technical-guide.md), [README](../README.md) y tabla de objetivos, implementación y verificación de la guía. Los enlaces y el formato de la documentación se comprueban antes de publicar el cambio.
+## 7. Validación y errores consistentes
 
-**Limitaciones:** La documentación describe la implementación actual y las comprobaciones registradas. No convierte los registros en memoria en datos persistentes ni incorpora funcionalidades pendientes. Debe actualizarse cuando cambie el comportamiento o la arquitectura.
+**Cambio:** FluentValidation en Application para altas, cambios y autenticación; filtro HTTP asíncrono; Problem Details para excepciones, autorización y enlace de modelos.
+
+**Motivo:** la API necesita explicar qué campo es inválido y mantener el mismo contrato entre errores 400, 401, 403, 404, 409 y 500.
+
+**Resultado:** `errors` por campo y detalle interno oculto para 500. Las reglas se ejecutan también cuando se usa el servicio sin un controlador.
+
+## 8. Serializable, auditoría y evidencia
+
+**Cambio:** comprobaciones y escritura CRUD bajo Serializable en PostgreSQL; auditoría de la unidad de trabajo; conflictos concurrentes y de integridad convertidos a 409.
+
+**Motivo:** una comprobación previa sin aislamiento puede permitir dos sacrificios concurrentes o una operación compartida por animales diferentes.
+
+**Resultado:** una sola petición confirma la operación incompatible; la otra debe reintentarse con datos actuales. La evidencia de PostgreSQL se distingue de las pruebas InMemory. La auditoría sólo se atribuye a operaciones que pasan por `ManagementRepository`.
+
+## 9. PostgreSQL 15 y actualización controlada
+
+**Cambio:** Compose usa PostgreSQL 15 y un volumen separado del anterior PostgreSQL 17. Migración explícita, seed idempotente y herramientas EF en `.config/dotnet-tools.json`.
+
+**Motivo:** aplicar las mismas condiciones de ejecución sobre las que se valida el esquema y evitar montar datos físicos de otra versión del motor.
+
+**Resultado:** puesta en marcha reproducible, sin eliminar el volumen anterior. La nueva transformación no tiene un retorno automático fiel al esquema antiguo; una reversión de datos exige una copia verificada.

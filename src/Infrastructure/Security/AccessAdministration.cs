@@ -40,6 +40,11 @@ public sealed class AccessAdministration(AppDbContext db) : IAccessAdministratio
         bool grant,
         CancellationToken cancellationToken)
     {
+        if (roleId == Guid.Empty || permissionId == Guid.Empty)
+        {
+            throw new ArgumentException("Role and permission identifiers must not be empty.");
+        }
+
         var role = await db.Roles
             .FirstOrDefaultAsync(candidate => candidate.Id == roleId, cancellationToken)
             ?? throw new KeyNotFoundException("The requested role was not found.");

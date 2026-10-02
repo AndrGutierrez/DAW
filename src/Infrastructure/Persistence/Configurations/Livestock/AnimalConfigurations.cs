@@ -33,7 +33,7 @@ public sealed class AnimalConfiguration : IEntityTypeConfiguration<Animal>
         builder.HasOne(animal => animal.Farm)
             .WithMany(farm => farm.Animals)
             .HasForeignKey(animal => animal.FarmId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(animal => animal.Species)
             .WithMany(species => species.Animals)
@@ -104,6 +104,6 @@ public sealed class WeightRecordConfiguration : IEntityTypeConfiguration<WeightR
         builder.HasOne(record => record.Animal)
             .WithMany(animal => animal.WeightRecords)
             .HasForeignKey(record => record.AnimalId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

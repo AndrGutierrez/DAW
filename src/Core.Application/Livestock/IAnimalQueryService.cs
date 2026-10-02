@@ -17,7 +17,9 @@ public sealed record AnimalListItem(
     string Farm,
     string? CoverPhotoUrl,
     int PhotoCount,
-    DateTime UpdatedAt);
+    DateTime UpdatedAt,
+    Guid FarmId,
+    Guid SpeciesId);
 
 public sealed record AnimalDetail(
     Guid Id,
@@ -43,7 +45,14 @@ public sealed record AnimalDetail(
     string Farm,
     IReadOnlyList<AnimalPhotoInfo> Photos,
     DateTime UpdatedAt,
-    string? Notes);
+    string? Notes,
+    Guid FarmId,
+    Guid SpeciesId,
+    Guid? BreedId,
+    Guid? LotId,
+    Guid? PaddockId,
+    Guid? DamId,
+    Guid? SireId);
 
 public interface IAnimalQueryService
 {

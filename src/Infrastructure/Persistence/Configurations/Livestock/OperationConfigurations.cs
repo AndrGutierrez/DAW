@@ -110,7 +110,7 @@ public sealed class TransactionConfiguration : IEntityTypeConfiguration<Transact
 
         builder.Property(transaction => transaction.Type).HasConversion<int>().IsRequired();
         builder.Property(transaction => transaction.Category).HasConversion<int>().IsRequired();
-        builder.Property(transaction => transaction.Amount).HasPrecision(14, 2).IsRequired();
+        builder.Property(transaction => transaction.Amount).HasPrecision(18, 2).IsRequired();
         builder.Property(transaction => transaction.Currency).IsRequired().HasMaxLength(3);
         builder.Property(transaction => transaction.Description).HasMaxLength(500);
         builder.Property(transaction => transaction.Counterparty).HasMaxLength(200);

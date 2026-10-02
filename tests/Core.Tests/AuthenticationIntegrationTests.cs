@@ -2,10 +2,14 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.IdentityModel.Tokens.Jwt;
+using Core.Application.Security;
 using Core.Domain.Livestock;
 using Infrastructure.Persistence;
+using Infrastructure.Persistence.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -27,10 +31,47 @@ public sealed class AuthenticationIntegrationTests
         using var client = factory.CreateClient();
         var token = await LoginAsync(client, "admin", AdminPassword);
         Assert.False(string.IsNullOrWhiteSpace(token));
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        Assert.Contains(jwt.Claims, claim => claim.Type == JwtRegisteredClaimNames.Email && claim.Value == "admin@daw.local");
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         using var roles = await client.GetAsync("/api/admin/roles");
         Assert.Equal(HttpStatusCode.OK, roles.StatusCode);
+    }
+
+    [Fact]
+    public async Task RegistrationPersistsDifferentHashesForTheSamePasswordAndVerifiesCredentials()
+    {
+        using var factory = CreateFactory();
+        await SeedAsync(factory);
+        using var client = factory.CreateClient();
+        var prefix = "salt" + Guid.NewGuid().ToString("N")[..8];
+        const string password = "Shared123!Pass";
+        foreach (var suffix in new[] { "one", "two" })
+        {
+            using var registration = await client.PostAsJsonAsync("/api/auth/register", new
+            {
+                username = prefix + suffix,
+                email = $"{prefix}{suffix}@daw.local",
+                password,
+                fullName = "Hash verification"
+            });
+            Assert.Equal(HttpStatusCode.OK, registration.StatusCode);
+        }
+
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var users = await db.Users.Where(user => user.UserName!.StartsWith(prefix)).ToListAsync();
+        Assert.Equal(2, users.Count);
+        Assert.NotEqual(users[0].PasswordHash, users[1].PasswordHash);
+        var manager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        foreach (var user in users)
+        {
+            Assert.False(string.IsNullOrWhiteSpace(user.PasswordHash));
+            Assert.NotEqual(password, user.PasswordHash);
+            Assert.True(await manager.CheckPasswordAsync(user, password));
+            Assert.False(await manager.CheckPasswordAsync(user, "Wrong123!Pass"));
+        }
     }
 
     [Fact]
@@ -162,6 +203,163 @@ public sealed class AuthenticationIntegrationTests
         using var refreshed = JsonDocument.Parse(await refresh.Content.ReadAsStringAsync());
         Assert.False(string.IsNullOrWhiteSpace(refreshed.RootElement.GetProperty("accessToken").GetString()));
         Assert.NotEqual(refreshToken, refreshed.RootElement.GetProperty("refreshToken").GetString());
+
+        using var replay = await client.PostAsJsonAsync("/api/auth/refresh", new { refreshToken });
+        Assert.Equal(HttpStatusCode.Unauthorized, replay.StatusCode);
+    }
+
+    [Fact]
+    public async Task LoginAcceptsAnEmailAddress()
+    {
+        using var factory = CreateFactory();
+        await SeedAsync(factory);
+        using var client = factory.CreateClient();
+
+        var token = await LoginAsync(client, "admin@daw.local", AdminPassword);
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var response = await client.GetAsync("/api/auth/me");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal("admin", user.RootElement.GetProperty("username").GetString());
+    }
+
+    [Fact]
+    public async Task InactiveAccountCannotRefreshOrReadItsProfile()
+    {
+        using var factory = CreateFactory();
+        await SeedAsync(factory);
+        using var client = factory.CreateClient();
+        using var login = await client.PostAsJsonAsync("/api/auth/login", new { username = "admin", password = AdminPassword });
+        using var auth = JsonDocument.Parse(await login.Content.ReadAsStringAsync());
+        var token = auth.RootElement.GetProperty("accessToken").GetString();
+        var refreshToken = auth.RootElement.GetProperty("refreshToken").GetString();
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var admin = await db.Users.SingleAsync(user => user.UserName == "admin");
+            admin.IsActive = false;
+            await db.SaveChangesAsync();
+        }
+
+        using var refresh = await client.PostAsJsonAsync("/api/auth/refresh", new { refreshToken });
+        Assert.Equal(HttpStatusCode.Unauthorized, refresh.StatusCode);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var me = await client.GetAsync("/api/auth/me");
+        Assert.Equal(HttpStatusCode.Unauthorized, me.StatusCode);
+        using var animals = await client.GetAsync("/api/animals");
+        Assert.Equal(HttpStatusCode.Forbidden, animals.StatusCode);
+    }
+
+    [Fact]
+    public async Task ReadOnlyUserCanReadAssignedFarmButCannotChangePhotosOrRolePermissions()
+    {
+        using var factory = CreateFactory();
+        await SeedAsync(factory);
+        Guid animalId;
+        Guid photoId;
+        Guid roleId;
+        Guid permissionId;
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = new ApplicationUser { UserName = "reader", Email = "reader@daw.local", FullName = "Reader" };
+            Assert.True((await userManager.CreateAsync(user, "User123!Test")).Succeeded);
+            Assert.True((await userManager.AddToRoleAsync(user, PermissionCatalog.ReadOnlyRole)).Succeeded);
+            var animal = await db.Animals.FirstAsync();
+            animalId = animal.Id;
+            db.UserFarms.Add(new UserFarm { UserId = user.Id, FarmId = animal.FarmId });
+            var photo = new AnimalPhoto
+            {
+                FarmId = animal.FarmId,
+                AnimalId = animal.Id,
+                Url = "/uploads/existing.png",
+                FileName = "existing.png"
+            };
+            db.AnimalPhotos.Add(photo);
+            await db.SaveChangesAsync();
+            photoId = photo.Id;
+            roleId = (await db.Roles.SingleAsync(role => role.Name == PermissionCatalog.ReadOnlyRole)).Id;
+            permissionId = (await db.Permissions.SingleAsync(permission => permission.Name == "photos.create")).Id;
+        }
+        using var client = factory.CreateClient();
+        var token = await LoginAsync(client, "reader", "User123!Test");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        using var detail = await client.GetAsync($"/api/animals/{animalId}");
+        Assert.Equal(HttpStatusCode.OK, detail.StatusCode);
+        using var form = new MultipartFormDataContent();
+        var file = new ByteArrayContent(TestImages.Png);
+        file.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        form.Add(file, "file", "photo.png");
+        using var upload = await client.PostAsync($"/api/animals/{animalId}/photo", form);
+        Assert.Equal(HttpStatusCode.Forbidden, upload.StatusCode);
+        using var delete = await client.DeleteAsync($"/api/animals/{animalId}/photos/{photoId}");
+        Assert.Equal(HttpStatusCode.Forbidden, delete.StatusCode);
+        using var grant = await client.PostAsync($"/api/admin/roles/{roleId}/permissions/{permissionId}", null);
+        Assert.Equal(HttpStatusCode.Forbidden, grant.StatusCode);
+
+        using var verification = factory.Services.CreateScope();
+        var verificationDb = verification.ServiceProvider.GetRequiredService<AppDbContext>();
+        Assert.True(await verificationDb.AnimalPhotos.AnyAsync(photo => photo.Id == photoId));
+        Assert.False(await verificationDb.RolePermissions.AnyAsync(link =>
+            link.RoleId == roleId && link.PermissionId == permissionId));
+    }
+
+    [Fact]
+    public async Task RegistrationValidationReturnsProblemDetailsWithFieldErrors()
+    {
+        using var factory = CreateFactory();
+        await SeedAsync(factory);
+        using var client = factory.CreateClient();
+
+        using var response = await client.PostAsJsonAsync("/api/auth/register", new
+        {
+            username = "a",
+            email = "invalid",
+            password = "weak",
+            fullName = ""
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal(400, problem.RootElement.GetProperty("status").GetInt32());
+        Assert.True(problem.RootElement.TryGetProperty("errors", out var errors));
+        Assert.True(errors.EnumerateObject().Any());
+        Assert.DoesNotContain("weak", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public async Task RoleManagementPermissionAloneDoesNotGrantAdministratorAuthority()
+    {
+        using var factory = CreateFactory();
+        await SeedAsync(factory);
+        Guid roleId;
+        Guid permissionId;
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var manager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var user = new ApplicationUser { UserName = "delegate", Email = "delegate@daw.local", FullName = "Delegate" };
+            Assert.True((await manager.CreateAsync(user, "User123!Test")).Succeeded);
+            var permission = await db.Permissions.SingleAsync(item => item.Name == "roles.manage");
+            db.UserPermissions.Add(new UserPermission { UserId = user.Id, PermissionId = permission.Id });
+            await db.SaveChangesAsync();
+            roleId = (await db.Roles.SingleAsync(role => role.Name == PermissionCatalog.ReadOnlyRole)).Id;
+            permissionId = (await db.Permissions.SingleAsync(item => item.Name == "photos.create")).Id;
+        }
+        using var client = factory.CreateClient();
+        var token = await LoginAsync(client, "delegate", "User123!Test");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        using var response = await client.PostAsync($"/api/admin/roles/{roleId}/permissions/{permissionId}", null);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        using var verification = factory.Services.CreateScope();
+        Assert.False(await verification.ServiceProvider.GetRequiredService<AppDbContext>().RolePermissions.AnyAsync(
+            link => link.RoleId == roleId && link.PermissionId == permissionId));
     }
 
     [Fact]
@@ -177,10 +375,17 @@ public sealed class AuthenticationIntegrationTests
         var animalId = await GetFirstAnimalIdAsync(client);
 
         var photoUrl = await UploadPhotoAsync(client, animalId, "photo.png");
-        Assert.StartsWith("/uploads/", photoUrl);
+        Assert.StartsWith($"/api/animals/{animalId}/photos/", photoUrl);
+        Assert.EndsWith("/content", photoUrl);
 
         using var served = await client.GetAsync(photoUrl);
         Assert.Equal(HttpStatusCode.OK, served.StatusCode);
+        Assert.Equal("image/png", served.Content.Headers.ContentType?.MediaType);
+        Assert.Equal(TestImages.Png, await served.Content.ReadAsByteArrayAsync());
+        Assert.Equal("nosniff", Assert.Single(served.Headers.GetValues("X-Content-Type-Options")));
+        using var anonymous = factory.CreateClient();
+        using var denied = await anonymous.GetAsync(photoUrl);
+        Assert.Equal(HttpStatusCode.Unauthorized, denied.StatusCode);
 
         using var detail = await client.GetAsync($"/api/animals/{animalId}");
         using var animal = JsonDocument.Parse(await detail.Content.ReadAsStringAsync());
@@ -201,6 +406,8 @@ public sealed class AuthenticationIntegrationTests
         using var afterDelete = await client.GetAsync($"/api/animals/{animalId}");
         using var afterAnimal = JsonDocument.Parse(await afterDelete.Content.ReadAsStringAsync());
         Assert.Equal(0, afterAnimal.RootElement.GetProperty("photos").GetArrayLength());
+        using var removed = await client.GetAsync(photoUrl);
+        Assert.Equal(HttpStatusCode.NotFound, removed.StatusCode);
     }
 
     [Fact]
@@ -247,7 +454,7 @@ public sealed class AuthenticationIntegrationTests
     private static async Task<string> UploadPhotoAsync(HttpClient client, Guid animalId, string fileName)
     {
         using var form = new MultipartFormDataContent();
-        var file = new ByteArrayContent(new byte[] { 0x89, 0x50, 0x4E, 0x47 });
+        var file = new ByteArrayContent(TestImages.Png);
         file.Headers.ContentType = new MediaTypeHeaderValue("image/png");
         form.Add(file, "file", fileName);
 

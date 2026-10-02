@@ -32,9 +32,16 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\"username\":\"{{adminUsername}}\",\"password\":\"{{adminPassword}}\"}"
@@ -65,9 +72,16 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\"refreshToken\":\"{{refreshToken}}\"}"
@@ -95,7 +109,16 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "url": "{{baseUrl}}/api/auth/me"
           }
@@ -119,7 +142,16 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "url": "{{baseUrl}}/api/admin/roles"
           }
@@ -144,7 +176,16 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "url": "{{baseUrl}}/api/admin/permissions"
           }
@@ -165,7 +206,9 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "url": "{{baseUrl}}/api/animals"
           }
@@ -200,9 +243,16 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\"username\":\"operario{{runId}}\",\"email\":\"operario{{runId}}@daw.local\",\"password\":\"User123!Test\",\"fullName\":\"Operario de campo\"}"
@@ -226,7 +276,16 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{newUserToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{newUserToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "url": "{{baseUrl}}/api/animals"
           }
@@ -246,23 +305,32 @@
               "  const animals = pm.response.json();",
               "  pm.expect(animals).to.be.an('array').with.lengthOf.at.least(1);",
               "  const animal = animals[0];",
-                  "  pm.expect(animal.internalTag).to.be.a('string').and.not.empty;",
-                  "  pm.expect(animal.species).to.be.a('string').and.not.empty;",
-                  "  pm.expect(animal.farm).to.be.a('string').and.not.empty;",
-                  "  pm.expect(animal.birthDate).to.be.a('string');",
-                  "  pm.expect(animal.currentWeightKg).to.be.a('number');",
-                  "  pm.expect(animal.updatedAt).to.be.a('string');",
-                  "  pm.expect(animal.photoCount).to.be.a('number');",
-                  "  pm.expect(animal).to.have.property('coverPhotoUrl');",
-                  "  pm.expect(animal).to.not.have.property('ageMonths');",
-                  "  pm.collectionVariables.set('animalId', animal.id);",
+              "  pm.expect(animal.internalTag).to.be.a('string').and.not.empty;",
+              "  pm.expect(animal.species).to.be.a('string').and.not.empty;",
+              "  pm.expect(animal.farm).to.be.a('string').and.not.empty;",
+              "  pm.expect(animal.birthDate).to.be.a('string');",
+              "  pm.expect(animal.currentWeightKg).to.be.a('number');",
+              "  pm.expect(animal.updatedAt).to.be.a('string');",
+              "  pm.expect(animal.photoCount).to.be.a('number');",
+              "  pm.expect(animal).to.have.property('coverPhotoUrl');",
+              "  pm.expect(animal).to.not.have.property('ageMonths');",
+              "  pm.collectionVariables.set('animalId', animal.id);",
               "});"
             ]
           }
         }
       ],
       "request": {
-        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
         "url": "{{baseUrl}}/api/animals"
       }
@@ -279,123 +347,173 @@
               "  pm.response.to.have.status(200);",
               "  const animal = pm.response.json();",
               "  pm.expect(animal.id).to.eql(pm.collectionVariables.get('animalId'));",
-                  "  pm.expect(animal.farm).to.be.a('string').and.not.empty;",
-                  "  pm.expect(animal.sex).to.be.oneOf(['Male', 'Female']);",
-                  "  pm.expect(animal.birthDate).to.be.a('string');",
-                  "  pm.expect(animal.currentWeightKg).to.be.a('number');",
-                  "});"
+              "  pm.expect(animal.farm).to.be.a('string').and.not.empty;",
+              "  pm.expect(animal.sex).to.be.oneOf(['Male', 'Female']);",
+              "  pm.expect(animal.birthDate).to.be.a('string');",
+              "  pm.expect(animal.currentWeightKg).to.be.a('number');",
+              "});"
             ]
           }
         }
       ],
       "request": {
-        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
-            "url": "{{baseUrl}}/api/animals/{{animalId}}"
-          }
-        },
+        "url": "{{baseUrl}}/api/animals/{{animalId}}"
+      }
+    },
+    {
+      "name": "List animals not updated recently",
+      "event": [
         {
-          "name": "List animals not updated recently",
-          "event": [
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Stale endpoint returns an array', function () {",
+              "  pm.response.to.have.status(200);",
+              "  const stale = pm.response.json();",
+              "  pm.expect(stale).to.be.an('array');",
+              "  if (stale.length > 0) {",
+              "    pm.expect(stale[0].updatedAt).to.be.a('string');",
+              "  }",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
             {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Stale endpoint returns an array', function () {",
-                  "  pm.response.to.have.status(200);",
-                  "  const stale = pm.response.json();",
-                  "  pm.expect(stale).to.be.an('array');",
-                  "  if (stale.length > 0) {",
-                  "    pm.expect(stale[0].updatedAt).to.be.a('string');",
-                  "  }",
-                  "});"
-                ]
-              }
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
             }
-          ],
-          "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
-            "method": "GET",
-            "url": "{{baseUrl}}/api/animals/stale?days=30"
-          }
+          ]
         },
+        "method": "GET",
+        "url": "{{baseUrl}}/api/animals/stale?days=30"
+      }
+    },
+    {
+      "name": "Upload animal photo",
+      "event": [
         {
-          "name": "Upload animal photo",
-          "event": [
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Authorized user uploads an animal photo', function () {",
+              "  pm.response.to.have.status(200);",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.url).to.eql('/api/animals/' + body.animalId + '/photos/' + body.photoId + '/content');",
+              "  pm.expect(body.uploadedAt).to.be.a('string');",
+              "  pm.collectionVariables.set('photoUrl', body.url);",
+              "  pm.collectionVariables.set('photoId', body.photoId);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
             {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Authorized user uploads an animal photo', function () {",
-                  "  pm.response.to.have.status(200);",
-                  "  const body = pm.response.json();",
-                  "  pm.expect(body.url).to.include('/uploads/');",
-                  "  pm.expect(body.uploadedAt).to.be.a('string');",
-                  "  pm.collectionVariables.set('photoUrl', body.url);",
-                  "  pm.collectionVariables.set('photoId', body.photoId);",
-                  "});"
-                ]
-              }
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
             }
-          ],
-          "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
-            "method": "POST",
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                { "key": "file", "type": "file", "src": "src/Presentation.API/wwwroot/favicon.png" }
-              ]
-            },
-            "url": "{{baseUrl}}/api/animals/{{animalId}}/photo"
-          }
+          ]
         },
-        {
-          "name": "Get uploaded animal photo",
-          "event": [
+        "method": "POST",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
             {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Uploaded photo is served as a static file', function () {",
-                  "  pm.response.to.have.status(200);",
-                  "});"
-                ]
-              }
+              "key": "file",
+              "type": "file",
+              "src": "src/Presentation.API/wwwroot/favicon.png"
             }
-          ],
-          "request": {
-            "auth": { "type": "noauth" },
-            "method": "GET",
-            "url": "{{baseUrl}}{{photoUrl}}"
-          }
+          ]
         },
+        "url": "{{baseUrl}}/api/animals/{{animalId}}/photo"
+      }
+    },
+    {
+      "name": "Get uploaded animal photo",
+      "event": [
         {
-          "name": "Delete animal photo",
-          "event": [
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Uploaded photo requires authenticated access\", function () {",
+              "  pm.response.to.have.status(200);",
+              "  pm.expect(pm.response.headers.get('Content-Type')).to.include('image/png');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
             {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test('Authorized user deletes the animal photo', function () {",
-                  "  pm.response.to.have.status(204);",
-                  "});"
-                ]
-              }
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
             }
-          ],
-          "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
-            "method": "DELETE",
-            "url": "{{baseUrl}}/api/animals/{{animalId}}/photos/{{photoId}}"
-          }
+          ]
         },
+        "method": "GET",
+        "url": "{{baseUrl}}{{photoUrl}}"
+      }
+    },
+    {
+      "name": "Delete animal photo",
+      "event": [
         {
-          "name": "Missing animal returns 404 Problem Details",
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Authorized user deletes the animal photo', function () {",
+              "  pm.response.to.have.status(204);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/animals/{{animalId}}/photos/{{photoId}}"
+      }
+    },
+    {
+      "name": "Missing animal returns 404 Problem Details",
       "event": [
         {
           "listen": "test",
@@ -413,7 +531,16 @@
         }
       ],
       "request": {
-        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }] },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
         "url": "{{baseUrl}}/api/animals/00000000-0000-0000-0000-000000000000"
       }
@@ -447,15 +574,45 @@
     }
   ],
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:18080" },
-    { "key": "adminUsername", "value": "admin" },
-    { "key": "adminPassword", "value": "Admin123!Secure" },
-    { "key": "accessToken", "value": "" },
-    { "key": "newUserToken", "value": "" },
-    { "key": "refreshToken", "value": "" },
-    { "key": "photoUrl", "value": "" },
-    { "key": "photoId", "value": "" },
-    { "key": "runId", "value": "" },
-    { "key": "animalId", "value": "" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:18080"
+    },
+    {
+      "key": "adminUsername",
+      "value": "admin"
+    },
+    {
+      "key": "adminPassword",
+      "value": "Admin123!Secure"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "newUserToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "photoUrl",
+      "value": ""
+    },
+    {
+      "key": "photoId",
+      "value": ""
+    },
+    {
+      "key": "runId",
+      "value": ""
+    },
+    {
+      "key": "animalId",
+      "value": ""
+    }
   ]
 }

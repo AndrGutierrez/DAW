@@ -4,7 +4,13 @@ public static class PermissionCatalog
 {
     public const string GuardName = "web";
 
-    public static readonly string[] Actions = ["list", "get"];
+    public const string AdminRole = "Admin";
+    public const string EmployeeRole = "Employee";
+    public const string AdministratorRole = "Administrador";
+    public const string ReadOnlyRole = "SoloLectura";
+    public const string AdminRoles = AdminRole + "," + AdministratorRole;
+
+    public static readonly string[] Actions = ["list", "get", "create", "update", "delete"];
 
     public static readonly string[] Resources =
     [
@@ -14,9 +20,15 @@ public static class PermissionCatalog
         "paddocks",
         "species",
         "breeds",
+        "categories",
+        "products",
+        "inventory",
+        "production",
+        "weights",
         "users",
         "roles",
-        "permissions"
+        "permissions",
+        "photos"
     ];
 
     public static IEnumerable<PermissionDefinition> All()
@@ -28,6 +40,8 @@ public static class PermissionCatalog
                 yield return new PermissionDefinition($"{resource}.{action}", resource, action, GuardName);
             }
         }
+
+        yield return new PermissionDefinition("roles.manage", "roles", "manage", GuardName);
     }
 
     public static string Name(string resource, string action) => $"{resource}.{action}";

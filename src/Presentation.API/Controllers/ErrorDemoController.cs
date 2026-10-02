@@ -19,7 +19,7 @@ public sealed class ErrorDemoController(IHostEnvironment environment) : Controll
             "not-found" => throw new KeyNotFoundException("The sample resource was not found."),
             "invalid-operation" => throw new InvalidOperationException("The sample operation is invalid."),
             "unexpected" => throw new Exception("Simulated internal detail that must remain private."),
-            _ => BadRequest("Use not-found, invalid-operation, or unexpected.")
+            _ => throw new ArgumentException("Use not-found, invalid-operation, or unexpected.")
         };
     }
 }

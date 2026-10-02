@@ -1,63 +1,68 @@
-using Core.Application.Cattle;
-using Core.Domain.Cattle;
-using Infrastructure.Cattle;
+using Core.Application.Management;
+using Core.Domain.Livestock;
 
 namespace Core.Tests;
 
 public sealed class DomainAndApplicationTests
 {
     [Fact]
-    public void EntitiesHaveGuidIdentityUtcCreationAndHerdRelationship()
+    public void EntitiesHaveGuidIdentityUtcCreationAndFarmRelationship()
     {
         var before = DateTime.UtcNow;
-        var herd = new Herd("North Pasture");
-        var animal = new Animal("C-001", "Brahman", herd);
-        var after = DateTime.UtcNow;
-
-        Assert.NotEqual(Guid.Empty, herd.Id);
+        var farm = new Farm
+        {
+            Name = "North Farm",
+            Code = "NORTH"
+        };
+        var animal = new Animal
+        {
+            InternalTag = "C-001",
+            Farm = farm,
+            FarmId = farm.Id
+        };
+        Assert.NotEqual(Guid.Empty, farm.Id);
         Assert.NotEqual(Guid.Empty, animal.Id);
-        Assert.NotEqual(herd.Id, animal.Id);
-        Assert.Equal(DateTimeKind.Utc, herd.CreatedAt.Kind);
+        Assert.NotEqual(farm.Id, animal.Id);
         Assert.Equal(DateTimeKind.Utc, animal.CreatedAt.Kind);
-        Assert.InRange(herd.CreatedAt, before, after);
-        Assert.InRange(animal.CreatedAt, before, after);
-        Assert.Same(herd, animal.Herd);
-        Assert.Equal(herd.Id, animal.HerdId);
-        Assert.Equal(AnimalHealthStatus.Healthy, animal.HealthStatus);
-        animal.ChangeHealthStatus(AnimalHealthStatus.UnderObservation);
-        Assert.Equal(AnimalHealthStatus.UnderObservation, animal.HealthStatus);
+        Assert.InRange(animal.CreatedAt, before, DateTime.UtcNow);
+        Assert.Same(farm, animal.Farm);
+        Assert.Equal(HealthStatus.Healthy, animal.HealthStatus);
     }
 
     [Fact]
-    public void CatalogRejectsDuplicateEarTagsRegardlessOfCase()
+    public void AnimalRegistrationRejectsFutureBirthDatesAndUnknownEnumValues()
     {
-        var catalog = CreateCatalog();
-        var herd = catalog.CreateHerd("North Pasture", null);
+        var request = new AnimalRequest(Guid.NewGuid(), Guid.NewGuid(), "C-001", Sex.Female, ProductivePurpose.Milk, BirthDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)), HealthStatus: (HealthStatus)99);
+        var result = new AnimalRequestValidator().Validate(request);
+        Assert.Contains(result.Errors, x => x.PropertyName == "BirthDate");
+        Assert.Contains(result.Errors, x => x.PropertyName == "HealthStatus");
+    }
 
-        var animal = catalog.RegisterAnimal("c-001", "Brahman", herd.Id, null);
-
-        Assert.Equal("C-001", animal.EarTag);
-        Assert.Throws<InvalidOperationException>(() =>
-            catalog.RegisterAnimal("C-001", "Holstein", herd.Id, null));
-        Assert.Single(catalog.ListAnimals());
+    [Theory]
+    [InlineData(-1, 1)]
+    [InlineData(1, -1)]
+    [InlineData(0, 1)]
+    public void ProductValidatorRejectsNonpositivePrices(decimal price, decimal cost)
+    {
+        var result = new ProductRequestValidator().Validate(new ProductRequest("FEED-1", "Feed", Guid.NewGuid(), price, cost, MeasurementUnit.Bag));
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, x => x.PropertyName is "Price" or "CostPrice");
     }
 
     [Fact]
-    public void CatalogRejectsUnknownHerdAndFutureBirthDate()
+    public void InventoryRequiresNonnegativeStockAndOrderedThresholds()
     {
-        var catalog = CreateCatalog();
-
-        Assert.Throws<KeyNotFoundException>(() =>
-            catalog.RegisterAnimal("C-002", "Brahman", Guid.NewGuid(), null));
-
-        var herd = catalog.CreateHerd("South Pasture", null);
-        Assert.Throws<ArgumentException>(() =>
-            catalog.RegisterAnimal("C-003", "Brahman", herd.Id, DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1))));
+        var result = new InventoryRequestValidator().Validate(new InventoryRequest(Guid.NewGuid(), Guid.NewGuid(), -2, 20, 10));
+        Assert.Contains(result.Errors, x => x.PropertyName == "Stock");
+        Assert.Contains(result.Errors, x => x.PropertyName == "MaxStock");
     }
 
-    private static CattleCatalogService CreateCatalog() =>
-        new(
-            new InMemoryCattleRepository(new InMemoryCattleStore()),
-            new AnimalTagNormalizer(),
-            new AnimalRegistrationValidator());
+    [Fact]
+    public void ProductionRejectsMilkObtainedBySlaughterAndFractionalEggs()
+    {
+        var validator = new ProductionRequestValidator();
+        var milk = new ProductionRequest(Guid.NewGuid(), Guid.NewGuid(), DateOnly.FromDateTime(DateTime.UtcNow), AnimalProductType.Milk, ProductionMethod.Slaughter, 20, MeasurementUnit.Liter, Guid.NewGuid());
+        Assert.False(validator.Validate(milk).IsValid);
+        Assert.False(validator.Validate(milk with { ProductType = AnimalProductType.Eggs, Method = ProductionMethod.Collection, Unit = MeasurementUnit.Unit, Quantity = 1.5m }).IsValid);
+    }
 }

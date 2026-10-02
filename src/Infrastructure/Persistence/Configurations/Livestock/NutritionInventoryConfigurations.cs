@@ -56,7 +56,7 @@ public sealed class FeedingRecordConfiguration : IEntityTypeConfiguration<Feedin
         builder.HasKey(record => record.Id);
 
         builder.Property(record => record.QuantityKg).HasPrecision(10, 3).IsRequired();
-        builder.Property(record => record.Cost).HasPrecision(12, 2);
+        builder.Property(record => record.Cost).HasPrecision(18, 2);
 
         builder.HasIndex(record => new { record.LotId, record.Date });
 
@@ -81,7 +81,7 @@ public sealed class ProductBatchConfiguration : IEntityTypeConfiguration<Product
 
         builder.Property(batch => batch.BatchNumber).HasMaxLength(50);
         builder.Property(batch => batch.InitialQuantity).HasPrecision(12, 3).IsRequired();
-        builder.Property(batch => batch.UnitCost).HasPrecision(12, 4);
+        builder.Property(batch => batch.UnitCost).HasPrecision(18, 2);
 
         builder.HasIndex(batch => new { batch.FarmId, batch.ProductId, batch.BatchNumber });
 

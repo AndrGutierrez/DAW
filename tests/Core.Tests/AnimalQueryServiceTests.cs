@@ -1,4 +1,5 @@
 using Core.Domain.Livestock;
+using Core.Application.Security;
 using Infrastructure.Livestock;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ public sealed class AnimalQueryServiceTests
     {
         await using var db = CreateContext();
         var (animalId, birthDate) = await SeedAnimalAsync(db);
-        var service = new AnimalQueryService(db, new AnimalWeightReader(db));
+        var service = new AnimalQueryService(db, new AnimalWeightReader(db), new AllFarmsAccess(db));
 
         var items = await service.ListAsync();
 
@@ -34,6 +35,8 @@ public sealed class AnimalQueryServiceTests
         Assert.Equal(520m, item.CurrentWeightKg);
         Assert.Equal("Engorde", item.Lot);
         Assert.Equal("Finca Test", item.Farm);
+        Assert.NotEqual(Guid.Empty, item.FarmId);
+        Assert.NotEqual(Guid.Empty, item.SpeciesId);
     }
 
     [Fact]
@@ -41,7 +44,7 @@ public sealed class AnimalQueryServiceTests
     {
         await using var db = CreateContext();
         var (animalId, _) = await SeedAnimalAsync(db);
-        var service = new AnimalQueryService(db, new AnimalWeightReader(db));
+        var service = new AnimalQueryService(db, new AnimalWeightReader(db), new AllFarmsAccess(db));
 
         var detail = await service.GetAsync(animalId);
 
@@ -50,6 +53,10 @@ public sealed class AnimalQueryServiceTests
         Assert.Equal(520m, detail.CurrentWeightKg);
         Assert.Equal(3.5m, detail.BodyConditionScore);
         Assert.Equal("Engorde", detail.Lot);
+        Assert.NotEqual(Guid.Empty, detail.FarmId);
+        Assert.NotEqual(Guid.Empty, detail.SpeciesId);
+        Assert.NotNull(detail.BreedId);
+        Assert.NotNull(detail.LotId);
         Assert.Empty(detail.Photos);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() => service.GetAsync(Guid.NewGuid()));
@@ -77,7 +84,7 @@ public sealed class AnimalQueryServiceTests
         });
         await db.SaveChangesAsync();
 
-        var service = new AnimalQueryService(db, new AnimalWeightReader(db));
+        var service = new AnimalQueryService(db, new AnimalWeightReader(db), new AllFarmsAccess(db));
 
         var stale = await service.ListStaleAsync(30);
 
@@ -124,5 +131,14 @@ public sealed class AnimalQueryServiceTests
         await db.SaveChangesAsync();
 
         return (animal.Id, birthDate);
+    }
+
+    private sealed class AllFarmsAccess(AppDbContext db) : IFarmAccess
+    {
+        public async Task<bool> CanAccessAsync(Guid farmId, CancellationToken cancellationToken = default) =>
+            await db.Farms.AsNoTracking().AnyAsync(farm => farm.Id == farmId, cancellationToken);
+
+        public async Task<IReadOnlyCollection<Guid>> GetAccessibleFarmIdsAsync(CancellationToken cancellationToken = default) =>
+            await db.Farms.AsNoTracking().Select(farm => farm.Id).ToListAsync(cancellationToken);
     }
 }

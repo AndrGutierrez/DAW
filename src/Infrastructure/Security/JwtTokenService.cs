@@ -31,7 +31,8 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
         Guid userId,
         string username,
         IEnumerable<string> roles,
-        bool isSuperuser)
+        bool isSuperuser,
+        string? email = null)
     {
         var expiresAt = DateTime.UtcNow.AddMinutes(_options.AccessTokenMinutes);
 
@@ -42,6 +43,11 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
             new(ClaimTypes.NameIdentifier, userId.ToString()),
             new(ClaimTypes.Name, username)
         };
+
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, email));
+        }
 
         if (isSuperuser)
         {

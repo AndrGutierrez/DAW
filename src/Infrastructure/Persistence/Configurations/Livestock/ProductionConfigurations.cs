@@ -4,82 +4,67 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.Configurations.Livestock;
 
-public sealed class MilkProductionRecordConfiguration : IEntityTypeConfiguration<MilkProductionRecord>
+public sealed class AnimalProductionConfiguration : IEntityTypeConfiguration<AnimalProduction>
 {
-    public void Configure(EntityTypeBuilder<MilkProductionRecord> builder)
+    public void Configure(EntityTypeBuilder<AnimalProduction> b)
     {
-        builder.ToTable("MilkProductionRecords");
-        builder.HasKey(record => record.Id);
-
-        builder.Property(record => record.Shift).HasConversion<int>().IsRequired();
-        builder.Property(record => record.Liters).HasPrecision(8, 2).IsRequired();
-        builder.Property(record => record.FatPercent).HasPrecision(5, 2);
-        builder.Property(record => record.ProteinPercent).HasPrecision(5, 2);
-
-        builder.HasIndex(record => new { record.AnimalId, record.Date, record.Shift });
-
-        builder.HasOne(record => record.Animal)
-            .WithMany()
-            .HasForeignKey(record => record.AnimalId)
-            .OnDelete(DeleteBehavior.Cascade);
+        b.ToTable("AnimalProduction", t => t.HasCheckConstraint("CK_AnimalProduction_Quantity", "\"Quantity\" > 0"));
+        b.HasKey(x => x.Id);
+        b.Property(x => x.Quantity).HasPrecision(14, 4).IsRequired();
+        b.Property(x => x.Notes).HasMaxLength(1000);
+        b.Property(x => x.ProductType).HasConversion<int>();
+        b.Property(x => x.Method).HasConversion<int>();
+        b.Property(x => x.Unit).HasConversion<int>();
+        b.HasIndex(x => new { x.OperationId, x.ProductType }).IsUnique();
+        b.HasIndex(x => new { x.AnimalId, x.Date });
+        b.HasOne(x => x.Animal).WithMany(x => x.Production).HasForeignKey(x => x.AnimalId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne(x => x.Farm).WithMany().HasForeignKey(x => x.FarmId).OnDelete(DeleteBehavior.Restrict);
     }
 }
 
-public sealed class EggProductionRecordConfiguration : IEntityTypeConfiguration<EggProductionRecord>
+public sealed class InventoryCategoryConfiguration : IEntityTypeConfiguration<InventoryCategory>
 {
-    public void Configure(EntityTypeBuilder<EggProductionRecord> builder)
+    public void Configure(EntityTypeBuilder<InventoryCategory> b)
     {
-        builder.ToTable("EggProductionRecords");
-        builder.HasKey(record => record.Id);
-
-        builder.Property(record => record.AverageWeightGrams).HasPrecision(8, 2);
-
-        builder.HasIndex(record => new { record.LotId, record.Date });
-
-        builder.HasOne(record => record.Lot)
-            .WithMany()
-            .HasForeignKey(record => record.LotId)
-            .OnDelete(DeleteBehavior.Cascade);
+        b.ToTable("InventoryCategories");
+        b.HasKey(x => x.Id);
+        b.Property(x => x.Name).IsRequired().HasMaxLength(100);
+        b.Property(x => x.Description).HasMaxLength(500);
+        b.Property(x => x.IsActive).HasDefaultValue(true);
+        b.HasIndex(x => x.Name).IsUnique();
+        // Fixed identifiers and timestamps keep model-managed data deterministic.
+        b.HasData(
+            new
+            {
+                Id = Guid.Parse("a1100000-0000-4000-8000-000000000001"),
+                Name = "Alimentación animal",
+                Description = "Insumos de la operación ganadera",
+                IsActive = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            },
+            new
+            {
+                Id = Guid.Parse("a1100000-0000-4000-8000-000000000002"),
+                Name = "Sanidad animal",
+                Description = "Insumos de la operación ganadera",
+                IsActive = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
     }
 }
 
-public sealed class WoolProductionRecordConfiguration : IEntityTypeConfiguration<WoolProductionRecord>
+public sealed class FarmInventoryConfiguration : IEntityTypeConfiguration<FarmInventory>
 {
-    public void Configure(EntityTypeBuilder<WoolProductionRecord> builder)
+    public void Configure(EntityTypeBuilder<FarmInventory> b)
     {
-        builder.ToTable("WoolProductionRecords");
-        builder.HasKey(record => record.Id);
-
-        builder.Property(record => record.FleeceWeightKg).HasPrecision(8, 2).IsRequired();
-        builder.Property(record => record.FiberDiameterMicrons).HasPrecision(8, 2);
-        builder.Property(record => record.Grade).HasMaxLength(50);
-
-        builder.HasIndex(record => new { record.AnimalId, record.Date });
-
-        builder.HasOne(record => record.Animal)
-            .WithMany()
-            .HasForeignKey(record => record.AnimalId)
-            .OnDelete(DeleteBehavior.Cascade);
-    }
-}
-
-public sealed class SlaughterRecordConfiguration : IEntityTypeConfiguration<SlaughterRecord>
-{
-    public void Configure(EntityTypeBuilder<SlaughterRecord> builder)
-    {
-        builder.ToTable("SlaughterRecords");
-        builder.HasKey(record => record.Id);
-
-        builder.Property(record => record.LiveWeightKg).HasPrecision(8, 2);
-        builder.Property(record => record.CarcassWeightKg).HasPrecision(8, 2);
-        builder.Property(record => record.ColdCarcassWeightKg).HasPrecision(8, 2);
-        builder.Property(record => record.Grade).HasMaxLength(50);
-
-        builder.HasIndex(record => new { record.AnimalId, record.Date });
-
-        builder.HasOne(record => record.Animal)
-            .WithMany()
-            .HasForeignKey(record => record.AnimalId)
-            .OnDelete(DeleteBehavior.Cascade);
+        b.ToTable("FarmInventory", t => t.HasCheckConstraint("CK_FarmInventory_Stock", "\"Stock\" >= 0 AND \"MinStock\" >= 0 AND \"MaxStock\" > \"MinStock\""));
+        b.HasKey(x => x.Id);
+        b.HasIndex(x => new { x.FarmId, x.ProductId }).IsUnique();
+        b.Property(x => x.Stock).HasPrecision(14, 4).HasDefaultValue(0m);
+        b.Property(x => x.MinStock).HasPrecision(14, 4).HasDefaultValue(5m).HasSentinel(-1m);
+        b.Property(x => x.MaxStock).HasPrecision(14, 4).HasDefaultValue(100m);
+        b.Property(x => x.Location).IsRequired().HasMaxLength(150).HasDefaultValue("Main warehouse");
+        b.HasOne(x => x.Farm).WithMany().HasForeignKey(x => x.FarmId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne(x => x.Product).WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
     }
 }

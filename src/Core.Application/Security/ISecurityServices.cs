@@ -29,7 +29,8 @@ public interface ITokenService
         Guid userId,
         string username,
         IEnumerable<string> roles,
-        bool isSuperuser);
+        bool isSuperuser,
+        string? email = null);
 
     string CreateRefreshToken();
 }

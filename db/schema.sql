@@ -2,14 +2,14 @@
 -- PostgreSQL database dump
 --
 
+\restrict qmqbX7JrrSepUQ9R2I3rgGvz4FuEFpRNrvhdZk9e3OJDgteC3gmhHRIINubWZWa
 
--- Dumped from database version 17.11
--- Dumped by pg_dump version 17.11
+-- Dumped from database version 15.19
+-- Dumped by pg_dump version 15.19
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -17,20 +17,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: public; Type: SCHEMA; Schema: -; Owner: -
---
-
--- *not* creating schema, since initdb creates it
-
-
---
--- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON SCHEMA public IS '';
-
 
 SET default_tablespace = '';
 
@@ -104,6 +90,26 @@ CREATE TABLE public."AnimalPhotos" (
     "UploadedByUserId" uuid,
     "UploadedAt" timestamp with time zone NOT NULL,
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: AnimalProduction; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."AnimalProduction" (
+    "Id" uuid NOT NULL,
+    "FarmId" uuid NOT NULL,
+    "AnimalId" uuid NOT NULL,
+    "OperationId" uuid NOT NULL,
+    "Date" date NOT NULL,
+    "ProductType" integer NOT NULL,
+    "Method" integer NOT NULL,
+    "Quantity" numeric(14,4) NOT NULL,
+    "Unit" integer NOT NULL,
+    "Notes" character varying(1000),
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT "CK_AnimalProduction_Quantity" CHECK (("Quantity" > (0)::numeric))
 );
 
 
@@ -206,18 +212,19 @@ CREATE TABLE public."Diseases" (
 
 
 --
--- Name: EggProductionRecords; Type: TABLE; Schema: public; Owner: -
+-- Name: FarmInventory; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public."EggProductionRecords" (
+CREATE TABLE public."FarmInventory" (
     "Id" uuid NOT NULL,
     "FarmId" uuid NOT NULL,
-    "LotId" uuid NOT NULL,
-    "Date" date NOT NULL,
-    "TotalEggs" integer NOT NULL,
-    "BrokenEggs" integer NOT NULL,
-    "AverageWeightGrams" numeric(8,2),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "ProductId" uuid NOT NULL,
+    "Stock" numeric(14,4) DEFAULT 0.0 NOT NULL,
+    "MinStock" numeric(14,4) DEFAULT 5.0 NOT NULL,
+    "MaxStock" numeric(14,4) DEFAULT 100.0 NOT NULL,
+    "Location" character varying(150) DEFAULT 'Main warehouse'::character varying NOT NULL,
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT "CK_FarmInventory_Stock" CHECK ((("Stock" >= (0)::numeric) AND ("MinStock" >= (0)::numeric) AND ("MaxStock" > "MinStock")))
 );
 
 
@@ -248,7 +255,7 @@ CREATE TABLE public."FeedingRecords" (
     "RationId" uuid NOT NULL,
     "Date" date NOT NULL,
     "QuantityKg" numeric(10,3) NOT NULL,
-    "Cost" numeric(12,2),
+    "Cost" numeric(18,2),
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 
@@ -264,7 +271,7 @@ CREATE TABLE public."HealthEvents" (
     "Date" date NOT NULL,
     "UserId" uuid,
     "Notes" character varying(1000),
-    "Cost" numeric(12,2),
+    "Cost" numeric(18,2),
     "EventType" character varying(13) NOT NULL,
     "ProductId" uuid,
     "Dose" numeric(10,3),
@@ -310,6 +317,19 @@ CREATE TABLE public."HealthStatusChanges" (
 
 
 --
+-- Name: InventoryCategories; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."InventoryCategories" (
+    "Id" uuid NOT NULL,
+    "Name" character varying(100) NOT NULL,
+    "Description" character varying(500),
+    "IsActive" boolean DEFAULT true NOT NULL,
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: Lots; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -321,24 +341,6 @@ CREATE TABLE public."Lots" (
     "Name" character varying(150) NOT NULL,
     "Purpose" integer NOT NULL,
     "IsActive" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
-);
-
-
---
--- Name: MilkProductionRecords; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."MilkProductionRecords" (
-    "Id" uuid NOT NULL,
-    "FarmId" uuid NOT NULL,
-    "AnimalId" uuid NOT NULL,
-    "Date" date NOT NULL,
-    "Shift" integer NOT NULL,
-    "Liters" numeric(8,2) NOT NULL,
-    "FatPercent" numeric(5,2),
-    "ProteinPercent" numeric(5,2),
-    "SomaticCellCount" integer,
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 
@@ -382,7 +384,7 @@ CREATE TABLE public."ProductBatches" (
     "BatchNumber" character varying(50),
     "ExpirationDate" date,
     "InitialQuantity" numeric(12,3) NOT NULL,
-    "UnitCost" numeric(12,4),
+    "UnitCost" numeric(18,2),
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 
@@ -394,12 +396,17 @@ CREATE TABLE public."ProductBatches" (
 CREATE TABLE public."Products" (
     "Id" uuid NOT NULL,
     "Name" character varying(150) NOT NULL,
-    "Category" integer NOT NULL,
-    "Unit" integer NOT NULL,
+    "Unit" integer DEFAULT 2 NOT NULL,
     "WithdrawalDays" integer,
     "RequiresPrescription" boolean NOT NULL,
     "IsActive" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "Brand" character varying(100) DEFAULT 'Generic'::character varying NOT NULL,
+    "CategoryId" uuid DEFAULT '00000000-0000-0000-0000-000000000000'::uuid NOT NULL,
+    "CostPrice" numeric(18,2) DEFAULT 0.0 NOT NULL,
+    "Price" numeric(18,2) DEFAULT 0.0 NOT NULL,
+    "SKU" character varying(50) DEFAULT ''::character varying NOT NULL,
+    CONSTRAINT "CK_Products_Prices" CHECK (((NOT "IsActive") OR (("Price" > (0)::numeric) AND ("CostPrice" > (0)::numeric))))
 );
 
 
@@ -546,23 +553,6 @@ CREATE TABLE public."SemenBatches" (
 
 
 --
--- Name: SlaughterRecords; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public."SlaughterRecords" (
-    "Id" uuid NOT NULL,
-    "FarmId" uuid NOT NULL,
-    "AnimalId" uuid NOT NULL,
-    "Date" date NOT NULL,
-    "LiveWeightKg" numeric(8,2),
-    "CarcassWeightKg" numeric(8,2),
-    "ColdCarcassWeightKg" numeric(8,2),
-    "Grade" character varying(50),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
-);
-
-
---
 -- Name: Species; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -643,7 +633,7 @@ CREATE TABLE public."Transactions" (
     "FarmId" uuid NOT NULL,
     "Type" integer NOT NULL,
     "Category" integer NOT NULL,
-    "Amount" numeric(14,2) NOT NULL,
+    "Amount" numeric(18,2) NOT NULL,
     "Currency" character varying(3) NOT NULL,
     "Date" date NOT NULL,
     "Description" character varying(500),
@@ -785,18 +775,12 @@ CREATE TABLE public."WeightRecords" (
 
 
 --
--- Name: WoolProductionRecords; Type: TABLE; Schema: public; Owner: -
+-- Name: __EFMigrationsHistory; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public."WoolProductionRecords" (
-    "Id" uuid NOT NULL,
-    "FarmId" uuid NOT NULL,
-    "AnimalId" uuid NOT NULL,
-    "Date" date NOT NULL,
-    "FleeceWeightKg" numeric(8,2) NOT NULL,
-    "FiberDiameterMicrons" numeric(8,2),
-    "Grade" character varying(50),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+CREATE TABLE public."__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL
 );
 
 
@@ -830,6 +814,14 @@ ALTER TABLE ONLY public."AnimalMovements"
 
 ALTER TABLE ONLY public."AnimalPhotos"
     ADD CONSTRAINT "PK_AnimalPhotos" PRIMARY KEY ("Id");
+
+
+--
+-- Name: AnimalProduction PK_AnimalProduction; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."AnimalProduction"
+    ADD CONSTRAINT "PK_AnimalProduction" PRIMARY KEY ("Id");
 
 
 --
@@ -873,11 +865,11 @@ ALTER TABLE ONLY public."Diseases"
 
 
 --
--- Name: EggProductionRecords PK_EggProductionRecords; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: FarmInventory PK_FarmInventory; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."EggProductionRecords"
-    ADD CONSTRAINT "PK_EggProductionRecords" PRIMARY KEY ("Id");
+ALTER TABLE ONLY public."FarmInventory"
+    ADD CONSTRAINT "PK_FarmInventory" PRIMARY KEY ("Id");
 
 
 --
@@ -913,19 +905,19 @@ ALTER TABLE ONLY public."HealthStatusChanges"
 
 
 --
+-- Name: InventoryCategories PK_InventoryCategories; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."InventoryCategories"
+    ADD CONSTRAINT "PK_InventoryCategories" PRIMARY KEY ("Id");
+
+
+--
 -- Name: Lots PK_Lots; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."Lots"
     ADD CONSTRAINT "PK_Lots" PRIMARY KEY ("Id");
-
-
---
--- Name: MilkProductionRecords PK_MilkProductionRecords; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."MilkProductionRecords"
-    ADD CONSTRAINT "PK_MilkProductionRecords" PRIMARY KEY ("Id");
 
 
 --
@@ -1022,14 +1014,6 @@ ALTER TABLE ONLY public."Roles"
 
 ALTER TABLE ONLY public."SemenBatches"
     ADD CONSTRAINT "PK_SemenBatches" PRIMARY KEY ("Id");
-
-
---
--- Name: SlaughterRecords PK_SlaughterRecords; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."SlaughterRecords"
-    ADD CONSTRAINT "PK_SlaughterRecords" PRIMARY KEY ("Id");
 
 
 --
@@ -1137,18 +1121,18 @@ ALTER TABLE ONLY public."WeightRecords"
 
 
 --
--- Name: WoolProductionRecords PK_WoolProductionRecords; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: __EFMigrationsHistory PK___EFMigrationsHistory; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."WoolProductionRecords"
-    ADD CONSTRAINT "PK_WoolProductionRecords" PRIMARY KEY ("Id");
+ALTER TABLE ONLY public."__EFMigrationsHistory"
+    ADD CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId");
 
 
 --
 -- Name: EmailIndex; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX "EmailIndex" ON public."Users" USING btree ("NormalizedEmail");
+CREATE UNIQUE INDEX "EmailIndex" ON public."Users" USING btree ("NormalizedEmail");
 
 
 --
@@ -1205,6 +1189,27 @@ CREATE INDEX "IX_AnimalMovements_ToPaddockId" ON public."AnimalMovements" USING 
 --
 
 CREATE INDEX "IX_AnimalPhotos_AnimalId_UploadedAt" ON public."AnimalPhotos" USING btree ("AnimalId", "UploadedAt");
+
+
+--
+-- Name: IX_AnimalProduction_AnimalId_Date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AnimalProduction_AnimalId_Date" ON public."AnimalProduction" USING btree ("AnimalId", "Date");
+
+
+--
+-- Name: IX_AnimalProduction_FarmId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AnimalProduction_FarmId" ON public."AnimalProduction" USING btree ("FarmId");
+
+
+--
+-- Name: IX_AnimalProduction_OperationId_ProductType; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_AnimalProduction_OperationId_ProductType" ON public."AnimalProduction" USING btree ("OperationId", "ProductType");
 
 
 --
@@ -1299,10 +1304,17 @@ CREATE INDEX "IX_Diseases_SpeciesId" ON public."Diseases" USING btree ("SpeciesI
 
 
 --
--- Name: IX_EggProductionRecords_LotId_Date; Type: INDEX; Schema: public; Owner: -
+-- Name: IX_FarmInventory_FarmId_ProductId; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX "IX_EggProductionRecords_LotId_Date" ON public."EggProductionRecords" USING btree ("LotId", "Date");
+CREATE UNIQUE INDEX "IX_FarmInventory_FarmId_ProductId" ON public."FarmInventory" USING btree ("FarmId", "ProductId");
+
+
+--
+-- Name: IX_FarmInventory_ProductId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_FarmInventory_ProductId" ON public."FarmInventory" USING btree ("ProductId");
 
 
 --
@@ -1390,6 +1402,13 @@ CREATE INDEX "IX_HealthStatusChanges_AnimalId_ChangedAt" ON public."HealthStatus
 
 
 --
+-- Name: IX_InventoryCategories_Name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_InventoryCategories_Name" ON public."InventoryCategories" USING btree ("Name");
+
+
+--
 -- Name: IX_Lots_FarmId_Name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1408,13 +1427,6 @@ CREATE INDEX "IX_Lots_PaddockId" ON public."Lots" USING btree ("PaddockId");
 --
 
 CREATE INDEX "IX_Lots_SpeciesId" ON public."Lots" USING btree ("SpeciesId");
-
-
---
--- Name: IX_MilkProductionRecords_AnimalId_Date_Shift; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX "IX_MilkProductionRecords_AnimalId_Date_Shift" ON public."MilkProductionRecords" USING btree ("AnimalId", "Date", "Shift");
 
 
 --
@@ -1453,10 +1465,24 @@ CREATE INDEX "IX_ProductBatches_SupplierId" ON public."ProductBatches" USING btr
 
 
 --
+-- Name: IX_Products_CategoryId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Products_CategoryId" ON public."Products" USING btree ("CategoryId");
+
+
+--
 -- Name: IX_Products_Name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX "IX_Products_Name" ON public."Products" USING btree ("Name");
+
+
+--
+-- Name: IX_Products_SKU; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_Products_SKU" ON public."Products" USING btree ("SKU");
 
 
 --
@@ -1576,13 +1602,6 @@ CREATE INDEX "IX_SemenBatches_FarmId" ON public."SemenBatches" USING btree ("Far
 --
 
 CREATE INDEX "IX_SemenBatches_SupplierId" ON public."SemenBatches" USING btree ("SupplierId");
-
-
---
--- Name: IX_SlaughterRecords_AnimalId_Date; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX "IX_SlaughterRecords_AnimalId_Date" ON public."SlaughterRecords" USING btree ("AnimalId", "Date");
 
 
 --
@@ -1719,13 +1738,6 @@ CREATE INDEX "IX_WeightRecords_AnimalId_Date" ON public."WeightRecords" USING bt
 
 
 --
--- Name: IX_WoolProductionRecords_AnimalId_Date; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX "IX_WoolProductionRecords_AnimalId_Date" ON public."WoolProductionRecords" USING btree ("AnimalId", "Date");
-
-
---
 -- Name: RoleNameIndex; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1788,6 +1800,22 @@ ALTER TABLE ONLY public."AnimalPhotos"
 
 
 --
+-- Name: AnimalProduction FK_AnimalProduction_Animals_AnimalId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."AnimalProduction"
+    ADD CONSTRAINT "FK_AnimalProduction_Animals_AnimalId" FOREIGN KEY ("AnimalId") REFERENCES public."Animals"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: AnimalProduction FK_AnimalProduction_Farms_FarmId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."AnimalProduction"
+    ADD CONSTRAINT "FK_AnimalProduction_Farms_FarmId" FOREIGN KEY ("FarmId") REFERENCES public."Farms"("Id") ON DELETE RESTRICT;
+
+
+--
 -- Name: Animals FK_Animals_Animals_DamId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1816,7 +1844,7 @@ ALTER TABLE ONLY public."Animals"
 --
 
 ALTER TABLE ONLY public."Animals"
-    ADD CONSTRAINT "FK_Animals_Farms_FarmId" FOREIGN KEY ("FarmId") REFERENCES public."Farms"("Id") ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_Animals_Farms_FarmId" FOREIGN KEY ("FarmId") REFERENCES public."Farms"("Id") ON DELETE RESTRICT;
 
 
 --
@@ -1860,11 +1888,19 @@ ALTER TABLE ONLY public."Diseases"
 
 
 --
--- Name: EggProductionRecords FK_EggProductionRecords_Lots_LotId; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: FarmInventory FK_FarmInventory_Farms_FarmId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."EggProductionRecords"
-    ADD CONSTRAINT "FK_EggProductionRecords_Lots_LotId" FOREIGN KEY ("LotId") REFERENCES public."Lots"("Id") ON DELETE CASCADE;
+ALTER TABLE ONLY public."FarmInventory"
+    ADD CONSTRAINT "FK_FarmInventory_Farms_FarmId" FOREIGN KEY ("FarmId") REFERENCES public."Farms"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: FarmInventory FK_FarmInventory_Products_ProductId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."FarmInventory"
+    ADD CONSTRAINT "FK_FarmInventory_Products_ProductId" FOREIGN KEY ("ProductId") REFERENCES public."Products"("Id") ON DELETE RESTRICT;
 
 
 --
@@ -1960,7 +1996,7 @@ ALTER TABLE ONLY public."HealthStatusChanges"
 --
 
 ALTER TABLE ONLY public."Lots"
-    ADD CONSTRAINT "FK_Lots_Farms_FarmId" FOREIGN KEY ("FarmId") REFERENCES public."Farms"("Id") ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_Lots_Farms_FarmId" FOREIGN KEY ("FarmId") REFERENCES public."Farms"("Id") ON DELETE RESTRICT;
 
 
 --
@@ -1980,19 +2016,11 @@ ALTER TABLE ONLY public."Lots"
 
 
 --
--- Name: MilkProductionRecords FK_MilkProductionRecords_Animals_AnimalId; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."MilkProductionRecords"
-    ADD CONSTRAINT "FK_MilkProductionRecords_Animals_AnimalId" FOREIGN KEY ("AnimalId") REFERENCES public."Animals"("Id") ON DELETE CASCADE;
-
-
---
 -- Name: Paddocks FK_Paddocks_Farms_FarmId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."Paddocks"
-    ADD CONSTRAINT "FK_Paddocks_Farms_FarmId" FOREIGN KEY ("FarmId") REFERENCES public."Farms"("Id") ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_Paddocks_Farms_FarmId" FOREIGN KEY ("FarmId") REFERENCES public."Farms"("Id") ON DELETE RESTRICT;
 
 
 --
@@ -2017,6 +2045,14 @@ ALTER TABLE ONLY public."ProductBatches"
 
 ALTER TABLE ONLY public."ProductBatches"
     ADD CONSTRAINT "FK_ProductBatches_Suppliers_SupplierId" FOREIGN KEY ("SupplierId") REFERENCES public."Suppliers"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Products FK_Products_InventoryCategories_CategoryId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Products"
+    ADD CONSTRAINT "FK_Products_InventoryCategories_CategoryId" FOREIGN KEY ("CategoryId") REFERENCES public."InventoryCategories"("Id") ON DELETE RESTRICT;
 
 
 --
@@ -2156,14 +2192,6 @@ ALTER TABLE ONLY public."SemenBatches"
 
 
 --
--- Name: SlaughterRecords FK_SlaughterRecords_Animals_AnimalId; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."SlaughterRecords"
-    ADD CONSTRAINT "FK_SlaughterRecords_Animals_AnimalId" FOREIGN KEY ("AnimalId") REFERENCES public."Animals"("Id") ON DELETE CASCADE;
-
-
---
 -- Name: StockMovements FK_StockMovements_ProductBatches_ProductBatchId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2296,19 +2324,12 @@ ALTER TABLE ONLY public."UserTokens"
 --
 
 ALTER TABLE ONLY public."WeightRecords"
-    ADD CONSTRAINT "FK_WeightRecords_Animals_AnimalId" FOREIGN KEY ("AnimalId") REFERENCES public."Animals"("Id") ON DELETE CASCADE;
-
-
---
--- Name: WoolProductionRecords FK_WoolProductionRecords_Animals_AnimalId; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public."WoolProductionRecords"
-    ADD CONSTRAINT "FK_WoolProductionRecords_Animals_AnimalId" FOREIGN KEY ("AnimalId") REFERENCES public."Animals"("Id") ON DELETE CASCADE;
+    ADD CONSTRAINT "FK_WeightRecords_Animals_AnimalId" FOREIGN KEY ("AnimalId") REFERENCES public."Animals"("Id") ON DELETE RESTRICT;
 
 
 --
 -- PostgreSQL database dump complete
 --
 
+\unrestrict qmqbX7JrrSepUQ9R2I3rgGvz4FuEFpRNrvhdZk9e3OJDgteC3gmhHRIINubWZWa
 

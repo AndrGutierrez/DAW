@@ -12,4 +12,8 @@ public interface IFileStorage
         CancellationToken cancellationToken = default);
 
     Task DeleteAsync(string relativeUrl, CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(string folder, string storedFileName, CancellationToken cancellationToken = default);
+
+    Task<Stream> OpenReadAsync(string folder, string storedFileName, CancellationToken cancellationToken = default);
 }

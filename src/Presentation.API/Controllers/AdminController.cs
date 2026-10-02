@@ -1,4 +1,5 @@
 using Core.Application.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.API.Authorization;
 
@@ -19,7 +20,8 @@ public sealed class AdminController(IAccessAdministration access) : ControllerBa
         Ok(await access.ListRolesAsync(cancellationToken));
 
     [HttpPost("roles/{roleId:guid}/permissions/{permissionId:guid}")]
-    [HasPermission("roles.list")]
+    [Authorize(Roles = PermissionCatalog.AdminRoles)]
+    [HasPermission("roles.manage")]
     public async Task<ActionResult<RoleResult>> GrantPermission(
         Guid roleId,
         Guid permissionId,
@@ -27,7 +29,8 @@ public sealed class AdminController(IAccessAdministration access) : ControllerBa
         Ok(await access.GrantPermissionAsync(roleId, permissionId, cancellationToken));
 
     [HttpDelete("roles/{roleId:guid}/permissions/{permissionId:guid}")]
-    [HasPermission("roles.list")]
+    [Authorize(Roles = PermissionCatalog.AdminRoles)]
+    [HasPermission("roles.manage")]
     public async Task<ActionResult<RoleResult>> RevokePermission(
         Guid roleId,
         Guid permissionId,

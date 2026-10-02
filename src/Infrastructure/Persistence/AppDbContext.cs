@@ -26,10 +26,9 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<HealthStatusChange> HealthStatusChanges => Set<HealthStatusChange>();
     public DbSet<ReproductiveEvent> ReproductiveEvents => Set<ReproductiveEvent>();
     public DbSet<SemenBatch> SemenBatches => Set<SemenBatch>();
-    public DbSet<MilkProductionRecord> MilkProductionRecords => Set<MilkProductionRecord>();
-    public DbSet<EggProductionRecord> EggProductionRecords => Set<EggProductionRecord>();
-    public DbSet<WoolProductionRecord> WoolProductionRecords => Set<WoolProductionRecord>();
-    public DbSet<SlaughterRecord> SlaughterRecords => Set<SlaughterRecord>();
+    public DbSet<AnimalProduction> AnimalProduction => Set<AnimalProduction>();
+    public DbSet<InventoryCategory> InventoryCategories => Set<InventoryCategory>();
+    public DbSet<FarmInventory> FarmInventory => Set<FarmInventory>();
     public DbSet<Ration> Rations => Set<Ration>();
     public DbSet<RationIngredient> RationIngredients => Set<RationIngredient>();
     public DbSet<FeedingRecord> FeedingRecords => Set<FeedingRecord>();

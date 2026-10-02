@@ -16,6 +16,7 @@ public sealed class ApplicationUserConfiguration : IEntityTypeConfiguration<Appl
         builder.Property(user => user.IsStaff).IsRequired();
         builder.Property(user => user.IsActive).IsRequired();
         builder.Property(user => user.CreatedAt).IsRequired();
+        builder.HasIndex(user => user.NormalizedEmail).IsUnique().HasDatabaseName("EmailIndex");
     }
 }
 
