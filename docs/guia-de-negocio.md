@@ -90,6 +90,8 @@ El estado reproductivo de la hembra (vacía, preñada, lactando, seca) se deduce
 
 ## 8. Producción
 
+Un animal produce uno o varios productos a lo largo de su vida: ordeño, esquila, recolección o sacrificio. Cada resultado tiene fecha, cantidad y unidad. Los productos de una misma operación comparten su identificador; por ejemplo, carne y piel de un sacrificio. La versión implementada registra estos resultados en una única tabla y mantiene el animal como origen. El sacrificio es irreversible y bloquea producción posterior. Las mediciones especializadas de calidad de la tabla siguiente pertenecen a la visión completa; actualmente sólo se conservan como metadatos cuando se migran registros anteriores.
+
 | Producción | Detalle |
 | --- | --- |
 | Leche | Litros por ordeñe, con grasa, proteína y células somáticas |
@@ -120,14 +122,14 @@ Registra **compras, ventas y gastos** vinculados a animales, lotes o insumos. Pe
 
 ## 14. Usuarios, roles y permisos
 
-Modelo basado en **Laravel Permission** (spatie), dividido en **roles**, **permisos** y sus asignaciones:
+Modelo de permisos inspirado en **Laravel Permission** (spatie), implementado aquí con ASP.NET Core Identity y tablas propias de asignación de permisos:
 
 - Un **rol** agrupa usuarios y permisos; un usuario puede tener varios roles.
-- Un **permiso** se nombra al estilo Django (`tabla.accion`, por ejemplo `animals.list` y `animals.get`). Por ahora solo se usan las acciones de lectura `list` y `get`. Cada permiso tiene un **guard** (`web` por defecto).
+- Un **permiso** se nombra como `recurso.accion`: `list`, `get`, `create`, `update` y `delete`; por ejemplo, `animals.create`. `roles.manage` protege la administración de permisos. Cada permiso tiene un **guard** (`web` por defecto).
 - Un permiso se otorga a un **rol** (todos sus miembros lo heredan) o **directamente a un usuario**.
-- El **superusuario** puede hacer todo sin restricciones.
+- El **superusuario** supera las comprobaciones de permisos y fincas. Las restricciones de integridad y negocio, como impedir un segundo sacrificio, se mantienen.
 
-Roles sugeridos: Administrador, Veterinario, Capataz, Operario, Solo lectura.
+Roles sembrados: Admin, Employee, Administrador, Veterinario, Capataz, Operario y SoloLectura. Todos los DELETE requieren Admin/Administrador; Employee registra operaciones autorizadas pero no elimina ni mantiene categorías; SoloLectura consulta datos sin modificar fotos o permisos.
 
 ## 15. Multi-finca
 

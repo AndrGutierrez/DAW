@@ -1,5 +1,13 @@
 # Registro de decisiones
 
+## Actualización: producción unificada y gestión persistente
+
+**Decisión:** una sola tabla `AnimalProduction` para los productos obtenidos de animales; `OperationId` identifica una operación con varios resultados. Los insumos se catalogan en `Products` y sus existencias por finca en `FarmInventory`. El CRUD persistente reemplaza el catálogo en memoria y conserva las rutas recuperadas con contratos explícitos.
+
+**Por qué:** el animal es el origen de la producción, mientras que los insumos se compran y almacenan. Las existencias de fincas diferentes no pueden sumarse como si pertenecieran a un único almacén.
+
+**Impacto:** tablas antiguas de leche/lana/huevos/sacrificio retiradas mediante migración, API unificada y reglas de fecha, unidad y sacrificio. Los permisos ahora incluyen acciones de escritura; las entradas siguientes que describen el inicio con `list/get` representan decisiones anteriores. Consulte [decisiones actuales](engineering-decisions.md) y [modelo implementado](modelo-produccion-y-crud.md).
+
 Entradas breves sobre decisiones de **negocio** y de modelo de datos. Formato: **Decisión · Por qué · Impacto**.
 
 Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negocio.md) y agregar aquí el motivo.
@@ -18,7 +26,7 @@ Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negoc
 
 **Por qué:** es un modelo de permisos probado y flexible, que permite otorgar permisos a roles y también directo a un usuario.
 
-**Impacto:** el acceso efectivo de un usuario es la unión de sus permisos directos y los de sus roles; el superusuario no tiene restricciones.
+**Impacto:** el acceso efectivo de un usuario es la unión de sus permisos directos y los de sus roles; el superusuario supera las comprobaciones de permisos, pero conserva las restricciones de negocio e integridad.
 
 ## Multi-finca con datos separados
 
@@ -34,15 +42,15 @@ Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negoc
 
 **Por qué:** evita datos desactualizados o contradictorios.
 
-**Impacto:** la ganancia de peso se calcula entre pesajes y se usa como indicador de salud.
+**Impacto actual:** las consultas muestran edad y último peso sin duplicar esos valores en el animal. El cálculo de ganancia entre pesajes como indicador sanitario corresponde a una ampliación posterior.
 
 ## Historial de salud, no solo estado actual
 
-**Decisión:** guardar cada evento de salud (vacuna, tratamiento, enfermedad) en lugar de un único campo de estado.
+**Decisión actual:** conservar el estado resumido en `Animal.HealthStatus` y registrar cada cambio en `HealthStatusChange`, con estado anterior, nuevo, motivo y usuario. El modelo de eventos clínicos permite una ampliación futura de vacunas, tratamientos y enfermedades.
 
 **Por qué:** la operación necesita saber qué se aplicó, cuándo y con qué retiro.
 
-**Impacto:** el estado actual se deduce del historial y se habilitan alertas por próxima dosis.
+**Impacto actual:** el estado se modifica explícitamente mediante los casos de uso y el historial permite seguir esos cambios. No se deduce automáticamente de eventos clínicos ni genera alertas de dosis en esta versión.
 
 ## Trazabilidad completa del animal
 
@@ -74,7 +82,7 @@ Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negoc
 
 **Por qué:** interesa saber qué pasó, cuándo y con qué resultado, no solo la situación actual.
 
-**Impacto:** el estado actual se deduce del historial y se habilitan alertas por próxima dosis o preñez.
+**Impacto previsto:** los discriminadores permiten representar eventos clínicos y reproductivos diferentes. La deducción automática de estados y las alertas por dosis/preñez todavía requieren casos de uso propios.
 
 ## Multi-finca con `Farm` como raíz
 
@@ -90,7 +98,7 @@ Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negoc
 
 **Por qué:** ante varias personas operando, hace falta rastrear cambios y su autor.
 
-**Impacto:** cada modificación relevante queda auditada y consultable por farm.
+**Impacto actual:** las escrituras realizadas mediante `ManagementRepository` generan auditoría en la misma transacción. Las operaciones de Identity, fotografías y SQL externo no pasan por este repositorio y no quedan cubiertas automáticamente; tampoco existe aún una interfaz completa para consultar auditoría.
 
 ## Reinicio de migraciones al reemplazar el modelo Phase 1
 
@@ -106,9 +114,9 @@ Al cambiar una regla del sistema, actualizar la [guía de negocio](guia-de-negoc
 
 **Por qué:** un animal suele tener varias fotos a lo largo del tiempo y conviene saber cuándo se subió cada una; las imágenes no deben guardarse en la base de datos.
 
-**Impacto:** `POST /api/animals/{id}/photo` agrega una foto y `DELETE /api/animals/{id}/photos/{photoId}` elimina una concreta; los archivos se sirven en `/uploads`. La lista expone `coverPhotoUrl` y `photoCount`, y el detalle la colección `photos`.
+**Impacto actual:** `POST /api/animals/{id}/photo` agrega una foto y `DELETE /api/animals/{id}/photos/{photoId}` elimina una concreta. El contenido se obtiene por `GET /api/animals/{id}/photos/{photoId}/content`, con JWT, permiso y acceso a la finca; `/uploads` ya no se sirve públicamente. La lista expone `coverPhotoUrl` y `photoCount`, y el detalle la colección `photos`. Las URL requieren autenticación también cuando se consumen desde una interfaz.
 
-## Seguimiento de actualizaciones (`updatedAt`) y animales sin registrar
+## Seguimiento de actualizaciones (`updatedAt`) y animales sin actualización reciente
 
 **Decisión:** agregar `Animal.UpdatedAt` (se refresca con cada cambio del animal, vía `SaveChanges`, y al subir/borrar fotos) y un endpoint `GET /api/animals/stale?days=X` que lista los animales sin actualizar en más de X días.
 
