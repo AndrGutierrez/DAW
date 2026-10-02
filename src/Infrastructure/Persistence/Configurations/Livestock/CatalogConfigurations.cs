@@ -68,7 +68,15 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasKey(product => product.Id);
 
         builder.Property(product => product.Name).IsRequired().HasMaxLength(150);
-        builder.Property(product => product.Category).HasConversion<int>().IsRequired();
+        builder.Property(product => product.SKU).IsRequired().HasMaxLength(50);
+        builder.HasIndex(product => product.SKU).IsUnique();
+        builder.Property(product => product.Price).HasPrecision(18, 2).IsRequired();
+        builder.Property(product => product.CostPrice).HasPrecision(18, 2).IsRequired();
+        builder.Property(product => product.Brand).HasMaxLength(100).HasDefaultValue("Generic").IsRequired();
+        builder.Property(product => product.Unit).HasDefaultValue(MeasurementUnit.Unit).HasSentinel((MeasurementUnit)(-1));
+        builder.HasOne(product => product.InventoryCategory).WithMany(category => category.Products)
+            .HasForeignKey(product => product.CategoryId).OnDelete(DeleteBehavior.Restrict);
+        builder.ToTable("Products", table => table.HasCheckConstraint("CK_Products_Prices", "NOT \"IsActive\" OR (\"Price\" > 0 AND \"CostPrice\" > 0)"));
         builder.Property(product => product.Unit).HasConversion<int>().IsRequired();
         builder.Property(product => product.RequiresPrescription).IsRequired();
         builder.Property(product => product.IsActive).IsRequired();

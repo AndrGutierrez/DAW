@@ -1,8 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Core.Application.Cattle;
-using Infrastructure.Cattle;
+using Core.Application.Management;
+using Core.Application.Security;
+using FluentValidation;
+using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -46,7 +48,7 @@ public sealed class ApiIntegrationTests
     }
 
     [Fact]
-    public async Task HerdsEndpointsRetainRecordsAcrossRequests()
+    public async Task HerdsCompatibilityRouteRequiresAuthentication()
     {
         using var factory = CreateFactory();
         using var client = factory.CreateClient();
@@ -56,15 +58,10 @@ public sealed class ApiIntegrationTests
             name = "North Pasture",
             description = "Breeding herd"
         });
-        Assert.Equal(HttpStatusCode.Created, herdResponse.StatusCode);
-        using var herd = JsonDocument.Parse(await herdResponse.Content.ReadAsStringAsync());
-        var herdId = herd.RootElement.GetProperty("id").GetGuid();
-
-        using var getResponse = await client.GetAsync($"/api/herds/{herdId}");
-        Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
-        using var retrieved = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync());
-        Assert.Equal(herdId, retrieved.RootElement.GetProperty("id").GetGuid());
-        Assert.Equal("North Pasture", retrieved.RootElement.GetProperty("name").GetString());
+        Assert.Equal(HttpStatusCode.Unauthorized, herdResponse.StatusCode);
+        Assert.Equal("application/problem+json", herdResponse.Content.Headers.ContentType?.MediaType);
+        using var problem = JsonDocument.Parse(await herdResponse.Content.ReadAsStringAsync());
+        foreach (var field in new[] { "type", "title", "status", "detail", "instance" }) Assert.True(problem.RootElement.TryGetProperty(field, out _));
     }
 
     [Fact]
@@ -77,13 +74,12 @@ public sealed class ApiIntegrationTests
         var first = firstScope.ServiceProvider;
         var second = secondScope.ServiceProvider;
 
-        Assert.Same(first.GetRequiredService<IAnimalTagNormalizer>(), second.GetRequiredService<IAnimalTagNormalizer>());
-        Assert.NotSame(first.GetRequiredService<IAnimalRegistrationValidator>(), first.GetRequiredService<IAnimalRegistrationValidator>());
-        Assert.Same(first.GetRequiredService<ICattleRepository>(), first.GetRequiredService<ICattleRepository>());
-        Assert.NotSame(first.GetRequiredService<ICattleRepository>(), second.GetRequiredService<ICattleRepository>());
-        Assert.Same(first.GetRequiredService<ICattleCatalogService>(), first.GetRequiredService<ICattleCatalogService>());
-        Assert.NotSame(first.GetRequiredService<ICattleCatalogService>(), second.GetRequiredService<ICattleCatalogService>());
-        Assert.Same(first.GetRequiredService<InMemoryCattleStore>(), second.GetRequiredService<InMemoryCattleStore>());
+        Assert.Same(first.GetRequiredService<ITokenService>(), second.GetRequiredService<ITokenService>());
+        Assert.NotSame(first.GetRequiredService<IValidator<AnimalRequest>>(), first.GetRequiredService<IValidator<AnimalRequest>>());
+        Assert.Same(first.GetRequiredService<AppDbContext>(), first.GetRequiredService<AppDbContext>());
+        Assert.NotSame(first.GetRequiredService<AppDbContext>(), second.GetRequiredService<AppDbContext>());
+        Assert.Same(first.GetRequiredService<ICrudService<AnimalRequest>>(), first.GetRequiredService<ICrudService<AnimalRequest>>());
+        Assert.NotSame(first.GetRequiredService<ICrudService<AnimalRequest>>(), second.GetRequiredService<ICrudService<AnimalRequest>>());
     }
 
     private static WebApplicationFactory<Program> CreateFactory() =>

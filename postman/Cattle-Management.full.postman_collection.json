@@ -1,0 +1,2627 @@
+{
+  "info": {
+    "name": "Gestión ganadera · CRUD, persistencia, producción y seguridad",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Pruebas de Fase 2 y Fase 3 sobre API local con PostgreSQL. Crear/actualizar/eliminar recursos requiere una base de desarrollo. Sacrificio conserva historia. Configurar contraseñas en entorno local; nunca versionar tokens."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{adminToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if(pm.info.requestName===\"Login Admin\"){pm.environment.set(\"runId\",Date.now().toString(36));const now=new Date();pm.environment.set(\"today\",now.toISOString().slice(0,10));now.setUTCDate(now.getUTCDate()-1);pm.environment.set(\"yesterday\",now.toISOString().slice(0,10));[\"crudOperationId\",\"milkOperationId\",\"slaughterOperationId\",\"lateOperationId\"].forEach(k=>pm.environment.set(k,pm.variables.replaceIn(\"{{$guid}}\")));}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "01 · Autenticación y datos de referencia",
+      "item": [
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const a=pm.response.json(); pm.environment.set(\"adminToken\",a.accessToken); pm.environment.set(\"refreshToken\",a.refreshToken); pm.test(\"Rol Admin y JWT\",()=>{pm.expect(a.user.roles).to.include(\"Admin\");pm.expect(a.accessToken.split(\".\")).to.have.lengthOf(3);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Employee",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{employeeUsername}}\",\n  \"password\": \"{{employeePassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const a=pm.response.json(); pm.environment.set(\"employeeToken\",a.accessToken); pm.test(\"Rol Employee\",()=>pm.expect(a.user.roles).to.include(\"Employee\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Fincas persistentes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/farms"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const rows=pm.response.json(); const farm=rows.find(r=>r.data.code===\"DEMO\");pm.expect(farm).to.exist;pm.environment.set(\"demoFarmId\",farm.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Especies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/species"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const b=pm.response.json().find(r=>r.data.code===\"BO\");pm.expect(b).to.exist;pm.environment.set(\"bovineId\",b.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Categorías sembradas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/categories"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.expect(pm.response.json().length).to.be.at.least(2);pm.environment.set(\"seedCategoryId\",pm.response.json()[0].id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cuatro insumos con precios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/products"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const rows=pm.response.json();pm.expect(rows.length).to.be.at.least(4);pm.test(\"Precios y SKU\",()=>rows.filter(r=>r.data.isActive).forEach(r=>{pm.expect(r.data.sku).to.be.a(\"string\");pm.expect(r.data.price).to.be.above(0);pm.expect(r.data.costPrice).to.be.above(0);}));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sin JWT",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 · CRUD de once recursos",
+      "item": [
+        {
+          "name": "Crear farms",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/farms",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Finca {{runId}}\",\n  \"code\": \"F{{runId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"farmsId\",r.id);pm.environment.set(\"farmsData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar farms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/farms"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"farmsId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar farms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/farms/{{farmsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"farmsId\")));const d=JSON.parse(pm.environment.get(\"farmsData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"farmsData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar farms",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/farms/{{farmsId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{farmsData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"farmsData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear species",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/species",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Especie {{runId}}\",\n  \"code\": \"S{{runId}}\",\n  \"purpose\": \"DualPurpose\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"speciesId\",r.id);pm.environment.set(\"speciesData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar species",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/species"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"speciesId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar species",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/species/{{speciesId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"speciesId\")));const d=JSON.parse(pm.environment.get(\"speciesData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"speciesData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar species",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/species/{{speciesId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{speciesData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"speciesData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear breeds",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/breeds",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"speciesId\": \"{{speciesId}}\",\n  \"name\": \"Raza {{runId}}\",\n  \"purpose\": \"DualPurpose\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"breedsId\",r.id);pm.environment.set(\"breedsData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar breeds",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/breeds"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"breedsId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar breeds",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/breeds/{{breedsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"breedsId\")));const d=JSON.parse(pm.environment.get(\"breedsData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"breedsData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar breeds",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/breeds/{{breedsId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{breedsData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"breedsData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear paddocks",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/paddocks",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farmsId}}\",\n  \"name\": \"Potrero {{runId}}\",\n  \"areaHectares\": 5,\n  \"capacity\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"paddocksId\",r.id);pm.environment.set(\"paddocksData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar paddocks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/paddocks"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"paddocksId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar paddocks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/paddocks/{{paddocksId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"paddocksId\")));const d=JSON.parse(pm.environment.get(\"paddocksData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"paddocksData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar paddocks",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/paddocks/{{paddocksId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{paddocksData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"paddocksData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear lots",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/lots",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farmsId}}\",\n  \"speciesId\": \"{{speciesId}}\",\n  \"name\": \"Lote {{runId}}\",\n  \"purpose\": \"DualPurpose\",\n  \"paddockId\": \"{{paddocksId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"lotsId\",r.id);pm.environment.set(\"lotsData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar lots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/lots"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"lotsId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar lots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/lots/{{lotsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"lotsId\")));const d=JSON.parse(pm.environment.get(\"lotsData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"lotsData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar lots",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/lots/{{lotsId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{lotsData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"lotsData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear categories",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/categories",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Categoría {{runId}}\",\n  \"description\": \"Insumos de pruebas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"categoriesId\",r.id);pm.environment.set(\"categoriesData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/categories"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"categoriesId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/categories/{{categoriesId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"categoriesId\")));const d=JSON.parse(pm.environment.get(\"categoriesData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"categoriesData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar categories",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/categories/{{categoriesId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{categoriesData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"categoriesData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear products",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/products",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"PR-{{runId}}\",\n  \"name\": \"Insumo {{runId}}\",\n  \"categoryId\": \"{{categoriesId}}\",\n  \"price\": 25.5,\n  \"costPrice\": 18.25,\n  \"unit\": \"Bag\",\n  \"brand\": \"Prueba\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"productsId\",r.id);pm.environment.set(\"productsData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/products"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"productsId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/products/{{productsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"productsId\")));const d=JSON.parse(pm.environment.get(\"productsData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"productsData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar products",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/products/{{productsId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{productsData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"productsData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear inventory",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/inventory",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farmsId}}\",\n  \"productId\": \"{{productsId}}\",\n  \"stock\": 40,\n  \"minStock\": 5,\n  \"maxStock\": 100,\n  \"location\": \"Almacén de pruebas\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"inventoryId\",r.id);pm.environment.set(\"inventoryData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/inventory"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"inventoryId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/inventory/{{inventoryId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"inventoryId\")));const d=JSON.parse(pm.environment.get(\"inventoryData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"inventoryData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar inventory",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/inventory/{{inventoryId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{inventoryData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"inventoryData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear animals",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/animals",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farmsId}}\",\n  \"speciesId\": \"{{speciesId}}\",\n  \"breedId\": \"{{breedsId}}\",\n  \"lotId\": \"{{lotsId}}\",\n  \"paddockId\": \"{{paddocksId}}\",\n  \"internalTag\": \"A-{{runId}}\",\n  \"name\": \"Animal de pruebas\",\n  \"sex\": \"Female\",\n  \"purpose\": \"DualPurpose\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"animalsId\",r.id);pm.environment.set(\"animalsData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar animals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"animalsId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar animals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals/{{animalsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"animalsId\")));const d=JSON.parse(pm.environment.get(\"animalsData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"animalsData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar animals",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/animals/{{animalsId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{animalsData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"animalsData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear weights",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/weights",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farmsId}}\",\n  \"animalId\": \"{{animalsId}}\",\n  \"date\": \"{{today}}\",\n  \"weightKg\": 120.25,\n  \"bodyConditionScore\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"weightsId\",r.id);pm.environment.set(\"weightsData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar weights",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/weights"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"weightsId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar weights",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/weights/{{weightsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"weightsId\")));const d=JSON.parse(pm.environment.get(\"weightsData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"weightsData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar weights",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/weights/{{weightsId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{weightsData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"weightsData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear production",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/production",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{farmsId}}\",\n  \"animalId\": \"{{animalsId}}\",\n  \"date\": \"{{today}}\",\n  \"productType\": \"Other\",\n  \"method\": \"Collection\",\n  \"quantity\": 2,\n  \"unit\": \"Unit\",\n  \"operationId\": \"{{crudOperationId}}\",\n  \"notes\": \"Resultado de prueba\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const r=pm.response.json();pm.environment.set(\"productionId\",r.id);pm.environment.set(\"productionData\",JSON.stringify(r.data));pm.test(\"Identidad y Location\",()=>{pm.expect(r.id).to.match(/^[0-9a-f-]{36}$/i);pm.expect(pm.response.headers.get(\"Location\")).to.exist;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar production",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/production"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Lista incluye el alta\",()=>pm.expect(pm.response.json().some(r=>r.id===pm.environment.get(\"productionId\"))).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar production",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/production/{{productionId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"productionId\")));const d=JSON.parse(pm.environment.get(\"productionData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"productionData\",JSON.stringify(d));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar production",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/production/{{productionId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{productionData}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"productionData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 · Permisos, validación e integridad",
+      "item": [
+        {
+          "name": "Employee DELETE denegado",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals/{{animalsId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Employee categoría denegada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/categories",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"No permitida {{runId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Precio negativo detallado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/products",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"BAD-{{runId}}\",\n  \"name\": \"Precio inválido\",\n  \"categoryId\": \"{{seedCategoryId}}\",\n  \"price\": -1,\n  \"costPrice\": 2,\n  \"unit\": \"Unit\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(400); });",
+                  "pm.test(\"Error Price\",()=>pm.expect(pm.response.json().errors).to.have.property(\"Price\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Umbrales inválidos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/inventory",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{demoFarmId}}\",\n  \"productId\": \"{{productsId}}\",\n  \"stock\": -1,\n  \"minStock\": 10,\n  \"maxStock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(400); });",
+                  "pm.test(\"Errores Stock y MaxStock\",()=>{pm.expect(pm.response.json().errors).to.have.property(\"Stock\");pm.expect(pm.response.json().errors).to.have.property(\"MaxStock\");});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "SKU duplicado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/products",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"PR-{{runId}}\",\n  \"name\": \"Insumo {{runId}}\",\n  \"categoryId\": \"{{categoriesId}}\",\n  \"price\": 25.5,\n  \"costPrice\": 18.25,\n  \"unit\": \"Bag\",\n  \"brand\": \"Prueba\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Categoría con insumos no se elimina",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/categories/{{categoriesId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Animal con producción no se elimina",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals/{{animalsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Finca ajena al Employee",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals/{{animalsId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "ID inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals/00000000-0000-0000-0000-000000000001"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ruta inexistente RFC7807",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/no-such-resource"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "JSON inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/products",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"price\":",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Error inesperado seguro",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/demo/errors/unexpected"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 500\", () => pm.response.to.have.status(500));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(500); });",
+                  "pm.expect(pm.response.json().detail).to.eql(\"An unexpected error occurred.\");"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 · Estado sanitario y producción del mismo animal",
+      "item": [
+        {
+          "name": "Employee registra animal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/animals",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{demoFarmId}}\",\n  \"speciesId\": \"{{bovineId}}\",\n  \"internalTag\": \"YIELD-{{runId}}\",\n  \"sex\": \"Female\",\n  \"purpose\": \"DualPurpose\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.environment.set(\"yieldAnimalId\",pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ruta anterior de salud recuperada",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/animals/{{yieldAnimalId}}/health-status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"UnderObservation\",\n  \"reason\": \"Seguimiento\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.expect(pm.response.json().healthStatus).to.eql(\"UnderObservation\");"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ruta de salud actual",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/animals/{{yieldAnimalId}}/health",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"healthStatus\": \"Healthy\",\n  \"reason\": \"Control completado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.expect(pm.response.json().healthStatus).to.eql(\"Healthy\");"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Leche del animal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/production",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{demoFarmId}}\",\n  \"animalId\": \"{{yieldAnimalId}}\",\n  \"date\": \"{{yesterday}}\",\n  \"productType\": \"Milk\",\n  \"method\": \"Milking\",\n  \"quantity\": 12.5,\n  \"unit\": \"Liter\",\n  \"operationId\": \"{{milkOperationId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Carne del mismo animal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/production",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{demoFarmId}}\",\n  \"animalId\": \"{{yieldAnimalId}}\",\n  \"date\": \"{{today}}\",\n  \"productType\": \"Meat\",\n  \"method\": \"Slaughter\",\n  \"quantity\": 220,\n  \"unit\": \"Kilogram\",\n  \"operationId\": \"{{slaughterOperationId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.environment.set(\"slaughterRecordId\",pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Piel del mismo sacrificio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/production",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{demoFarmId}}\",\n  \"animalId\": \"{{yieldAnimalId}}\",\n  \"date\": \"{{today}}\",\n  \"productType\": \"Hide\",\n  \"method\": \"Slaughter\",\n  \"quantity\": 1,\n  \"unit\": \"Unit\",\n  \"operationId\": \"{{slaughterOperationId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sacrificio deja animal fallecido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals/{{yieldAnimalId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Estado Dead\",()=>pm.expect(pm.response.json().status).to.eql(\"Dead\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "No ordeñar después del sacrificio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/production",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"farmId\": \"{{demoFarmId}}\",\n  \"animalId\": \"{{yieldAnimalId}}\",\n  \"date\": \"{{today}}\",\n  \"productType\": \"Milk\",\n  \"method\": \"Milking\",\n  \"quantity\": 12.5,\n  \"unit\": \"Liter\",\n  \"operationId\": \"{{lateOperationId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{employeeToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sacrificio irreversible",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/production/{{slaughterRecordId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(409); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 · Bajas en orden de dependencias",
+      "item": [
+        {
+          "name": "Eliminar production",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/production/{{productionId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja production",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/production/{{productionId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar weights",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/weights/{{weightsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja weights",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/weights/{{weightsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar animals",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals/{{animalsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja animals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals/{{animalsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar inventory",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/inventory/{{inventoryId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/inventory/{{inventoryId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar products",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/products/{{productsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/products/{{productsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar categories",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/categories/{{categoriesId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/categories/{{categoriesId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar lots",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/lots/{{lotsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja lots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/lots/{{lotsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar paddocks",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/paddocks/{{paddocksId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja paddocks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/paddocks/{{paddocksId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar breeds",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/breeds/{{breedsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja breeds",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/breeds/{{breedsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar species",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/species/{{speciesId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja species",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/species/{{speciesId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar farms",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/farms/{{farmsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar baja farms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/farms/{{farmsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(404); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 · Renovación de sesión",
+      "item": [
+        {
+          "name": "Renovar token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/refresh",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Rotación\",()=>pm.expect(pm.response.json().refreshToken).not.to.eql(pm.environment.get(\"refreshToken\")));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Refresh anterior revocado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/refresh",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

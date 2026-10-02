@@ -10,9 +10,20 @@ namespace Presentation.API.Controllers;
 [Route("api/animals")]
 public sealed class AnimalPhotosController(IAnimalPhotoService photoService, ICurrentUser currentUser) : ControllerBase
 {
+    [HttpGet("{id:guid}/photos/{photoId:guid}/content")]
+    [Authorize]
+    [HasPermission("photos.get")]
+    public async Task<IActionResult> Download(Guid id, Guid photoId, CancellationToken cancellationToken)
+    {
+        var photo = await photoService.OpenReadAsync(id, photoId, cancellationToken);
+        Response.Headers["X-Content-Type-Options"] = "nosniff";
+        Response.Headers["Cache-Control"] = "private, no-store";
+        return File(photo.Content, photo.ContentType, photo.FileName);
+    }
+
     [HttpPost("{id:guid}/photo")]
     [Authorize]
-    [HasPermission("animals.get")]
+    [HasPermission("photos.create")]
     public async Task<ActionResult<AnimalPhotoResult>> Upload(Guid id, IFormFile file, CancellationToken cancellationToken)
     {
         if (file is null || file.Length == 0)
@@ -35,8 +46,8 @@ public sealed class AnimalPhotosController(IAnimalPhotoService photoService, ICu
     }
 
     [HttpDelete("{id:guid}/photos/{photoId:guid}")]
-    [Authorize]
-    [HasPermission("animals.get")]
+    [Authorize(Roles = PermissionCatalog.AdminRoles)]
+    [HasPermission("photos.delete")]
     public async Task<IActionResult> Delete(Guid id, Guid photoId, CancellationToken cancellationToken)
     {
         await photoService.DeleteAsync(id, photoId, cancellationToken);

@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Core.Application.Management;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -27,6 +29,9 @@ public sealed class ExceptionMiddleware(
             {
                 KeyNotFoundException => StatusCodes.Status404NotFound,
                 UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                ForbiddenException => StatusCodes.Status403Forbidden,
+                ConflictException => StatusCodes.Status409Conflict,
+                ValidationException => StatusCodes.Status400BadRequest,
                 InvalidOperationException or ArgumentException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
@@ -50,6 +55,10 @@ public sealed class ExceptionMiddleware(
                     : exception.Message,
                 Instance = context.Request.Path
             };
+
+            if (exception is ValidationException validation)
+                problem.Extensions["errors"] = validation.Errors.GroupBy(error => error.PropertyName)
+                    .ToDictionary(group => group.Key, group => group.Select(error => error.ErrorMessage).Distinct().ToArray());
 
             context.Response.Clear();
             context.Response.StatusCode = statusCode;

@@ -67,6 +67,7 @@ public sealed class Animal : BaseEntity
     public ICollection<AnimalPhoto> Photos { get; set; } = [];
 
     public ICollection<WeightRecord> WeightRecords { get; set; } = [];
+    public ICollection<AnimalProduction> Production { get; set; } = [];
 }
 
 public sealed class AnimalPhoto : BaseEntity

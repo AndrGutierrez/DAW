@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:17-alpine
+    image: postgres:15-alpine
     container_name: daw-postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -9,7 +9,7 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
-      - daw-postgres-data:/var/lib/postgresql/data
+      - daw-postgres15-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -31,6 +31,9 @@ services:
       - Seed__AdminUsername=${SEED_ADMIN_USERNAME}
       - Seed__AdminEmail=${SEED_ADMIN_EMAIL}
       - Seed__AdminPassword=${SEED_ADMIN_PASSWORD}
+      - Seed__EmployeeUsername=${SEED_EMPLOYEE_USERNAME:-employee}
+      - Seed__EmployeeEmail=${SEED_EMPLOYEE_EMAIL:-employee@daw.local}
+      - Seed__EmployeePassword=${SEED_EMPLOYEE_PASSWORD:-}
       - Storage__RootPath=/app/uploads
     volumes:
       - daw-uploads:/app/uploads
@@ -54,5 +57,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  daw-postgres-data:
+  daw-postgres15-data:
   daw-uploads:

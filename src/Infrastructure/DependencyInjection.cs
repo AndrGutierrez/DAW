@@ -1,4 +1,6 @@
 using Core.Application.Livestock;
+using Core.Application.Management;
+using Core.Domain.Livestock;
 using Core.Application.Security;
 using Core.Application.Storage;
 using Infrastructure.Livestock;
@@ -31,7 +33,8 @@ public static class DependencyInjection
                 options.User.RequireUniqueEmail = true;
             })
             .AddRoles<Role>()
-            .AddEntityFrameworkStores<AppDbContext>();
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
 
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection(JwtOptions.SectionName))
@@ -48,8 +51,30 @@ public static class DependencyInjection
         services.AddScoped<IAnimalPhotoService, AnimalPhotoService>();
         services.AddScoped<IAnimalQueryService, AnimalQueryService>();
         services.AddScoped<IAnimalWeightReader, AnimalWeightReader>();
+        services.AddScoped<IFarmAccess, FarmAccess>();
+        services.AddScoped<IManagementRepository, ManagementRepository>();
+        services.AddScoped<AnimalHealthService>();
+        AddResource<Farm, FarmRequest, FarmDefinition>(services);
+        AddResource<Species, SpeciesRequest, SpeciesDefinition>(services);
+        AddResource<Breed, BreedRequest, BreedDefinition>(services);
+        AddResource<Paddock, PaddockRequest, PaddockDefinition>(services);
+        AddResource<Lot, LotRequest, LotDefinition>(services);
+        AddResource<InventoryCategory, CategoryRequest, CategoryDefinition>(services);
+        AddResource<Product, ProductRequest, ProductDefinition>(services);
+        AddResource<FarmInventory, InventoryRequest, InventoryDefinition>(services);
+        AddResource<Animal, AnimalRequest, AnimalDefinition>(services);
+        AddResource<AnimalProduction, ProductionRequest, ProductionDefinition>(services);
+        AddResource<WeightRecord, WeightRequest, WeightDefinition>(services);
 
         return services;
+    }
+
+    private static void AddResource<TEntity, TRequest, TDefinition>(IServiceCollection services)
+        where TEntity : Core.Domain.Common.BaseEntity, new()
+        where TDefinition : class, IResourceDefinition<TEntity, TRequest>
+    {
+        services.AddScoped<IResourceDefinition<TEntity, TRequest>, TDefinition>();
+        services.AddScoped<ICrudService<TRequest>, CrudService<TEntity, TRequest>>();
     }
 
     public static async Task SeedDatabaseAsync(this IServiceProvider services)

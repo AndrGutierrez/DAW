@@ -1,30 +1,36 @@
 using Core.Application.Livestock;
+using Core.Application.Security;
 using Core.Domain.Livestock;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Livestock;
 
-public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weights) : IAnimalQueryService
+public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weights, IFarmAccess farmAccess) : IAnimalQueryService
 {
-    public async Task<IReadOnlyList<AnimalListItem>> ListAsync(CancellationToken cancellationToken = default) =>
-        await MaterializeAsync(
-            db.Animals.AsNoTracking().OrderBy(animal => animal.InternalTag),
-            cancellationToken);
+    public async Task<IReadOnlyList<AnimalListItem>> ListAsync(CancellationToken cancellationToken = default)
+    {
+        var farmIds = await farmAccess.GetAccessibleFarmIdsAsync(cancellationToken);
+        return await MaterializeAsync(
+            db.Animals.AsNoTracking().Where(animal => farmIds.Contains(animal.FarmId))
+                .OrderBy(animal => animal.InternalTag), cancellationToken);
+    }
 
     public async Task<IReadOnlyList<AnimalListItem>> ListStaleAsync(int days, CancellationToken cancellationToken = default)
     {
         var cutoff = DateTime.UtcNow.AddDays(-days);
+        var farmIds = await farmAccess.GetAccessibleFarmIdsAsync(cancellationToken);
 
         return await MaterializeAsync(
             db.Animals.AsNoTracking()
-                .Where(animal => animal.UpdatedAt < cutoff)
+                .Where(animal => farmIds.Contains(animal.FarmId) && animal.UpdatedAt < cutoff)
                 .OrderBy(animal => animal.UpdatedAt),
             cancellationToken);
     }
 
     public async Task<AnimalDetail> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
+        var farmIds = await farmAccess.GetAccessibleFarmIdsAsync(cancellationToken);
         var animal = await db.Animals
             .AsNoTracking()
             .Include(candidate => candidate.Species)
@@ -34,7 +40,7 @@ public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weig
             .Include(candidate => candidate.Farm)
             .Include(candidate => candidate.Photos)
             .AsSplitQuery()
-            .FirstOrDefaultAsync(candidate => candidate.Id == id, cancellationToken)
+            .FirstOrDefaultAsync(candidate => candidate.Id == id && farmIds.Contains(candidate.FarmId), cancellationToken)
             ?? throw new KeyNotFoundException("The requested animal was not found.");
 
         var latest = await weights.GetLatestAsync(id, cancellationToken);
@@ -68,7 +74,14 @@ public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weig
             animal.Farm.Name,
             photos,
             animal.UpdatedAt,
-            animal.Notes);
+            animal.Notes,
+            animal.FarmId,
+            animal.SpeciesId,
+            animal.BreedId,
+            animal.LotId,
+            animal.PaddockId,
+            animal.DamId,
+            animal.SireId);
     }
 
     private async Task<IReadOnlyList<AnimalListItem>> MaterializeAsync(
@@ -107,7 +120,9 @@ public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weig
                     .Select(photo => photo.Url)
                     .FirstOrDefault(),
                 animal.Photos.Count,
-                animal.UpdatedAt))
+                animal.UpdatedAt,
+                animal.FarmId,
+                animal.SpeciesId))
             .ToList();
     }
 }

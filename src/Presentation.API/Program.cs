@@ -1,26 +1,45 @@
 using System.Text;
-using Core.Application.Cattle;
+using Core.Application.Management;
 using Core.Application.Security;
 using Infrastructure;
-using Infrastructure.Cattle;
+using FluentValidation;
 using Infrastructure.Security;
 using Infrastructure.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Presentation.API.Authorization;
 using Presentation.API.Components;
 using Presentation.API.Middleware;
+using Presentation.API.Validation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.Add<RequestValidationFilter>())
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
+builder.Services.AddValidatorsFromAssemblyContaining<AnimalRequestValidator>(ServiceLifetime.Transient);
+builder.Services.Configure<ApiBehaviorOptions>(options => options.InvalidModelStateResponseFactory = context =>
+{
+    var problem = new ValidationProblemDetails(context.ModelState)
+    {
+        Type = "about:blank",
+        Title = "Bad Request",
+        Status = 400,
+        Detail = "One or more request fields are invalid.",
+        Instance = context.HttpContext.Request.Path
+    };
+    var result = new BadRequestObjectResult(problem);
+    result.ContentTypes.Add("application/problem+json");
+    return result;
+});
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressMapClientErrors = true);
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -76,12 +95,6 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddSingleton<IAnimalTagNormalizer, AnimalTagNormalizer>();
-builder.Services.AddTransient<IAnimalRegistrationValidator, AnimalRegistrationValidator>();
-builder.Services.AddScoped<ICattleCatalogService, CattleCatalogService>();
-builder.Services.AddScoped<ICattleRepository, InMemoryCattleRepository>();
-// The in-memory store keeps cattle records available across HTTP requests.
-builder.Services.AddSingleton<InMemoryCattleStore>();
 
 var app = builder.Build();
 
@@ -98,7 +111,23 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+app.UseStatusCodePages(async statusContext =>
+{
+    var context = statusContext.HttpContext;
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        var status = context.Response.StatusCode;
+        context.Response.ContentType = "application/problem+json";
+        await System.Text.Json.JsonSerializer.SerializeAsync(context.Response.Body, new ProblemDetails
+        {
+            Type = "about:blank",
+            Title = ReasonPhrases.GetReasonPhrase(status),
+            Status = status,
+            Detail = ReasonPhrases.GetReasonPhrase(status),
+            Instance = context.Request.Path
+        }, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web), context.RequestAborted);
+    }
+});
 if (!app.Configuration.GetValue<bool>("DisableHttpsRedirection"))
 {
     app.UseHttpsRedirection();
@@ -112,15 +141,6 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Gestión Ganadera API v1");
     options.RoutePrefix = "swagger";
-});
-
-var storageOptions = app.Services.GetRequiredService<IOptions<StorageOptions>>().Value;
-var uploadsRoot = Path.GetFullPath(storageOptions.RootPath);
-Directory.CreateDirectory(uploadsRoot);
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(uploadsRoot),
-    RequestPath = storageOptions.RequestPath
 });
 
 app.UseAntiforgery();

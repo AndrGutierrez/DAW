@@ -1,0 +1,17 @@
+-- Run only against a disposable database at AddAnimalPhotosAndUpdatedAt.
+INSERT INTO "Farms" ("Id","Name","Code","IsActive")
+VALUES ('11111111-1111-4111-8111-111111111111','Finca de migración','LEGACY',true);
+INSERT INTO "Species" ("Id","Name","Code","Purpose","IsActive")
+VALUES ('22222222-2222-4222-8222-222222222222','Bovino de migración','LEGACY-BO',4,true),
+       ('22222222-2222-4222-8222-222222222223','Ovino de migración','LEGACY-OV',2,true);
+INSERT INTO "Animals" ("Id","FarmId","SpeciesId","InternalTag","Sex","Status","Origin","Purpose","HealthStatus")
+VALUES ('33333333-3333-4333-8333-333333333333','11111111-1111-4111-8111-111111111111','22222222-2222-4222-8222-222222222222','LEGACY-1',1,0,0,4,0),
+       ('33333333-3333-4333-8333-333333333334','11111111-1111-4111-8111-111111111111','22222222-2222-4222-8222-222222222223','LEGACY-2',1,0,0,2,0);
+INSERT INTO "Products" ("Id","Name","Category","Unit","RequiresPrescription","IsActive")
+VALUES ('44444444-4444-4444-8444-444444444444','Insumo sin precio anterior',2,4,false,true);
+INSERT INTO "MilkProductionRecords" ("Id","FarmId","AnimalId","Date","Shift","Liters","FatPercent")
+VALUES ('55555555-5555-4555-8555-555555555551','11111111-1111-4111-8111-111111111111','33333333-3333-4333-8333-333333333333','2026-09-20',0,12.50,3.20);
+INSERT INTO "WoolProductionRecords" ("Id","FarmId","AnimalId","Date","FleeceWeightKg","Grade")
+VALUES ('55555555-5555-4555-8555-555555555552','11111111-1111-4111-8111-111111111111','33333333-3333-4333-8333-333333333334','2026-09-20',3.25,'A');
+INSERT INTO "SlaughterRecords" ("Id","FarmId","AnimalId","Date","CarcassWeightKg","LiveWeightKg")
+VALUES ('55555555-5555-4555-8555-555555555553','11111111-1111-4111-8111-111111111111','33333333-3333-4333-8333-333333333333','2026-09-21',245.50,500);

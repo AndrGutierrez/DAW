@@ -61,7 +61,7 @@ public sealed class PaddockConfiguration : IEntityTypeConfiguration<Paddock>
         builder.HasOne(paddock => paddock.Farm)
             .WithMany(farm => farm.Paddocks)
             .HasForeignKey(paddock => paddock.FarmId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 
@@ -81,7 +81,7 @@ public sealed class LotConfiguration : IEntityTypeConfiguration<Lot>
         builder.HasOne(lot => lot.Farm)
             .WithMany(farm => farm.Lots)
             .HasForeignKey(lot => lot.FarmId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(lot => lot.Species)
             .WithMany(species => species.Lots)

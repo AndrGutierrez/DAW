@@ -319,6 +319,61 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("AnimalPhotos", (string)null);
                 });
 
+            modelBuilder.Entity("Core.Domain.Livestock.AnimalProduction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AnimalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FarmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Method")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ProductType")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(14, 4)
+                        .HasColumnType("numeric(14,4)");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FarmId");
+
+                    b.HasIndex("AnimalId", "Date");
+
+                    b.HasIndex("OperationId", "ProductType")
+                        .IsUnique();
+
+                    b.ToTable("AnimalProduction", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_AnimalProduction_Quantity", "\"Quantity\" > 0");
+                        });
+                });
+
             modelBuilder.Entity("Core.Domain.Livestock.Attachment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -489,43 +544,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Diseases", (string)null);
                 });
 
-            modelBuilder.Entity("Core.Domain.Livestock.EggProductionRecord", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal?>("AverageWeightGrams")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
-
-                    b.Property<int>("BrokenEggs")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FarmId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("LotId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("TotalEggs")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LotId", "Date");
-
-                    b.ToTable("EggProductionRecords", (string)null);
-                });
-
             modelBuilder.Entity("Core.Domain.Livestock.Farm", b =>
                 {
                     b.Property<Guid>("Id")
@@ -570,6 +588,61 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Farms", (string)null);
                 });
 
+            modelBuilder.Entity("Core.Domain.Livestock.FarmInventory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<Guid>("FarmId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasDefaultValue("Main warehouse");
+
+                    b.Property<decimal>("MaxStock")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(14, 4)
+                        .HasColumnType("numeric(14,4)")
+                        .HasDefaultValue(100m);
+
+                    b.Property<decimal>("MinStock")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(14, 4)
+                        .HasColumnType("numeric(14,4)")
+                        .HasDefaultValue(5m);
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Stock")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(14, 4)
+                        .HasColumnType("numeric(14,4)")
+                        .HasDefaultValue(0m);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("FarmId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("FarmInventory", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_FarmInventory_Stock", "\"Stock\" >= 0 AND \"MinStock\" >= 0 AND \"MaxStock\" > \"MinStock\"");
+                        });
+                });
+
             modelBuilder.Entity("Core.Domain.Livestock.FeedingRecord", b =>
                 {
                     b.Property<Guid>("Id")
@@ -577,8 +650,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal?>("Cost")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("numeric(12,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -620,8 +693,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal?>("Cost")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("numeric(12,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -699,6 +772,39 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("HealthStatusChanges", (string)null);
                 });
 
+            modelBuilder.Entity("Core.Domain.Livestock.InventoryCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("InventoryCategories", (string)null);
+                });
+
             modelBuilder.Entity("Core.Domain.Livestock.Lot", b =>
                 {
                     b.Property<Guid>("Id")
@@ -740,51 +846,6 @@ namespace Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Lots", (string)null);
-                });
-
-            modelBuilder.Entity("Core.Domain.Livestock.MilkProductionRecord", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AnimalId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FarmId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal?>("FatPercent")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("numeric(5,2)");
-
-                    b.Property<decimal>("Liters")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
-
-                    b.Property<decimal?>("ProteinPercent")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("numeric(5,2)");
-
-                    b.Property<int>("Shift")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SomaticCellCount")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnimalId", "Date", "Shift");
-
-                    b.ToTable("MilkProductionRecords", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Livestock.Paddock", b =>
@@ -834,8 +895,19 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("integer");
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("Generic");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("CostPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -850,20 +922,39 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
                     b.Property<bool>("RequiresPrescription")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("SKU")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<int>("Unit")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(2);
 
                     b.Property<int?>("WithdrawalDays")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.HasIndex("Name");
 
-                    b.ToTable("Products", (string)null);
+                    b.HasIndex("SKU")
+                        .IsUnique();
+
+                    b.ToTable("Products", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Products_Prices", "NOT \"IsActive\" OR (\"Price\" > 0 AND \"CostPrice\" > 0)");
+                        });
                 });
 
             modelBuilder.Entity("Core.Domain.Livestock.ProductBatch", b =>
@@ -898,8 +989,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal?>("UnitCost")
-                        .HasPrecision(12, 4)
-                        .HasColumnType("numeric(12,4)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.HasKey("Id");
 
@@ -1072,49 +1163,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("SupplierId");
 
                     b.ToTable("SemenBatches", (string)null);
-                });
-
-            modelBuilder.Entity("Core.Domain.Livestock.SlaughterRecord", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AnimalId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal?>("CarcassWeightKg")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
-
-                    b.Property<decimal?>("ColdCarcassWeightKg")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FarmId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Grade")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<decimal?>("LiveWeightKg")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnimalId", "Date");
-
-                    b.ToTable("SlaughterRecords", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Livestock.Species", b =>
@@ -1318,8 +1366,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(14, 2)
-                        .HasColumnType("numeric(14,2)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<Guid?>("AnimalId")
                         .HasColumnType("uuid");
@@ -1448,45 +1496,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("WeightRecords", (string)null);
                 });
 
-            modelBuilder.Entity("Core.Domain.Livestock.WoolProductionRecord", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AnimalId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FarmId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal?>("FiberDiameterMicrons")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
-
-                    b.Property<decimal>("FleeceWeightKg")
-                        .HasPrecision(8, 2)
-                        .HasColumnType("numeric(8,2)");
-
-                    b.Property<string>("Grade")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnimalId", "Date");
-
-                    b.ToTable("WoolProductionRecords", (string)null);
-                });
-
             modelBuilder.Entity("Infrastructure.Persistence.Identity.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1560,6 +1569,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
+                        .IsUnique()
                         .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
@@ -2098,7 +2108,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasOne("Core.Domain.Livestock.Farm", "Farm")
                         .WithMany("Animals")
                         .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Core.Domain.Livestock.Lot", "Lot")
@@ -2187,6 +2197,25 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Animal");
                 });
 
+            modelBuilder.Entity("Core.Domain.Livestock.AnimalProduction", b =>
+                {
+                    b.HasOne("Core.Domain.Livestock.Animal", "Animal")
+                        .WithMany("Production")
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Core.Domain.Livestock.Farm", "Farm")
+                        .WithMany()
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Animal");
+
+                    b.Navigation("Farm");
+                });
+
             modelBuilder.Entity("Core.Domain.Livestock.Breed", b =>
                 {
                     b.HasOne("Core.Domain.Livestock.Species", "Species")
@@ -2208,15 +2237,23 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Species");
                 });
 
-            modelBuilder.Entity("Core.Domain.Livestock.EggProductionRecord", b =>
+            modelBuilder.Entity("Core.Domain.Livestock.FarmInventory", b =>
                 {
-                    b.HasOne("Core.Domain.Livestock.Lot", "Lot")
+                    b.HasOne("Core.Domain.Livestock.Farm", "Farm")
                         .WithMany()
-                        .HasForeignKey("LotId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Lot");
+                    b.HasOne("Core.Domain.Livestock.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Farm");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Core.Domain.Livestock.FeedingRecord", b =>
@@ -2273,7 +2310,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasOne("Core.Domain.Livestock.Farm", "Farm")
                         .WithMany("Lots")
                         .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Core.Domain.Livestock.Paddock", "Paddock")
@@ -2294,26 +2331,26 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Species");
                 });
 
-            modelBuilder.Entity("Core.Domain.Livestock.MilkProductionRecord", b =>
-                {
-                    b.HasOne("Core.Domain.Livestock.Animal", "Animal")
-                        .WithMany()
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Animal");
-                });
-
             modelBuilder.Entity("Core.Domain.Livestock.Paddock", b =>
                 {
                     b.HasOne("Core.Domain.Livestock.Farm", "Farm")
                         .WithMany("Paddocks")
                         .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Farm");
+                });
+
+            modelBuilder.Entity("Core.Domain.Livestock.Product", b =>
+                {
+                    b.HasOne("Core.Domain.Livestock.InventoryCategory", "InventoryCategory")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("InventoryCategory");
                 });
 
             modelBuilder.Entity("Core.Domain.Livestock.ProductBatch", b =>
@@ -2423,17 +2460,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Supplier");
                 });
 
-            modelBuilder.Entity("Core.Domain.Livestock.SlaughterRecord", b =>
-                {
-                    b.HasOne("Core.Domain.Livestock.Animal", "Animal")
-                        .WithMany()
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Animal");
-                });
-
             modelBuilder.Entity("Core.Domain.Livestock.StockMovement", b =>
                 {
                     b.HasOne("Core.Domain.Livestock.ProductBatch", "ProductBatch")
@@ -2515,18 +2541,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasOne("Core.Domain.Livestock.Animal", "Animal")
                         .WithMany("WeightRecords")
                         .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Animal");
-                });
-
-            modelBuilder.Entity("Core.Domain.Livestock.WoolProductionRecord", b =>
-                {
-                    b.HasOne("Core.Domain.Livestock.Animal", "Animal")
-                        .WithMany()
-                        .HasForeignKey("AnimalId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Animal");
@@ -2729,6 +2744,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Navigation("Photos");
 
+                    b.Navigation("Production");
+
                     b.Navigation("WeightRecords");
                 });
 
@@ -2746,6 +2763,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("Paddocks");
+                });
+
+            modelBuilder.Entity("Core.Domain.Livestock.InventoryCategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Core.Domain.Livestock.Lot", b =>
