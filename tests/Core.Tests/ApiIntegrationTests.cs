@@ -18,6 +18,7 @@ public sealed class ApiIntegrationTests
     [InlineData("not-found", HttpStatusCode.NotFound, "Not Found")]
     [InlineData("invalid-operation", HttpStatusCode.BadRequest, "Bad Request")]
     [InlineData("unexpected", HttpStatusCode.InternalServerError, "Internal Server Error")]
+    [InlineData("unknown", HttpStatusCode.BadRequest, "Bad Request")]
     public async Task RegisteredPipelineReturnsProblemDetails(
         string kind,
         HttpStatusCode expectedStatus,

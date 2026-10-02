@@ -370,7 +370,7 @@ Validación final ejecutada el 1 de octubre de 2026, hora de Venezuela. Los coma
 | Comprobación | Resultado ejecutado |
 | --- | --- |
 | Build de la solución | Publicación Docker exitosa con SDK .NET 10.0.401 |
-| Pruebas .NET | 93 aprobadas, 0 fallidas/omitidas; EF InMemory en pruebas de servicios/pipeline |
+| Pruebas .NET | 94 aprobadas, 0 fallidas/omitidas; EF InMemory en pruebas de servicios/pipeline |
 | Migraciones PostgreSQL 15 | Cuatro migraciones aplicadas; actualización histórica, rechazo seguro de huevos por lote y conservación de categorías preexistentes comprobados |
 | Esquema y siembra SQL | Exportaciones reales de esquema/datos importadas en otra base; seed dos veces sin duplicados |
 | Concurrencia serializable | Tres carreras: una respuesta 201 y una 409 por par; sin estado parcial |

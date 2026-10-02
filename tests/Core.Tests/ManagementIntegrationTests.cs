@@ -129,6 +129,9 @@ public sealed class ManagementIntegrationTests
         Assert.Equal(HttpStatusCode.Forbidden, productCreate.StatusCode);
         using var productUpdate = await client.PutAsJsonAsync($"/api/products/{product.Id}", new ProductRequest(product.SKU, "Unauthorized change", product.CategoryId, 999, 998, product.Unit, product.Brand));
         Assert.Equal(HttpStatusCode.Forbidden, productUpdate.StatusCode);
+        using var productDelete = await client.DeleteAsync($"/api/products/{product.Id}");
+        Assert.Equal(HttpStatusCode.Forbidden, productDelete.StatusCode);
+        Assert.Equal("application/problem+json", productDelete.Content.Headers.ContentType?.MediaType);
         var preserved = await db.Products.AsNoTracking().SingleAsync(x => x.Id == product.Id);
         Assert.Equal(product.Name, preserved.Name);
         Assert.Equal(product.Price, preserved.Price);

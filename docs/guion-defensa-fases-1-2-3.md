@@ -333,7 +333,7 @@ Las migraciones actuales son:
 
 | Evidencia ejecutada | Resultado | Archivo para localizarla o reproducirla |
 | --- | --- | --- |
-| Suite .NET | **93 aprobadas; 0 fallidas/omitidas** | [Core.Tests](../tests/Core.Tests), [DAW.slnx](../DAW.slnx) |
+| Suite .NET | **94 aprobadas; 0 fallidas/omitidas** | [Core.Tests](../tests/Core.Tests), [DAW.slnx](../DAW.slnx) |
 | Postman completo, PostgreSQL 15.19 | **97 solicitudes; 176 assertions; 0 fallos** | [Colección completa](../postman/Cattle-Management.full.postman_collection.json) |
 | Colección utilizada por CI | **16 solicitudes; 16 assertions; 0 fallos** | [Colección de CI](../postman/Cattle-Management.postman_collection.json) |
 | Restricciones reales | Índices, FK, importes, defaults y stock comprobados | [PostgresConstraints.sql](../tests/Core.Tests/Fixtures/PostgresConstraints.sql) |

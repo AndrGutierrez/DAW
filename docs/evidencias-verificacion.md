@@ -13,7 +13,7 @@ Los resultados describen las comprobaciones efectivamente ejecutadas. La [matriz
 | Comprobación | Entorno | Resultado obtenido |
 | --- | --- | --- |
 | Compilación/publicación Docker | SDK y runtime .NET 10 | Exit 0; imagen construida y API iniciada |
-| Pruebas .NET | xUnit; EF InMemory en pruebas de servicios/pipeline | **93 aprobadas, 0 fallidas, 0 omitidas** |
+| Pruebas .NET | xUnit; EF InMemory en pruebas de servicios/pipeline | **94 aprobadas, 0 fallidas, 0 omitidas** |
 | Correspondencia modelo–migración | EF Core/Npgsql | `has-pending-model-changes`: sin cambios pendientes |
 | Migración desde base vacía | PostgreSQL 15.19 | Cuatro migraciones aplicadas; 43 tablas, incluida la historia de migraciones |
 | Categorías declaradas con `HasData` | PostgreSQL 15.19 | Base nueva: UUID constantes; actualización de base sembrada: UUID anteriores y referencias conservados |
@@ -92,6 +92,8 @@ La colección ejecutó login Admin/Employee, consultas sembradas, operaciones de
 | Reutilizar refresh token ya rotado | 401 |
 
 Cada error comprobado utiliza `application/problem+json` y los campos `type`, `title`, `status`, `detail`, `instance`. Los errores de validación añaden `errors` por campo. El endpoint de error inesperado existe para verificar el middleware en Development.
+
+La solicitud Postman `Employee DELETE producto denegado` apunta a `/api/products/{id}` y obtiene 403; la prueba .NET comprueba POST, PUT y DELETE de productos como Employee, y verifica que el producto conserve sus valores. La prueba de pipeline incluye también un tipo de error de demostración desconocido: devuelve 400 mediante el middleware, con los cinco campos y la cabecera estándar.
 
 Las pruebas .NET incluyen `RegistrationPersistsDifferentHashesForTheSamePasswordAndVerifiesCredentials`: dos altas HTTP con una misma contraseña de prueba conservan hashes diferentes; Identity acepta la contraseña correcta y rechaza una incorrecta. Utiliza EF InMemory y demuestra el comportamiento del servicio de Identity, no una comparación manual de hashes. `SeededAdminCanLoginAndReadRoles` comprueba `email` en el JWT real del login. `AdministratorCannotCreateAProductWithAnInvalidSku` y `ProductDtoDoesNotBindIdentityOrCreationTimestamp` comprueban formato de SKU y campos de entrada protegidos.
 

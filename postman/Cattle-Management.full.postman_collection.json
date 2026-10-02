@@ -1405,11 +1405,11 @@
       "name": "03 · Permisos, validación e integridad",
       "item": [
         {
-          "name": "Employee DELETE denegado",
+          "name": "Employee DELETE producto denegado",
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": "{{baseUrl}}/api/animals/{{animalsId}}",
+            "url": "{{baseUrl}}/api/products/{{productsId}}",
             "auth": {
               "type": "bearer",
               "bearer": [
