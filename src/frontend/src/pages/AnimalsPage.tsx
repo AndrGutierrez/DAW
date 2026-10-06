@@ -6,6 +6,10 @@ import { useResource } from '../api/useResource';
 
 import { labels, text, kg, date } from '../api/livestock';
 import type { AnimalDetail, AnimalPageResult } from '../api/livestock';
+import { AnimalClinical } from '../components/AnimalClinical';
+import { AnimalReproduction } from '../components/AnimalReproduction';
+import { AnimalProduction } from '../components/AnimalProduction';
+import { AnimalGenealogy } from '../components/AnimalGenealogy';
 import { AnimalGrowth } from '../components/AnimalGrowth';
 import { PhotoUploader } from '../components/PhotoUploader';
 import { WeighingForm } from '../components/WeighingForm';
@@ -92,10 +96,14 @@ export function AnimalPage() {
   ];
   return <section><Link className="back-link" to="/animals">← Volver a los animales</Link><div className="page-heading"><div><span className="eyebrow">{animal.internalTag}</span><h1>{animal.name || 'Ficha del animal'}</h1><p className="muted">{animal.species} · {animal.farm}</p></div><div className="heading-actions"><span className={'status-pill ' + (animal.status === 'Active' ? 'positive' : '')}>{text(animal.status)}</span>{can('animals.update') && <Link className="button secondary" to={'/animals/' + animal.id + '/edit'}>Editar ficha</Link>}{can('weights.create') && animal.status === 'Active' && <a className="button primary" href="#weigh">Registrar peso</a>}</div></div>
     <div className="detail-top"><div className="panel detail-cover">{animal.photos.length && can('photos.get') ? <ProtectedPhoto path={animal.photos[0].url} alt={'Fotografía de ' + animal.internalTag} /> : <div className="detail-monogram">{animal.internalTag}<small>Sin fotografía disponible</small></div>}</div><div className="panel detail-summary"><span className="eyebrow">SEGUIMIENTO ACTUAL</span><h2>{kg(animal.currentWeightKg)}</h2><p className="muted">Último peso registrado</p><div className="summary-health"><span className="status-dot" />{text(animal.healthStatus)}</div><p className="muted">Última actualización: {date(animal.updatedAt)}</p></div></div>
+    <nav className="animal-section-links" aria-label="Secciones de la ficha"><a href="#clinical">Sanidad</a><a href="#reproduction">Reproducción</a><a href="#production">Producción</a><a href="#genealogy">Genealogía</a></nav>
+    <div id="clinical"><AnimalClinical key={animal.id} animal={animal} onAnimalChanged={reload} /></div>
+    <div id="reproduction"><AnimalReproduction key={animal.id} animal={animal} /></div>
+    <div id="production"><AnimalProduction key={animal.id} animal={animal} onAnimalChanged={reload} /></div>
+    <div id="genealogy"><AnimalGenealogy key={animal.id} animal={animal} /></div>
     <AnimalGrowth key={animal.id} animalId={animal.id} />
     {can("weights.create") && animal.status === "Active" && <section id="weigh" className="panel animal-details"><h2>Registrar un pesaje</h2><WeighingForm animalId={animal.id} onSaved={reload} /></section>}
     <div className="panel animal-details"><h2>Identificación y ubicación</h2><dl className="detail-grid">{fields.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value || 'Sin registro'}</dd></div>)}</dl></div>
-    <div className="panel animal-details"><h2>Genealogía</h2><div className="parent-links">{animal.damId ? <Link className="button secondary" to={'/animals/' + animal.damId}>Consultar madre ↗</Link> : <span className="muted">Madre sin registro</span>}{animal.sireId ? <Link className="button secondary" to={'/animals/' + animal.sireId}>Consultar padre ↗</Link> : <span className="muted">Padre sin registro</span>}</div></div>
     {animal.notes && <div className="panel animal-details"><h2>Observaciones</h2><p className="animal-notes">{animal.notes}</p></div>}
     <section className="panel animal-details"><h2>Fotografías</h2>{can("photos.create") && <PhotoUploader animalId={animal.id} onSaved={reload} />}{can("photos.get") && animal.photos.length > 0 && <div className="photo-gallery">{animal.photos.map(photo => <figure key={photo.id}><ProtectedPhoto path={photo.url} alt={"Fotografía de " + animal.internalTag} /><figcaption><span>{date(photo.uploadedAt)}</span>{isAdmin && can("photos.delete") && <button className="text-button danger-text" disabled={photoBusy} onClick={() => void removePhoto(photo.id)} aria-label="Eliminar fotografía">Eliminar</button>}</figcaption></figure>)}</div>}{!animal.photos.length && <p className="muted">Aún no hay fotografías registradas.</p>}</section>
   </section>;

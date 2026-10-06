@@ -56,7 +56,7 @@ No se eliminan entidades ganaderas ni se añade una migración de reducción. El
 
 GET /api/animals/page añade búsqueda por arete, nombre e identificación oficial, filtro por estado y finca, conteo y paginación en el servidor. Las consultas aplican las fincas accesibles antes de contar o paginar. La página se limita a 100 registros y la búsqueda a 100 caracteres. GET /api/animals conserva su respuesta anterior.
 
-La SPA permite consultar el listado y la ficha básica del animal, fotografías privadas y enlaces a sus progenitores. Tener entidades clínicas y reproductivas mapeadas no significa que estos flujos estén disponibles en esta interfaz.
+El primer incremento incorporó el listado, la ficha básica y fotografías privadas. Los incrementos posteriores añaden edición, pesajes, sanidad, reproducción y retiro; sus reglas y límites se describen en [animales y pesajes](fase4-animales.md) y [sanidad y reproducción](fase4-sanidad.md).
 
 ## Cómo demostrarlo
 

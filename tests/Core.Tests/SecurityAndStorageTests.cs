@@ -14,7 +14,7 @@ public sealed class PermissionCatalogTests
     {
         var definitions = PermissionCatalog.All().ToList();
 
-        Assert.Equal(15 * 5 + 1, definitions.Count);
+        Assert.Equal(15 * 5 + 4 + 1, definitions.Count);
         Assert.Equal(definitions.Count, definitions.Select(definition => definition.Name).Distinct().Count());
 
         foreach (var definition in definitions)

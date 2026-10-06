@@ -33,6 +33,8 @@ public interface IManagementRepository
     Task<TResult> ExecuteWriteAsync<TResult>(Func<Task<TResult>> operation, CancellationToken ct = default);
     Task<IReadOnlyList<T>> ListAsync<T>(Expression<Func<T, bool>>? predicate = null, CancellationToken ct = default)
         where T : BaseEntity;
+    Task<int> CountAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken ct = default) where T : BaseEntity;
+    Task<IReadOnlyList<T>> PageAsync<T, TOrder>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrder>> order, int skip, int take, CancellationToken ct = default) where T : BaseEntity;
     Task<T?> GetAsync<T>(Guid id, bool tracking = false, CancellationToken ct = default)
         where T : BaseEntity;
     Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken ct = default)

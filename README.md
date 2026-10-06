@@ -81,9 +81,10 @@ Importar [colección Postman](postman/Cattle-Management.full.postman_collection.
 - [Diagrama entidad–relación: imágenes y visor interactivo](db/diagram/README.md).
 - [Sesión persistente: decisión, controles, defensa y pruebas](docs/fase4-sesion.md).
 - [Ficha, fotografías, GDP y pesaje consecutivo](docs/fase4-animales.md).
+- [Sanidad, reproducción, retiro y producción del animal](docs/fase4-sanidad.md).
 - [Estado y trabajo restante de Fase 4](docs/fase4-estado.md).
 - [Verificación ejecutada de Fase 4](docs/fase4-verificacion.md).
 - [Decisiones técnicas](docs/engineering-decisions.md).
 - [Visión del negocio completo](docs/guia-de-negocio.md).
 
-La SPA permite recuperar la sesión al recargar, consultar y editar animales, cargar fotografías comprimidas y privadas, revisar el historial paginado y la curva Recharts de peso/GDP, y registrar pesajes individuales o consecutivos sin recargar. Los informes y flujos completos de reproducción, eventos clínicos, retiro, alimentación, tareas y finanzas están previstos para posteriores incrementos; tener sus entidades mapeadas no equivale a disponer de sus casos de uso.
+La SPA permite recuperar la sesión al recargar, consultar y editar animales, cargar fotografías comprimidas y privadas, revisar la curva Recharts de peso/GDP y registrar pesajes consecutivos. La ficha conecta sanidad, reproducción, retiro farmacológico, producción paginada y un árbol genealógico navegable. El retiro se valida en el servidor para leche y sacrificio. Dashboard, mapa de potreros, inventario visual y exportaciones están pendientes; el alcance y los límites de cada recorrido se describen en las guías de Fase 4.

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Core.Domain.Common;
 using Core.Domain.Livestock;
 using Core.Application.Security;
+using Core.Application.Livestock;
 
 namespace Core.Application.Management;
 
@@ -264,6 +265,8 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user)
                 Check(!await Repository.ExistsAsync<WeightRecord>(record => record.AnimalId == e.Id && record.Date < birth, ct), "Birth date cannot follow an existing weighing date.");
             if (e.SpeciesId != q.SpeciesId || e.Sex != q.Sex || e.BirthDate != q.BirthDate)
             {
+                Check(!await Repository.ExistsAsync<HealthEvent>(x => x.AnimalId == e.Id, ct) &&
+                    !await Repository.ExistsAsync<ReproductiveEvent>(x => x.DamId == e.Id || (x is Mating && ((Mating)x).SireId == e.Id) || (x is Insemination && ((Insemination)x).SireId == e.Id) || (x is Weaning && ((Weaning)x).OffspringId == e.Id), ct), "An animal with care history cannot change species, sex or birth date.");
                 Check(!await Repository.ExistsAsync<AnimalProduction>(x => x.AnimalId == e.Id, ct), "An animal with production history cannot change species, sex or birth date.");
                 Check(!await Repository.ExistsAsync<Animal>(x => x.DamId == e.Id || x.SireId == e.Id, ct), "A recorded parent cannot change species, sex or birth date while offspring reference it.");
             }
@@ -366,6 +369,8 @@ public sealed class ProductionDefinition(IManagementRepository r) : ResourceDefi
         Check(animal.BirthDate == null || q.Date >= animal.BirthDate, "The production date precedes the animal birth.");
         if (e.AnimalId != Guid.Empty)
             Check(e.OperationId == q.OperationId && e.Method == q.Method && e.Date == q.Date, "An existing operation keeps its identifier, method and date; only its yield can be corrected.");
+        if (q.Method is ProductionMethod.Milking or ProductionMethod.Slaughter)
+            await new WithdrawalPolicy(Repository).CheckAsync(animal.Id, q.Date, ct);
         var slaughter = await Repository.ListAsync<AnimalProduction>(x => x.AnimalId == q.AnimalId && x.Method == ProductionMethod.Slaughter, ct);
         if (q.Method == ProductionMethod.Slaughter)
         {

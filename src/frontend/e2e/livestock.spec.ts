@@ -126,7 +126,7 @@ test('growth uses recorded weights, same-day selection and an explicit gain targ
   await expect(page.locator('.chart-point')).toHaveCount(2);
   await page.getByRole('button', { name: 'Pesaje siguiente en la curva' }).click();
   await expect(page.locator('.chart-inspector')).toContainText('GDP: 1,2 kg/día');
-  await expect(page.getByRole('table')).toContainText('Otro pesaje del mismo día');
+  await expect(page.getByRole('table', { name: 'Historial completo de pesajes' })).toContainText('Otro pesaje del mismo día');
   await page.getByRole('button', { name: 'GDP', exact: true }).click();
   await expect(page.locator('.chart-point')).toHaveCount(1);
   await page.getByLabel('Objetivo de GDP (kg/día)').fill('2');

@@ -47,6 +47,10 @@ public sealed class ManagementRepository(AppDbContext db, ICurrentUser user) : I
         return await query.OrderBy(e => e.CreatedAt).ThenBy(e => e.Id).ToListAsync(ct);
     }
 
+    public Task<int> CountAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken ct = default) where T : BaseEntity => db.Set<T>().AsNoTracking().CountAsync(predicate, ct);
+    public async Task<IReadOnlyList<T>> PageAsync<T, TOrder>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrder>> order, int skip, int take, CancellationToken ct = default) where T : BaseEntity =>
+        await db.Set<T>().AsNoTracking().Where(predicate).OrderByDescending(order).ThenByDescending(x => x.CreatedAt).ThenByDescending(x => x.Id).Skip(skip).Take(take).ToListAsync(ct);
+
     public Task<T?> GetAsync<T>(Guid id, bool tracking = false, CancellationToken ct = default)
         where T : BaseEntity => (tracking ? db.Set<T>() : db.Set<T>().AsNoTracking()).FirstOrDefaultAsync(x => x.Id == id, ct);
     public Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken ct = default)

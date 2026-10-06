@@ -93,6 +93,7 @@ public sealed class AnimalHealthService(IManagementRepository repository, IFarmA
         {
             repository.Add(new HealthStatusChange { FarmId = animal.FarmId, AnimalId = animal.Id, PreviousStatus = animal.HealthStatus, NewStatus = request.HealthStatus, Reason = request.Reason, UserId = user.UserId });
             animal.HealthStatus = request.HealthStatus;
+            animal.UpdatedAt = DateTime.UtcNow;
         }
 
         await repository.SaveAsync(ct);

@@ -2,22 +2,22 @@
 
 Fecha: 6 de octubre de 2026.
 
-Se verificó la rama codex/phase4-cattle-spa en un entorno aislado. Los resultados cubren sesión persistente, consulta y edición del ganado, fotografías, crecimiento y pesaje consecutivo. El [estado de implementación](fase4-estado.md) distingue estos recorridos de la entrega completa.
+Se verificó la rama codex/phase4-cattle-spa en un entorno aislado. Los resultados cubren sesión persistente, consulta y edición del ganado, fotografías, crecimiento, pesaje consecutivo, sanidad, reproducción, retiro y producción por animal. El [estado de implementación](fase4-estado.md) distingue estos recorridos de la entrega completa.
 
 ## Resultados ejecutados
 
-| Verificación | Primer incremento | Segundo incremento |
-| --- | --- | --- |
-| Core.Tests: dominio, infraestructura y pipeline HTTP | 108 aprobadas | 116 aprobadas |
-| UnitTests: Core.Application con xUnit y Moq | 18 aprobadas | 42 aprobadas |
-| Cliente con Vitest | 13 aprobadas | 28 aprobadas |
-| Playwright en desktop y mobile | 12 aprobadas | 34 aprobadas |
-| TypeScript y Vite | Aprobados | Aprobados en Windows y Docker |
-| Imágenes API y Nginx | Construidas e iniciadas | Construidas e iniciadas |
-| Dependencias frontend | Sin vulnerabilidades reportadas | Sin vulnerabilidades reportadas al instalar Recharts |
-| PostgreSQL | 43 tablas | 43 tablas, sin migraciones de eliminación |
+| Verificación | Primer incremento | Segundo incremento | Tercer incremento |
+| --- | --- | --- | --- |
+| Core.Tests: dominio, infraestructura y pipeline HTTP | 108 aprobadas | 116 aprobadas | 124 aprobadas |
+| UnitTests: Core.Application con xUnit y Moq | 18 aprobadas | 42 aprobadas | 72 aprobadas |
+| Cliente con Vitest | 13 aprobadas | 28 aprobadas | 28 aprobadas |
+| Playwright en desktop y mobile | 12 aprobadas | 34 aprobadas | 46 aprobadas |
+| TypeScript y Vite | Aprobados | Aprobados en Windows y Docker | Aprobados en Windows y Docker |
+| Imágenes API y Nginx | Construidas e iniciadas | Construidas e iniciadas | Construidas e iniciadas |
+| Dependencias frontend | Sin vulnerabilidades reportadas | Sin vulnerabilidades reportadas al instalar Recharts | Sin cambios de dependencias |
+| PostgreSQL | 43 tablas | 43 tablas, sin migraciones de eliminación | 43 tablas, sin cambios de esquema |
 
-El segundo incremento tiene 158 pruebas .NET aprobadas en total. Los conteos no son porcentajes de cobertura; no se ha medido ni se afirma cobertura global del 100 %. La línea base anterior al primer incremento tenía 94 pruebas Core.Tests.
+El tercer incremento tiene 196 pruebas .NET aprobadas en total; el segundo tenía 158. Los conteos no son porcentajes de cobertura; no se ha medido ni se afirma cobertura global del 100 %. La línea base anterior al primer incremento tenía 94 pruebas Core.Tests.
 
 ## Entorno y evidencia
 
@@ -25,7 +25,7 @@ PostgreSQL 15, API .NET 10 y SPA compilada servida por Nginx, bajo el proyecto C
 
 Las pruebas WebApplicationFactory utilizan una base EF InMemory aislada. Las pruebas UnitTests utilizan Moq y referencian Core.Application; no utilizan EF ni una base física. Playwright comprueba integración contra PostgreSQL real. La distinción importa: una prueba InMemory no demuestra el comportamiento de concurrencia de PostgreSQL.
 
-Se revisaron visualmente el listado y el editor en escritorio, el formulario móvil y la ficha con Recharts en tema oscuro. Las comprobaciones de navegador verifican ausencia de desbordamiento horizontal en los recorridos principales. La revisión no equivale a una auditoría completa de accesibilidad ni de todos los navegadores.
+Se revisaron visualmente el listado y el editor en escritorio, el formulario móvil y la ficha con Recharts en tema oscuro. Las comprobaciones de navegador verifican ausencia de desbordamiento horizontal en los recorridos principales. Sanidad se revisó también en escritorio y en móvil oscuro. La revisión no equivale a una auditoría completa de accesibilidad ni de todos los navegadores.
 
 Los archivos .env, capturas, perfiles del navegador y trazas permanecen fuera del control de versiones. No se modificó .github.
 
@@ -58,10 +58,27 @@ Las pruebas Moq comprueban cálculo por días transcurridos, pérdidas de peso, 
 
 Las pruebas de registro comprueban propiedad derivada de la ficha, identidad del envío, repetición sin escritura, colisiones de contenido/autor, rechazo de animales no activos, falta de acceso y valores inválidos. El pipeline HTTP verifica también autoría, auditoría, normalización y coherencia con el último peso de la ficha.
 
-## Reproducción
+## Verificación reproducible
 
 Los comandos de .NET, frontend y E2E están en [la guía de sesión](fase4-sesion.md#verificación-reproducible). La suite de navegador requiere credenciales de administrador y empleado de una base de prueba aislada; no se deben usar datos de producción.
 
-La suite crea sus propios animales y elimina sus pesos y fotografías al terminar. Los perfiles y trazas pueden contener datos y cookies del entorno de prueba. La colección Postman existente conserva el contrato anterior de autenticación.
+La suite de animales elimina sus pesos y fotografías al terminar. Los casos clínicos generan un manifiesto opcional mediante E2E_CARE_FIXTURE_OUTPUT: sus eventos son históricos y no tienen DELETE público. En esta verificación se limpiaron exclusivamente los identificadores de fixtures creados por la suite, en la base aislada, después de comprobar su prefijo y propiedad. Una ejecución sin limpieza conservará esos animales como datos de prueba. Los perfiles y trazas pueden contener datos y cookies del entorno de prueba. La colección Postman existente conserva el contrato anterior de autenticación.
 
 El propósito, el comportamiento y los límites del nuevo recorrido se explican en [animales y pesaje consecutivo](fase4-animales.md).
+
+## Sanidad, reproducción y producción
+
+Los seis escenarios nuevos de navegador se ejecutan en escritorio y móvil sobre PostgreSQL:
+
+- Tratamiento con producto, dosis y retiro guardados; rechazo de leche y sacrificio durante el período y conservación del animal activo.
+- Diagnóstico positivo seguido de parto; cambio del estado reproductivo y navegación por el árbol genealógico.
+- Respuesta clínica perdida después del 201; campos bloqueados, reintento del cuerpo original y una sola fila persistida.
+- Historial de 11 eventos: diez en la primera página y uno en la segunda, con solicitud al servidor. Employee registra un cambio de salud con motivo, fecha de actualización e historial.
+- Persistencia de los cinco tipos de evento sanitario y los siete reproductivos; búsqueda de descendientes limitada a la madre.
+- Tratamiento y leche enviados simultáneamente: uno devuelve 201, el otro 409 y solamente queda una de las dos operaciones.
+
+Las pruebas Moq comprueban días inclusivos, última administración, retiro cero, períodos superpuestos, historia incompleta, snapshot del catálogo, colisiones/repetición, autorización antes de leer y tratamientos retroactivos incompatibles con leche o sacrificio. La reproducción comprueba sexo, reproductor, cantidades y repetición con autor.
+
+El pipeline HTTP comprueba el límite final y la liberación al día siguiente en las rutas original y nueva; eventos con auditoría, identidad protegida, estado reproductivo por fecha, producción idempotente y fincas no asignadas. InMemory cubre ese pipeline; la carrera entre tratamiento y leche se verifica separadamente con PostgreSQL físico.
+
+El alcance y las limitaciones se explican en [sanidad y reproducción](fase4-sanidad.md), incluyendo el bloqueo conservador del registro de leche y la ausencia de venta/descarte, corrección de eventos y consumo automático de inventario.

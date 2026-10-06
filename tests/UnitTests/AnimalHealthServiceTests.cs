@@ -26,6 +26,7 @@ public sealed class AnimalHealthServiceTests
     [Fact]
     public async Task StatusChangeRecordsPreviousStateReasonAndAuthor()
     {
+        animal.UpdatedAt = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         var userId = Guid.NewGuid();
         user.SetupGet(value => value.UserId).Returns(userId);
         HealthStatusChange? history = null;
@@ -34,6 +35,7 @@ public sealed class AnimalHealthServiceTests
         await Service.UpdateAsync(animal.Id, new HealthUpdateRequest(HealthStatus.InTreatment, "Veterinary assessment"));
 
         Assert.Equal(HealthStatus.InTreatment, animal.HealthStatus);
+        Assert.True(animal.UpdatedAt > new DateTime(2020, 1, 1));
         Assert.NotNull(history);
         Assert.Equal(HealthStatus.Healthy, history.PreviousStatus);
         Assert.Equal(HealthStatus.InTreatment, history.NewStatus);

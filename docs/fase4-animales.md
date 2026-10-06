@@ -2,7 +2,7 @@
 
 Este segundo incremento conecta el registro y la edición del animal, sus fotografías privadas y el seguimiento de peso con la SPA. Desarrolla la curva de GDP, la carga con compresión y el pesaje consecutivo descritos para el grupo 3 en los [lineamientos del profesor](https://gramirezsunet.github.io/desarrolloAplicacionesWeb/REAF-F4/).
 
-La ficha todavía no incorpora el historial clínico, los períodos de retiro ni el estado reproductivo. El alcance restante se detalla en [estado de implementación](fase4-estado.md).
+El tercer incremento amplía esta ficha con historial clínico, retiro, reproducción, producción y árbol genealógico. Sus reglas se explican en [sanidad y reproducción](fase4-sanidad.md); el alcance restante está en [estado de implementación](fase4-estado.md).
 
 ## Registro y edición
 

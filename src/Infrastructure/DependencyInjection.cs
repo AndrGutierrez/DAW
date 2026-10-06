@@ -54,6 +54,10 @@ public static class DependencyInjection
         services.AddScoped<IFarmAccess, FarmAccess>();
         services.AddScoped<IManagementRepository, ManagementRepository>();
         services.AddScoped<AnimalHealthService>();
+        services.AddScoped<WithdrawalPolicy>();
+        services.AddScoped<AnimalProductionService>();
+        services.AddScoped<AnimalCareService>();
+        services.AddScoped<AnimalReproductionService>();
         services.AddScoped<AnimalGrowthService>();
         services.AddScoped<AnimalWeighingService>();
         AddResource<Farm, FarmRequest, FarmDefinition>(services);
