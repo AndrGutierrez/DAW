@@ -47,6 +47,10 @@ public sealed class AnimalsController(IAnimalQueryService animals, ICrudService<
     public async Task<ActionResult<IReadOnlyList<AnimalListItem>>> List(CancellationToken cancellationToken) =>
         Ok(await animals.ListAsync(cancellationToken));
 
+    [HttpGet("page"), HasPermission("animals.list")]
+    public async Task<ActionResult<AnimalPageResult>> Page([FromQuery] AnimalPageRequest request, CancellationToken ct) =>
+        Ok(await animals.PageAsync(request, ct));
+
     [HttpGet("stale")]
     [HasPermission("animals.list")]
     public async Task<ActionResult<IReadOnlyList<AnimalListItem>>> ListStale(

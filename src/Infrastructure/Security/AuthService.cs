@@ -60,19 +60,39 @@ public sealed class AuthService(
 
     public async Task<AuthResponse> RefreshAsync(RefreshRequest request, CancellationToken cancellationToken = default)
     {
-        var token = await db.RefreshTokens
-            .Include(refreshToken => refreshToken.User)
-            .FirstOrDefaultAsync(refreshToken => refreshToken.Token == request.RefreshToken, cancellationToken);
-
+        var token = await FindRefreshTokenAsync(request.RefreshToken, cancellationToken);
         if (token is null || !token.IsActive || !token.User.IsActive)
-        {
             throw new UnauthorizedAccessException("The refresh token is invalid or expired.");
-        }
 
         token.RevokedAt = DateTime.UtcNow;
-
-        return await BuildResponseAsync(token.User, cancellationToken);
+        try { return await BuildResponseAsync(token.User, cancellationToken); }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new UnauthorizedAccessException("The refresh token has already been used or revoked.");
+        }
     }
+
+    public async Task RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
+    {
+        var token = await FindRefreshTokenAsync(refreshToken, cancellationToken);
+        if (token is null || token.RevokedAt is not null) return;
+        token.RevokedAt = DateTime.UtcNow;
+        try { await db.SaveChangesAsync(cancellationToken); }
+        catch (DbUpdateConcurrencyException) { /* Another request already revoked this token. */ }
+    }
+
+    private Task<RefreshToken?> FindRefreshTokenAsync(string value, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(value) || value.Length > 256)
+            return Task.FromResult<RefreshToken?>(null);
+        var hash = HashRefreshToken(value);
+        // Accept existing plaintext rows until their next rotation or expiry.
+        return db.RefreshTokens.Include(token => token.User)
+            .FirstOrDefaultAsync(token => token.Token == hash || (value.Length == 88 && token.Token == value), cancellationToken);
+    }
+
+    private static string HashRefreshToken(string value) =>
+        "sha256:" + Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value)));
 
     public async Task<UserResult> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
@@ -102,7 +122,7 @@ public sealed class AuthService(
 
         db.RefreshTokens.Add(new RefreshToken
         {
-            Token = refreshToken,
+            Token = HashRefreshToken(refreshToken),
             UserId = user.Id,
             ExpiresAt = DateTime.UtcNow.AddDays(_jwtOptions.RefreshTokenDays)
         });

@@ -1,4 +1,5 @@
 using Core.Application.Livestock;
+using FluentValidation;
 using Core.Application.Security;
 using Core.Domain.Livestock;
 using Infrastructure.Persistence;
@@ -8,6 +9,24 @@ namespace Infrastructure.Livestock;
 
 public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weights, IFarmAccess farmAccess) : IAnimalQueryService
 {
+    public async Task<AnimalPageResult> PageAsync(AnimalPageRequest request, CancellationToken cancellationToken = default)
+    {
+        await new AnimalPageRequestValidator().ValidateAndThrowAsync(request, cancellationToken);
+        var farmIds = await farmAccess.GetAccessibleFarmIdsAsync(cancellationToken);
+        var query = db.Animals.AsNoTracking().Where(animal => farmIds.Contains(animal.FarmId));
+        if (request.FarmId.HasValue) query = query.Where(animal => animal.FarmId == request.FarmId.Value);
+        if (request.Status.HasValue) query = query.Where(animal => animal.Status == request.Status.Value);
+        var search = request.Search?.Trim().ToLowerInvariant();
+        if (!string.IsNullOrEmpty(search))
+            query = query.Where(animal => animal.InternalTag.ToLower().Contains(search) ||
+                (animal.Name != null && animal.Name.ToLower().Contains(search)) ||
+                (animal.OfficialId != null && animal.OfficialId.ToLower().Contains(search)));
+        var total = await query.CountAsync(cancellationToken);
+        var items = await MaterializeAsync(query.OrderBy(animal => animal.InternalTag).ThenBy(animal => animal.Id)
+            .Skip((request.Page - 1) * request.PageSize).Take(request.PageSize), cancellationToken);
+        return new AnimalPageResult(items, total, request.Page, request.PageSize);
+    }
+
     public async Task<IReadOnlyList<AnimalListItem>> ListAsync(CancellationToken cancellationToken = default)
     {
         var farmIds = await farmAccess.GetAccessibleFarmIdsAsync(cancellationToken);

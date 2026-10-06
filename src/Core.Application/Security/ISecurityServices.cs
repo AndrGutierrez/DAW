@@ -8,6 +8,8 @@ public interface IAuthService
 
     Task<AuthResponse> RefreshAsync(RefreshRequest request, CancellationToken cancellationToken = default);
 
+    Task RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
+
     Task<UserResult> GetUserAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 

@@ -6,7 +6,11 @@
 **/.gitignore
 **/Dockerfile
 **/docker-compose.yml
-**/nginx
 **/.env
 **/*.user
 **/db/erd
+
+**/node_modules
+**/dist
+**/playwright-report
+**/test-results

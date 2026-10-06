@@ -43,7 +43,9 @@ services:
     restart: unless-stopped
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: src/frontend/Dockerfile
     container_name: blazor-nginx
     ports:
       - "${NGINX_HTTP_PORT}:80"

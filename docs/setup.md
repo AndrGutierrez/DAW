@@ -20,7 +20,7 @@ Las contraseñas requieren mayúscula, minúscula, número, símbolo y al menos 
 
 ```bash
 docker compose config -q
-docker compose build blazorapp
+docker compose build
 docker compose up -d db
 docker compose run --rm blazorapp --seed
 docker compose up -d blazorapp nginx

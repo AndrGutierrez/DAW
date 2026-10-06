@@ -1,6 +1,6 @@
 # Sistema de gestión ganadera
 
-API para administrar fincas, potreros, lotes, animales, su estado de salud, pesajes, productos obtenidos del ganado y existencias de insumos. Construida con **.NET 10, C# 14, Onion Architecture, EF Core 10 y PostgreSQL 15**, con ASP.NET Core Identity, JWT, permisos por operación y validación FluentValidation.
+API y SPA React para administrar fincas, potreros, lotes, animales, su estado de salud, pesajes, productos obtenidos del ganado y existencias de insumos. Construida con **.NET 10, C# 14, Onion Architecture, EF Core 10 y PostgreSQL 15**, con ASP.NET Core Identity, JWT, permisos por operación y validación FluentValidation.
 
 Un animal puede producir leche, lana, carne u otros productos a lo largo de su vida. Estos resultados se registran en **una única tabla `AnimalProduction`**, indicando el animal, la finca, la fecha, el método, la cantidad y la unidad. `OperationId` permite registrar varios productos de una misma operación; por ejemplo, carne y piel del mismo sacrificio.
 
@@ -18,13 +18,13 @@ Completar `.env`: `POSTGRES_PASSWORD`, `JWT_KEY`, `SEED_ADMIN_PASSWORD` y, para 
 
 ```bash
 docker compose config -q
-docker compose build blazorapp
+docker compose build
 docker compose up -d db
 docker compose run --rm blazorapp --seed
 docker compose up -d blazorapp nginx
 ```
 
-El comando `--seed` aplica las migraciones y carga datos de demostración de forma idempotente. La API estará en `http://localhost:18080` y Swagger en `http://localhost:18080/swagger`. Usuario Admin: valor de `SEED_ADMIN_USERNAME`; contraseña: valor configurado en `.env`. Employee se crea solamente si tiene contraseña configurada.
+El comando `--seed` aplica las migraciones y carga datos de demostración de forma idempotente. La SPA estará en `http://localhost:18080`, la API en `/api` y Swagger en `http://localhost:18080/swagger`. Usuario Admin: valor de `SEED_ADMIN_USERNAME`; contraseña: valor configurado en `.env`. Employee se crea solamente si tiene contraseña configurada.
 
 **Persistencia existente:** PostgreSQL 15 usa el volumen nuevo `daw-postgres15-data`. Un volumen creado con PostgreSQL 17 no se puede conectar directamente a PostgreSQL 15: se conserva y requiere exportación/importación para trasladar sus datos. La migración de producción convierte leche, lana y carne con cantidades válidas; bloquea registros de huevos por lote sin animal y datos inconsistentes. Los insumos antiguos sin precios se conservan inactivos para revisión. No ejecuta un borrado general de la base. El detalle está en [instalación y actualización](docs/setup.md).
 
@@ -70,6 +70,8 @@ Importar [colección Postman](postman/Cattle-Management.full.postman_collection.
 | `Infrastructure` | EF Core, PostgreSQL, migraciones, repositorios, Identity, JWT y archivos |
 | `Presentation.API` | HTTP, autorización, composición DI y Problem Details |
 | `Core.Tests` | Pruebas del dominio, aplicación, persistencia aislada, seguridad y pipeline HTTP |
+| `UnitTests` | Casos de uso de Core.Application aislados con xUnit y Moq, sin EF ni base física |
+| `src/frontend` | SPA React 18, Vite, TypeScript, Tailwind, AuthContext y ThemeContext |
 
 - [Instalación, migración, ejecución y pruebas](docs/setup.md).
 - [Producto, contratos y fundamentos técnicos](docs/product-and-technical-guide.md).
@@ -77,7 +79,10 @@ Importar [colección Postman](postman/Cattle-Management.full.postman_collection.
 - [Verificación de Fase 2 y Fase 3](docs/fases-2-y-3.md).
 - [Evidencias ejecutadas y reproducción de pruebas](docs/evidencias-verificacion.md).
 - [Diagrama entidad–relación: imágenes y visor interactivo](db/diagram/README.md).
+- [Sesión persistente: decisión, controles, defensa y pruebas](docs/fase4-sesion.md).
+- [Estado y trabajo restante de Fase 4](docs/fase4-estado.md).
+- [Verificación del incremento de sesión](docs/fase4-verificacion.md).
 - [Decisiones técnicas](docs/engineering-decisions.md).
 - [Visión del negocio completo](docs/guia-de-negocio.md).
 
-La página Blazor actual presenta la API. Los formularios de gestión, informes y flujos completos de reproducción, eventos clínicos, alimentación, tareas y finanzas están previstos para posteriores incrementos; tener sus entidades mapeadas no equivale a disponer de sus casos de uso.
+La SPA permite iniciar sesión, recuperar el acceso al recargar, consultar animales con búsqueda y paginación del servidor y abrir su ficha básica. Los formularios de gestión, informes y flujos completos de reproducción, eventos clínicos, alimentación, tareas y finanzas están previstos para posteriores incrementos; tener sus entidades mapeadas no equivale a disponer de sus casos de uso.

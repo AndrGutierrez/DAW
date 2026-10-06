@@ -56,6 +56,8 @@ public sealed record AnimalDetail(
 
 public interface IAnimalQueryService
 {
+    Task<AnimalPageResult> PageAsync(AnimalPageRequest request, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<AnimalListItem>> ListAsync(CancellationToken cancellationToken = default);
 
     Task<AnimalDetail> GetAsync(Guid id, CancellationToken cancellationToken = default);

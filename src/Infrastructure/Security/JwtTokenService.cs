@@ -39,6 +39,7 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
             new(JwtRegisteredClaimNames.UniqueName, username),
             new(ClaimTypes.NameIdentifier, userId.ToString()),
             new(ClaimTypes.Name, username)

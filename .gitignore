@@ -268,3 +268,9 @@ db/erd/
 
 # Local file uploads
 uploads/
+
+# React SPA build and test artifacts
+src/frontend/dist/
+src/frontend/*.tsbuildinfo
+src/frontend/playwright-report/
+src/frontend/test-results/
