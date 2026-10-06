@@ -80,9 +80,10 @@ Importar [colección Postman](postman/Cattle-Management.full.postman_collection.
 - [Evidencias ejecutadas y reproducción de pruebas](docs/evidencias-verificacion.md).
 - [Diagrama entidad–relación: imágenes y visor interactivo](db/diagram/README.md).
 - [Sesión persistente: decisión, controles, defensa y pruebas](docs/fase4-sesion.md).
+- [Ficha, fotografías, GDP y pesaje consecutivo](docs/fase4-animales.md).
 - [Estado y trabajo restante de Fase 4](docs/fase4-estado.md).
-- [Verificación del incremento de sesión](docs/fase4-verificacion.md).
+- [Verificación ejecutada de Fase 4](docs/fase4-verificacion.md).
 - [Decisiones técnicas](docs/engineering-decisions.md).
 - [Visión del negocio completo](docs/guia-de-negocio.md).
 
-La SPA permite iniciar sesión, recuperar el acceso al recargar, consultar animales con búsqueda y paginación del servidor y abrir su ficha básica. Los formularios de gestión, informes y flujos completos de reproducción, eventos clínicos, alimentación, tareas y finanzas están previstos para posteriores incrementos; tener sus entidades mapeadas no equivale a disponer de sus casos de uso.
+La SPA permite recuperar la sesión al recargar, consultar y editar animales, cargar fotografías comprimidas y privadas, revisar el historial paginado y la curva Recharts de peso/GDP, y registrar pesajes individuales o consecutivos sin recargar. Los informes y flujos completos de reproducción, eventos clínicos, retiro, alimentación, tareas y finanzas están previstos para posteriores incrementos; tener sus entidades mapeadas no equivale a disponer de sus casos de uso.

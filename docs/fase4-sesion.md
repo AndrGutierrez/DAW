@@ -102,6 +102,9 @@ Pruebas E2E, contra un entorno aislado ya sembrado:
     export E2E_ADMIN_USERNAME=admin
     read -rsp "Contraseña de prueba: " E2E_ADMIN_PASSWORD
     export E2E_ADMIN_PASSWORD
+    export E2E_EMPLOYEE_USERNAME=employee
+    read -rsp "Contraseña de empleado de prueba: " E2E_EMPLOYEE_PASSWORD
+    export E2E_EMPLOYEE_PASSWORD
     npx playwright install chromium
     npm --script-shell="C:/Program Files/Git/bin/bash.exe" run test:e2e
 

@@ -15,6 +15,10 @@ public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weig
         var farmIds = await farmAccess.GetAccessibleFarmIdsAsync(cancellationToken);
         var query = db.Animals.AsNoTracking().Where(animal => farmIds.Contains(animal.FarmId));
         if (request.FarmId.HasValue) query = query.Where(animal => animal.FarmId == request.FarmId.Value);
+        if (request.SpeciesId.HasValue) query = query.Where(animal => animal.SpeciesId == request.SpeciesId.Value);
+        if (request.Sex.HasValue) query = query.Where(animal => animal.Sex == request.Sex.Value);
+        if (request.ExcludeId.HasValue) query = query.Where(animal => animal.Id != request.ExcludeId.Value);
+        if (request.LotId.HasValue) query = query.Where(animal => animal.LotId == request.LotId.Value);
         if (request.Status.HasValue) query = query.Where(animal => animal.Status == request.Status.Value);
         var search = request.Search?.Trim().ToLowerInvariant();
         if (!string.IsNullOrEmpty(search))

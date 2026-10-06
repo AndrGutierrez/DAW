@@ -3,9 +3,10 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { ThemeProvider } from './theme/ThemeContext';
+import { FeedbackProvider } from './components/Feedback';
 import { App } from './App';
 import './styles.css';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode><BrowserRouter><ThemeProvider><AuthProvider><App /></AuthProvider></ThemeProvider></BrowserRouter></StrictMode>,
+  <StrictMode><BrowserRouter><ThemeProvider><AuthProvider><FeedbackProvider><App /></FeedbackProvider></AuthProvider></ThemeProvider></BrowserRouter></StrictMode>,
 );

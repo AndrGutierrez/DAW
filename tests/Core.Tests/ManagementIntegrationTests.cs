@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Core.Tests;
 
-public sealed class ManagementIntegrationTests
+public sealed partial class ManagementIntegrationTests
 {
     [Fact]
     public async Task EveryManagedResourceSupportsCreateReadUpdateDelete()

@@ -260,6 +260,8 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user)
         await Unique<Animal>(x => x.Id != e.Id && x.FarmId == q.FarmId && (x.InternalTag == tag || (official != null && x.OfficialId == official) || (rfid != null && x.Rfid == rfid)), ct);
         if (e.FarmId != Guid.Empty)
         {
+            if (e.BirthDate != q.BirthDate && q.BirthDate is DateOnly birth)
+                Check(!await Repository.ExistsAsync<WeightRecord>(record => record.AnimalId == e.Id && record.Date < birth, ct), "Birth date cannot follow an existing weighing date.");
             if (e.SpeciesId != q.SpeciesId || e.Sex != q.Sex || e.BirthDate != q.BirthDate)
             {
                 Check(!await Repository.ExistsAsync<AnimalProduction>(x => x.AnimalId == e.Id, ct), "An animal with production history cannot change species, sex or birth date.");

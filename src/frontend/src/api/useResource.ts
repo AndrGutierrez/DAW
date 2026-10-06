@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { errorMessage } from './errors';
 import { useAuth } from '../auth/AuthContext';
 
-export function useResource<T>(path: string, enabled = true) {
+export function useResource<T>(path: string, enabled = true, preserveOnReload = false) {
   const { request } = useAuth();
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(enabled);
@@ -10,14 +11,14 @@ export function useResource<T>(path: string, enabled = true) {
   useEffect(() => {
     if (!enabled) { setLoading(false); setData(null); return; }
     const controller = new AbortController();
-    setLoading(true); setData(null); setError('');
+    setLoading(true); if (!preserveOnReload) setData(null); setError('');
     void request<T>(path, { signal: controller.signal }).then(value => {
       if (!controller.signal.aborted) setData(value);
     }).catch(error => {
       if (!controller.signal.aborted && !(error instanceof DOMException && error.name === 'AbortError'))
-        setError(error instanceof Error ? error.message : 'No se pudo cargar la información.');
+        setError(errorMessage(error));
     }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [path, request, enabled, revision]);
+  }, [path, request, enabled, revision, preserveOnReload]);
   return { data, loading, error, reload: () => setRevision(value => value + 1) };
 }

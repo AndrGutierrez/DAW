@@ -93,6 +93,9 @@ public sealed class AnimalPhoto : BaseEntity
 
 public sealed class WeightRecord : BaseEntity
 {
+    public WeightRecord() { }
+    public WeightRecord(Guid id) : base(id) { }
+
     public Guid FarmId { get; set; }
 
     public Guid AnimalId { get; set; }
