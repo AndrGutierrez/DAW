@@ -103,7 +103,10 @@ public sealed class PaddockDefinition(IManagementRepository r) : ResourceDefinit
 
     public override async Task CheckAsync(Paddock e, PaddockRequest q, CancellationToken ct)
     {
-        await Require<Farm>(q.FarmId, ct);
+        Check((await Require<Farm>(q.FarmId, ct)).IsActive, "The farm is inactive.");
+        var occupied = await Repository.CountAsync<Animal>(a => a.PaddockId == e.Id && a.Status == AnimalStatus.Active, ct);
+        Check(q.Capacity == null || q.Capacity >= occupied, "The capacity cannot be lower than the current occupancy.");
+        Check(q.IsActive || occupied == 0, "An occupied paddock cannot be deactivated.");
         await Unique<Paddock>(x => x.Id != e.Id && x.FarmId == q.FarmId && x.Name == q.Name.Trim(), ct);
     }
 }
@@ -200,7 +203,7 @@ public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefin
     }
 }
 
-public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user) : ResourceDefinition<Animal, AnimalRequest>(r)
+public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user, AnimalLocationPolicy location) : ResourceDefinition<Animal, AnimalRequest>(r)
 {
     public override Guid? FarmId(Animal e) => e.FarmId;
     public override Guid? FarmId(AnimalRequest q) => q.FarmId;
@@ -241,17 +244,7 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user)
             Check(breed.SpeciesId == q.SpeciesId && breed.IsActive, "The breed does not match the active species.");
         }
 
-        if (q.LotId is Guid l)
-        {
-            var lot = await Require<Lot>(l, ct);
-            Check(lot.FarmId == q.FarmId && lot.SpeciesId == q.SpeciesId && lot.IsActive, "The lot does not match the farm and species.");
-        }
-
-        if (q.PaddockId is Guid p)
-        {
-            var paddock = await Require<Paddock>(p, ct);
-            Check(paddock.FarmId == q.FarmId && paddock.IsActive, "The paddock does not belong to this farm or is inactive.");
-        }
+        await location.CheckAsync(e.Id, q.FarmId, q.SpeciesId, q.Status, q.PaddockId, q.LotId, ct);
 
         await CheckParent(e, q, q.DamId, Sex.Female, ct);
         await CheckParent(e, q, q.SireId, Sex.Male, ct);
@@ -278,6 +271,10 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user)
                 Repository.Add(new HealthStatusChange { FarmId = e.FarmId, AnimalId = e.Id, PreviousStatus = e.HealthStatus, NewStatus = q.HealthStatus, Reason = "Animal record updated", UserId = user.UserId });
             }
         }
+        if (e.PaddockId != q.PaddockId || e.LotId != q.LotId)
+            Repository.Add(new AnimalMovement { FarmId = q.FarmId, AnimalId = e.Id, FromPaddockId = e.PaddockId, ToPaddockId = q.PaddockId,
+                FromLotId = e.LotId, ToLotId = q.LotId, Date = DateOnly.FromDateTime(DateTime.UtcNow),
+                Reason = e.FarmId == Guid.Empty ? "Initial location registered" : "Animal record updated", UserId = user.UserId });
     }
 
     private async Task CheckParent(Animal e, AnimalRequest q, Guid? parentId, Sex expectedSex, CancellationToken ct)

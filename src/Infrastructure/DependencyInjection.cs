@@ -57,6 +57,10 @@ public static class DependencyInjection
         services.AddScoped<WithdrawalPolicy>();
         services.AddScoped<AnimalProductionService>();
         services.AddScoped<AnimalCareService>();
+        services.AddScoped<AnimalLocationPolicy>();
+        services.AddScoped<AnimalMovementService>();
+        services.AddScoped<PaddockService>();
+        services.AddScoped<IPaddockReader, PaddockReader>();
         services.AddScoped<AnimalReproductionService>();
         services.AddScoped<AnimalGrowthService>();
         services.AddScoped<AnimalWeighingService>();

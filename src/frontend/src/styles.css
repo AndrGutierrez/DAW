@@ -156,3 +156,43 @@ td { vertical-align: top; }
 .animal-section-links{display:flex;flex-wrap:wrap;gap:1rem;margin:1.5rem 0}.animal-section-links a{font-weight:600}.care-form{padding:1.25rem 0;border-block:1px solid var(--line);margin-block:1rem}.care-timeline{list-style:none;padding:0;margin:1rem 0}.care-timeline li{border-left:3px solid var(--line);padding:.75rem 1rem;margin:.6rem 0;overflow-wrap:anywhere}.care-event-heading{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}.care-timeline p{margin:.4rem 0}.care-clear,.care-state{padding:1rem;background:var(--soft);border-radius:.75rem}.care-state small{display:block;margin-top:.5rem}.care-editor{padding:1rem 0}.care-editor summary{cursor:pointer;font-weight:600;margin-bottom:1rem}.check-field{display:flex;align-items:center;gap:.75rem}.genealogy-root{display:flex;gap:1rem;align-items:center;justify-content:center;padding:1rem}.genealogy-tree,.genealogy-branch ul{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.genealogy-branch ul{margin-top:1rem}.genealogy-node{border:1px solid var(--line);border-radius:.7rem;padding:1rem;min-height:6rem;overflow-wrap:anywhere}.genealogy-node small{display:block}.genealogy-node a{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}.genealogy-branch{min-width:0}.animal-details{scroll-margin-top:1rem}@media(max-width:650px){.genealogy-tree{grid-template-columns:1fr}.genealogy-branch ul{gap:.5rem}.genealogy-node{padding:.75rem}}
 
 .section-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}.check-field input{width:auto;min-height:auto}
+
+.paddock-filters { flex-wrap: wrap; }
+.paddock-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 1rem; }
+.paddock-card { overflow: hidden; border-top: 4px solid var(--muted); }
+.paddock-card.positive { border-top-color: #228768; }
+.paddock-card.warning { border-top-color: #bc7a18; }
+.paddock-card.critical { border-top-color: #c24e5b; }
+.paddock-card.selected { outline: 2px solid var(--blue); outline-offset: 2px; }
+.paddock-select { display: flex; flex-direction: column; gap: .75rem; width: 100%; padding: 1.25rem; color: var(--text); background: transparent; border: 0; text-align: left; cursor: pointer; }
+.paddock-select:hover { background: var(--soft); }
+.paddock-select:focus-visible { outline: 3px solid var(--blue); outline-offset: -3px; }
+.paddock-card-title { display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: 1.2rem; }
+.paddock-occupancy strong { font-size: 2.2rem; }
+.paddock-occupancy > span { color: var(--muted); }
+.paddock-facts { display: flex; flex-direction: column; gap: .45rem; font-size: .875rem; }
+.paddock-open { color: var(--blue); font-weight: 650; font-size: .875rem; }
+.paddock-edit { margin: 0 1.25rem 1.25rem; }
+.occupancy-track { width: 100%; height: .5rem; border-radius: 1rem; overflow: hidden; background: var(--line); }
+.occupancy-track > span { display: block; height: 100%; background: #228768; }
+.warning .occupancy-track > span { background: #bc7a18; }
+.critical .occupancy-track > span { background: #c24e5b; }
+.map-legend { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; font-size: .8rem; margin: 1.25rem 0; }
+.map-dot { display: inline-block; width: .65rem; height: .65rem; flex-shrink: 0; border-radius: 100%; background: #8293a6; }
+.map-dot.positive { background: #228768; }
+.map-dot.warning { background: #bc7a18; }
+.map-dot.critical { background: #c24e5b; }
+.status-pill.warning { background: #fff0ce; color: #7b4b00; }
+.status-pill.critical { background: #ffe1e5; color: #9a2436; }
+:root.dark .status-pill.warning { background: #493616; color: #ffda92; }
+:root.dark .status-pill.critical { background: #4d2630; color: #ffb5c1; }
+.map-note { font-size: .85rem; margin-top: 2rem; }
+
+.sidebar nav { flex-wrap: wrap; }
+.dark .paddock-open { color: #92c6ef; }
+.paddock-card.selected { outline-color: #438ec5; }
+.paddock-select:focus-visible { outline-color: #438ec5; }
+
+.lot-map { margin-bottom: 1.5rem; }
+
+.paddock-detail { padding: 1.5rem; margin-block: 1.5rem; }

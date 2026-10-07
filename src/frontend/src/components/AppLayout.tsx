@@ -18,7 +18,7 @@ export function AppLayout() {
     <aside className="sidebar">
       <Link className="brand" to="/animals"><span className="brand-mark">G</span><span>Gestión ganadera<small>Tu finca, en perspectiva</small></span></Link>
       <div className="sidebar-section">SEGUIMIENTO DEL GANADO</div>
-      <nav aria-label="Principal"><NavLink to="/animals"><span aria-hidden="true">◈</span>Animales</NavLink>{can("weights.create") && can("animals.list") && can("animals.get") && <NavLink to="/weighing"><span aria-hidden="true">↗</span>Pesaje</NavLink>}<NavLink to="/account"><span aria-hidden="true">◎</span>Mi cuenta</NavLink></nav>
+      <nav aria-label="Principal"><NavLink to="/animals"><span aria-hidden="true">◈</span>Animales</NavLink>{can("weights.create") && can("animals.list") && can("animals.get") && <NavLink to="/weighing"><span aria-hidden="true">↗</span>Pesaje</NavLink>}{can('paddocks.list') && <NavLink to="/paddocks"><span aria-hidden="true">▦</span>Potreros</NavLink>}<NavLink to="/account"><span aria-hidden="true">◎</span>Mi cuenta</NavLink></nav>
       <div className="sidebar-note"><span className="eyebrow">UNET · GRUPO 3</span><p>El animal es el centro de cada registro.</p></div>
     </aside>
     <div className="main-shell">

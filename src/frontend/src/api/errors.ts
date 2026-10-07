@@ -1,6 +1,15 @@
 import { ApiError } from '../auth/session';
 export type FieldErrors = Record<string, string>;
 const messages: Record<string, string> = {
+  'The paddock has reached its configured capacity.': 'El potrero alcanzó su capacidad máxima. Elige otro destino o libera espacio antes de trasladar el animal.',
+  'The capacity cannot be lower than the current occupancy.': 'La capacidad no puede ser menor que la cantidad de animales activos presentes.',
+  'An occupied paddock cannot be deactivated.': 'Traslada los animales activos antes de desactivar este potrero.',
+  'The animal location changed. Refresh before moving it.': 'Otro usuario cambió la ubicación del animal. Actualiza la ficha y revisa el destino antes de trasladarlo.',
+  'The animal is already at this location.': 'El animal ya tiene este potrero y lote. Selecciona una ubicación distinta.',
+  'Only active animals can be moved.': 'Solo los animales activos pueden trasladarse.',
+  'The paddock does not belong to this farm or is inactive.': 'Selecciona un potrero activo de esta finca.',
+  'The farm is inactive.': 'La finca está inactiva. Revisa su estado antes de continuar.',
+  'This submission identifier belongs to a different movement.': 'Este envío ya corresponde a otro traslado. Actualiza la ficha antes de registrar un nuevo movimiento.',
   'Milk and slaughter are blocked by a medication withdrawal period on this date.': 'El animal está en retiro sanitario para esa fecha. No se puede registrar leche ni sacrificio.',
   'This treatment conflicts with existing milk or slaughter during withdrawal. Review the historical records first.': 'Ya existe leche o sacrificio dentro de este período de retiro. Revisa los registros históricos antes de guardar el tratamiento.',
   'A treatment cannot shorten the product withdrawal period.': 'Los días de retiro no pueden ser menores que los del producto.',

@@ -6,6 +6,7 @@ import { useResource } from '../api/useResource';
 
 import { labels, text, kg, date } from '../api/livestock';
 import type { AnimalDetail, AnimalPageResult } from '../api/livestock';
+import { AnimalLocation } from '../components/AnimalLocation';
 import { AnimalClinical } from '../components/AnimalClinical';
 import { AnimalReproduction } from '../components/AnimalReproduction';
 import { AnimalProduction } from '../components/AnimalProduction';
@@ -96,11 +97,12 @@ export function AnimalPage() {
   ];
   return <section><Link className="back-link" to="/animals">← Volver a los animales</Link><div className="page-heading"><div><span className="eyebrow">{animal.internalTag}</span><h1>{animal.name || 'Ficha del animal'}</h1><p className="muted">{animal.species} · {animal.farm}</p></div><div className="heading-actions"><span className={'status-pill ' + (animal.status === 'Active' ? 'positive' : '')}>{text(animal.status)}</span>{can('animals.update') && <Link className="button secondary" to={'/animals/' + animal.id + '/edit'}>Editar ficha</Link>}{can('weights.create') && animal.status === 'Active' && <a className="button primary" href="#weigh">Registrar peso</a>}</div></div>
     <div className="detail-top"><div className="panel detail-cover">{animal.photos.length && can('photos.get') ? <ProtectedPhoto path={animal.photos[0].url} alt={'Fotografía de ' + animal.internalTag} /> : <div className="detail-monogram">{animal.internalTag}<small>Sin fotografía disponible</small></div>}</div><div className="panel detail-summary"><span className="eyebrow">SEGUIMIENTO ACTUAL</span><h2>{kg(animal.currentWeightKg)}</h2><p className="muted">Último peso registrado</p><div className="summary-health"><span className="status-dot" />{text(animal.healthStatus)}</div><p className="muted">Última actualización: {date(animal.updatedAt)}</p></div></div>
-    <nav className="animal-section-links" aria-label="Secciones de la ficha"><a href="#clinical">Sanidad</a><a href="#reproduction">Reproducción</a><a href="#production">Producción</a><a href="#genealogy">Genealogía</a></nav>
+    <nav className="animal-section-links" aria-label="Secciones de la ficha"><a href="#clinical">Sanidad</a><a href="#reproduction">Reproducción</a><a href="#production">Producción</a><a href="#genealogy">Genealogía</a><a href="#location">Ubicación</a></nav>
     <div id="clinical"><AnimalClinical key={animal.id} animal={animal} onAnimalChanged={reload} /></div>
     <div id="reproduction"><AnimalReproduction key={animal.id} animal={animal} /></div>
     <div id="production"><AnimalProduction key={animal.id} animal={animal} onAnimalChanged={reload} /></div>
     <div id="genealogy"><AnimalGenealogy key={animal.id} animal={animal} /></div>
+    <AnimalLocation key={animal.id} animal={animal} onUpdated={reload} />
     <AnimalGrowth key={animal.id} animalId={animal.id} />
     {can("weights.create") && animal.status === "Active" && <section id="weigh" className="panel animal-details"><h2>Registrar un pesaje</h2><WeighingForm animalId={animal.id} onSaved={reload} /></section>}
     <div className="panel animal-details"><h2>Identificación y ubicación</h2><dl className="detail-grid">{fields.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value || 'Sin registro'}</dd></div>)}</dl></div>
