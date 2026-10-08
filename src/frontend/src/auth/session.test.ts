@@ -28,6 +28,7 @@ describe('SessionClient', () => {
     const client = new SessionClient(fetchQueue(json({ requestToken: 'csrf' }), json({ detail: 'No session.' }, 401)));
     await client.initialize();
     expect(client.getSnapshot()).toMatchObject({ status: 'anonymous', session: null });
+    expect(client.getSnapshot().reason).toBeUndefined();
   });
 
   it('distinguishes an unavailable API from an expired session and permits retry', async () => {
@@ -80,6 +81,19 @@ describe('SessionClient', () => {
     await client.initialize();
     expect(await client.request('/api/animals')).toEqual(['animal']);
     expect(fetcher).toHaveBeenCalledTimes(5);
+  });
+
+  it('communicates expiration after an authenticated refresh fails', async () => {
+    const client = new SessionClient(fetchQueue(json({ requestToken: 'csrf' }), json(session()), json({ detail: 'Session expired' }, 401)));
+    await client.initialize();
+    await expect(client.refresh()).rejects.toMatchObject({ status: 401 });
+    expect(client.getSnapshot()).toMatchObject({ status: 'anonymous', session: null, reason: 'expired' });
+  });
+
+  it('does not describe an explicit logout as expiration', async () => {
+    const client = new SessionClient(fetchQueue(json({ requestToken: 'csrf' }), json(session()), new Response(null, { status: 204 })));
+    await client.initialize(); await client.logout();
+    expect(client.getSnapshot().reason).toBeUndefined();
   });
 
   it('keeps authorization failures separate from session renewal', async () => {

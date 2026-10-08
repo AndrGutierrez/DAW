@@ -6,7 +6,7 @@ La rama codex/phase4-cattle-spa incluye sesión persistente, gestión del animal
 | --- | --- | --- |
 | SPA React, Vite y TypeScript | React 18, Tailwind, navegación, módulos del animal, potreros, inventario, dashboard y reportes; cargas, errores, toasts y diseño móvil | Auditoría y recorrido final |
 | AuthContext | Cookie persistente, JWT en memoria, renovación, logout, usuario, roles, permisos y autorización de los nuevos flujos | Defensa de la alternativa de sesión y evidencia final |
-| ThemeContext y UI | Paleta semántica de granja en ambos temas, preferencia persistida, controles compartidos e iconos SVG; ocho pestañas reales y paneles laterales | Auditoría completa de accesibilidad; fuentes/iconos externos siguen como investigación |
+| ThemeContext y UI | Paleta semántica de granja en ambos temas, preferencia persistida, controles compartidos e iconos SVG; ocho pestañas reales y paneles laterales | Auditoría completa de accesibilidad; Source Sans 3, Phosphor, selector Radix y mejoras del login aplicados |
 | Dashboard | Valoración, mínimos/máximos, rotación condicionada a historial suficiente, leche por finca/lote actual, peso por edad al pesaje y diagnósticos con denominadores; oculto y prohibido para Employee | Evidencia y explicación de los límites históricos |
 | UnitTests y Moq | Proyecto separado con referencia a Core.Application; sanidad, GDP, idempotencia, retiro, ubicación, stock y métricas | Cobertura porcentual real y evidencia seleccionada |
 | Integración | PostgreSQL, API y SPA; consultas paginadas, transacciones serializables, exportaciones con lectura consistente y RFC 7807 | Recorrido final completo |
@@ -19,4 +19,4 @@ La rama codex/phase4-cattle-spa incluye sesión persistente, gestión del animal
 
 Se conserva el dominio ganadero y su modelo. Productos, lotes farmacológicos, proveedores, semen y alimentación mantienen su utilidad. Una tabla sin interfaz no se presenta como módulo terminado ni se elimina por ese motivo. La única migración de este incremento amplía la precisión de las cantidades de movimientos; permanecen 43 tablas.
 
-Las decisiones y límites están en [animales y pesaje](fase4-animales.md), [sanidad y reproducción](fase4-sanidad.md), [potreros y traslados](fase4-potreros.md), [interfaz de la finca](fase4-ui.md), [inventario, dashboard y reportes](fase4-operaciones.md) y [sesión persistente](fase4-sesion.md). Los resultados ejecutados están en [verificación](fase4-verificacion.md).
+Las decisiones y límites están en [animales y pesaje](fase4-animales.md), [sanidad y reproducción](fase4-sanidad.md), [potreros y traslados](fase4-potreros.md), [interfaz de la finca](fase4-ui.md), [pulido de UI](fase4-ui-pulido.md), [inventario, dashboard y reportes](fase4-operaciones.md) y [sesión persistente](fase4-sesion.md). Los resultados ejecutados están en [verificación](fase4-verificacion.md).

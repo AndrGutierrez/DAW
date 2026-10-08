@@ -1,6 +1,6 @@
 # Investigación de recursos para la interfaz — Fase 4
 
-Revisión del 7 de octubre de 2026. Esta investigación no instala paquetes ni cambia el login. Las pestañas reales de la ficha y el detalle lateral de Potreros se implementaron con los componentes existentes y la plataforma web.
+Revisión original del 7 de octubre de 2026, inicialmente sin implementar. La selección autorizada el 8 de octubre se aplica en [pulido de UI](fase4-ui-pulido.md). Las pestañas reales de la ficha y el detalle lateral de Potreros se implementaron con los componentes existentes y la plataforma web.
 
 ## Selección recomendada
 
@@ -11,7 +11,7 @@ Revisión del 7 de octubre de 2026. Esta investigación no instala paquetes ni c
 | [Radix Primitives](https://www.radix-ui.com/primitives/docs/overview/introduction) | Diálogos, menús, selectores y tooltips sin estilos, con gestión de foco y teclado; permite conservar nuestra paleta. | Añade dependencias y requiere integrar estilos. Confirmar compatibilidad de la versión elegida con React 18 y probar cada componente. | Selectiva, por ejemplo un selector con búsqueda. |
 | [Motion para React](https://motion.dev/docs/react-accessibility) | Transiciones de entrada/salida o cambios de disposición, con opciones de movimiento reducido. | Añade una dependencia. Las transiciones sencillas ya pueden resolverse con CSS y movimiento reducido. | Posponer hasta completar lo funcional. |
 
-Recomendación: Phosphor + Source Sans 3 y adopción selectiva de Radix. Motion queda reservado para una necesidad que CSS no resuelva bien. Son candidatos revisados documentalmente; no se instalaron ni se verificaron integraciones.
+Recomendación: Phosphor + Source Sans 3 y adopción selectiva de Radix. Motion queda reservado para una necesidad que CSS no resuelva bien. La integración de Phosphor, Source Sans 3 y el selector con Radix se realizó después de autorizarla el 8 de octubre; sus pruebas están en [verificación](fase4-verificacion.md). Las transiciones aplicadas se resuelven con CSS y movimiento reducido.
 
 ## Animales y potreros
 
@@ -19,7 +19,7 @@ Priorizar fotografías reales del animal mediante el flujo protegido existente. 
 
 La ficha muestra un panel por pestaña y conserva los valores al alternarlas. Peso y GDP permanecen dentro de Crecimiento. El detalle de ocupación abre desde el lateral derecho y ocupa el ancho disponible en móvil. Su representación sigue siendo esquemática y carece de coordenadas geográficas.
 
-## Siguiente mejora del login, todavía sin implementar
+## Mejoras del login propuestas y aplicadas en el pulido
 
 1. Mostrar/Ocultar contraseña con un botón que no envíe el formulario, nombre accesible y estado comunicado. Conservar valor, autocompletado y foco; Enter sigue enviando.
 2. Aviso con icono, título, explicación y siguiente acción. Distinguir credenciales inválidas, sesión vencida y fallo de conexión sin revelar si existe una cuenta concreta.

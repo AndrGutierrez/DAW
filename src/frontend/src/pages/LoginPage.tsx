@@ -1,6 +1,8 @@
 import { Icon } from '../components/ui/Icon';
 import { Button, Input } from '../components/ui/Controls';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { PasswordInput } from '../components/ui/PasswordInput';
+import { StatusNotice } from '../components/ui/StatusNotice';
 import type { FormEvent } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
@@ -10,7 +12,13 @@ import { ThemeButton } from '../components/ThemeButton';
 export function LoginPage() {
   const auth = useAuth();
   const location = useLocation();
-  const [error, setError] = useState('');
+  const [notice, setNotice] = useState<{ title: string; message: string; action: string } | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const usernameInput = useRef<HTMLInputElement>(null);
+  const passwordInput = useRef<HTMLInputElement>(null);
+  const noticeElement = useRef<HTMLDivElement>(null);
+  const submitting = useRef(false);
+  useEffect(() => { if (notice) noticeElement.current?.focus(); }, [notice]);
   const [busy, setBusy] = useState(false);
   if (auth.status === 'authenticated') {
     const destination = (location.state as { from?: string } | null)?.from;
@@ -18,15 +26,31 @@ export function LoginPage() {
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitting.current) return;
     const data = new FormData(event.currentTarget);
-    setBusy(true); setError('');
-    try { await auth.login(String(data.get('username')).trim(), String(data.get('password'))); }
-    catch (error) {
-      setError(error instanceof ApiError && error.status === 401
-        ? 'Usuario o contraseña incorrectos, o cuenta inactiva.'
-        : error instanceof Error ? error.message : 'No fue posible iniciar sesión.');
+    const username = String(data.get('username') || '').trim();
+    const password = String(data.get('password') || '');
+    const validation: Record<string, string> = {};
+    if (!username) validation.username = 'Escribe tu usuario o correo.';
+    if (!password) validation.password = 'Escribe tu contraseña.';
+    setErrors(validation); setNotice(null);
+    if (Object.keys(validation).length) {
+      requestAnimationFrame(() => (validation.username ? usernameInput : passwordInput).current?.focus());
+      return;
     }
-    finally { setBusy(false); }
+    submitting.current = true; setBusy(true);
+    try { await auth.login(username, password); }
+    catch (failure) {
+      if (failure instanceof ApiError && failure.status === 401)
+        setNotice({ title: 'Revisa tus credenciales', message: 'Usuario o contraseña incorrectos, o cuenta inactiva.', action: 'Comprueba lo que escribiste. Si el problema continúa, contacta al administrador de tu finca.' });
+      else if (failure instanceof ApiError && failure.status === 429)
+        setNotice({ title: 'Espera antes de reintentar', message: 'El servicio recibió demasiados intentos de acceso.', action: 'Espera un momento y vuelve a intentarlo.' });
+      else if (failure instanceof ApiError && failure.status < 500)
+        setNotice({ title: 'No se pudo completar el acceso', message: 'La solicitud de acceso no pudo validarse.', action: 'Revisa los datos e inténtalo de nuevo. Si persiste, contacta al administrador.' });
+      else
+        setNotice({ title: 'No pudimos conectar', message: 'No se pudo comunicar con el servicio de la finca.', action: 'Revisa tu conexión y vuelve a pulsar Entrar a mi finca. Conservamos los datos del formulario.' });
+    }
+    finally { submitting.current = false; setBusy(false); }
   }
   return <main className="login-page">
     <section className="login-story" aria-label="Gestión ganadera">
@@ -37,11 +61,15 @@ export function LoginPage() {
     </section>
     <section className="login-form-panel"><div className="login-theme"><ThemeButton /></div><div className="login-form-content">
       <span className="eyebrow">BIENVENIDO A TU FINCA</span><h2>Inicia sesión</h2><p className="muted">Accede con tu usuario o correo electrónico.</p>
-      <form onSubmit={submit}>
-        <label htmlFor="username">Usuario o correo</label><Input id="username" name="username" autoComplete="username" required maxLength={254} placeholder="Tu usuario" disabled={busy} />
-        <label htmlFor="password">Contraseña</label><Input id="password" name="password" type="password" autoComplete="current-password" required maxLength={256} placeholder="Tu contraseña" disabled={busy} />
-        {error && <p role="alert" className="error-message">{error}</p>}
-        <Button className="button primary login-submit" disabled={busy}>{busy ? 'Iniciando sesión…' : 'Entrar a mi finca'}<Icon name="arrow" size={18} /></Button>
+      {auth.reason === 'expired' && !notice && <StatusNotice kind="info" title="Tu sesión terminó"><p>Vuelve a iniciar sesión para continuar en la pantalla que estabas consultando.</p></StatusNotice>}
+      <form onSubmit={event => void submit(event)} noValidate aria-busy={busy}>
+        <label htmlFor="username">Usuario o correo</label><Input ref={usernameInput} id="username" name="username" autoComplete="username" required maxLength={254} placeholder="Tu usuario" readOnly={busy} aria-invalid={!!errors.username} aria-describedby={errors.username ? 'username-error' : undefined} onInput={() => setErrors(current => ({ ...current, username: '' }))} />
+        {errors.username && <small id="username-error" className="field-error">{errors.username}</small>}
+        <label htmlFor="password">Contraseña</label><PasswordInput ref={passwordInput} id="password" name="password" autoComplete="current-password" required maxLength={256} placeholder="Tu contraseña" readOnly={busy} aria-invalid={!!errors.password} aria-describedby={errors.password ? 'password-error' : undefined} onInput={() => setErrors(current => ({ ...current, password: '' }))} />
+        {errors.password && <small id="password-error" className="field-error">{errors.password}</small>}
+        {notice && <StatusNotice ref={noticeElement} title={notice.title}><p>{notice.message}</p><p>{notice.action}</p></StatusNotice>}
+        <Button className="button primary login-submit" type="submit" disabled={busy}>{busy ? 'Iniciando sesión…' : 'Entrar a mi finca'}<Icon name={busy ? 'spinner' : 'arrow'} className={busy ? 'loading-icon' : undefined} size={18} /></Button>
+        {busy && <span className="sr-only" role="status">Comprobando tus credenciales. Espera un momento.</span>}
       </form>
       <p className="login-help">¿Necesitas acceso? Solicita una cuenta al administrador de tu finca.</p>
     </div><p className="login-footer">Universidad Nacional Experimental del Táchira</p></section>

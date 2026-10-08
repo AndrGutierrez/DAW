@@ -54,4 +54,4 @@ La comprobación de contraste mide texto/fondo de los controles y estados render
 
 El incremento no cambia el backend ni la base de datos. Inventario, dashboard, alertas generales, exportaciones y evidencia final siguen pendientes según el [estado de Fase 4](fase4-estado.md).
 
-La selección de recursos externos y el siguiente pulido del login se documentan en [investigación UI](fase4-ui-investigacion.md). No se instalaron esos recursos ni se cambió el login en este ajuste.
+La [investigación UI](fase4-ui-investigacion.md) describe las propuestas posteriores a este ajuste. Source Sans 3, Phosphor, adopción selectiva de Radix y mejoras del login se implementaron después y se explican en [pulido de UI](fase4-ui-pulido.md).

@@ -13,6 +13,7 @@ export type AuthState = {
   status: 'checking' | 'authenticated' | 'anonymous' | 'unavailable';
   session: Session | null;
   error: string | null;
+  reason?: 'expired';
 };
 export type Problem = { status?: number; title?: string; detail?: string; errors?: Record<string, string[]> };
 
@@ -119,7 +120,7 @@ export class SessionClient {
         })
         .catch(error => {
           if (version === this.version && error instanceof ApiError && error.status === 401)
-            this.clearLocalSession();
+            this.clearLocalSession(this.state.session ? 'expired' : undefined);
           throw error;
         })
         .finally(() => { this.pendingRefresh = null; });
@@ -133,9 +134,9 @@ export class SessionClient {
     this.broadcastLogout();
   };
 
-  clearLocalSession = () => {
+  clearLocalSession = (reason?: AuthState['reason']) => {
     this.version++;
-    this.publish({ status: 'anonymous', session: null, error: null });
+    this.publish({ status: 'anonymous', session: null, error: null, reason });
   };
 
   request = async <T>(path: string, init: RequestInit = {}, retry = true, responseType: "json" | "blob" = "json"): Promise<T> => {
@@ -154,7 +155,7 @@ export class SessionClient {
       if (this.state.session?.accessToken === session.accessToken) await this.refresh();
       return this.request<T>(path, init, false, responseType);
     }
-    if (response.status === 401) this.clearLocalSession();
+    if (response.status === 401) this.clearLocalSession('expired');
     return this.read<T>(response, responseType);
   };
 }

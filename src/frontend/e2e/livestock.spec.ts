@@ -58,10 +58,9 @@ test('create and edit preserve animal identification, location, genealogy and no
   await page.getByLabel('Fecha de nacimiento').fill('2025-01-01');
   await page.getByLabel('Peso al nacer (kg)').fill('32.25');
   await page.getByLabel('Observaciones', { exact: true }).fill('Preserve this information.');
+  await page.getByRole('button', { name: 'Madre', exact: true }).click();
   await page.getByLabel('Buscar madre').fill(prefix + '-MOTHER');
-  await page.locator('.parent-picker').first().getByRole('button', { name: 'Buscar', exact: true }).click();
-  await expect(page.getByLabel('Madre', { exact: true }).locator('option[value="' + mother + '"]')).toHaveCount(1);
-  await page.getByLabel('Madre', { exact: true }).selectOption(mother);
+  await page.getByRole('dialog', { name: 'Seleccionar madre' }).getByRole('button', { name: prefix + '-MOTHER', exact: true }).click();
   const lots = await (await request.get('/api/lots', { headers })).json();
   const lot = lots.find((item: { data: { farmId: string; speciesId: string; isActive: boolean } }) => item.data.farmId === farmId && item.data.speciesId === speciesId && item.data.isActive);
   await page.getByLabel('Lote', { exact: true }).selectOption(lot.id);
