@@ -19,11 +19,7 @@ Las contraseñas requieren mayúscula, minúscula, número, símbolo y al menos 
 ## 2. Docker Compose
 
 ```bash
-docker compose config -q
-docker compose build
-docker compose up -d db
-docker compose run --rm blazorapp --seed
-docker compose up -d blazorapp nginx
+docker compose up --build -d --wait
 ```
 
 `--seed` ejecuta `MigrateAsync`, crea permisos y roles, verifica la cuenta Admin y carga datos. Repetirlo no duplica los registros de demostración ni reemplaza sus existencias editadas. La contraseña de Admin se sincroniza mediante el mecanismo de restablecimiento de Identity; se valida antes de cambiarla. La cuenta Employee se crea sólo si se configura su contraseña y recibe una membresía a DEMO.
@@ -123,3 +119,13 @@ El workflow existente utiliza PostgreSQL 17 en su entorno temporal; Compose y la
 - API 409: identificador duplicado, dependencia pendiente, regla de negocio o conflicto concurrente; corregir o recargar antes de repetir.
 - Error de clave JWT: configurar un secreto real; el placeholder se rechaza al arrancar.
 - Puerto ocupado: cambiar `NGINX_HTTP_PORT` y `baseUrl`. Una pestaña abierta no demuestra que se esté ejecutando la imagen recién construida.
+
+## Inicialización automática y comprobada de Fase 4
+
+Desde una base vacía basta docker compose up --build -d --wait, una vez configurado .env. El servicio initialize comparte imagen/configuración con blazorapp, aplica migraciones mediante --seed y debe terminar correctamente antes de iniciar la API. Si falla la migración o el seed, Compose no inicia esa dependencia. Consultar docker compose logs initialize para el diagnóstico.
+
+No ejecutar varios initialize simultáneos contra la misma base. Actualizar una instalación existente conserva sus datos; las condiciones de migración descritas arriba siguen aplicando. El arranque HTTP directo continúa sin migrar automáticamente.
+
+El seed nuevo configura dos posiciones esquemáticas ilustrativas en los potreros DEMO; no cambia posiciones en bases existentes ni define objetivos GDP universales. Una cuenta Employee ya configurada conserva sus roles y membresías.
+
+Importar también [colección específica Fase 4](../postman/Phase4.postman_collection.json). Comprueba usuarios y revocación, objetivos y plano; restaura el objetivo previo y conserva inactiva la cuenta de prueba. La colección completa incorpora esos casos como carpeta 07. Las comprobaciones de geometría/avisos con datos nuevos se complementan con e2e/monitoring.spec.ts.

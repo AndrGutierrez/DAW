@@ -77,3 +77,13 @@ Registrar un ejemplar con identificación y genealogía; modificar solo su nombr
 Registrar pesos en dos fechas distintas, cambiar a GDP y consultar los puntos. Añadir un segundo pesaje de una misma fecha y comprobar que se conserva el anterior en la tabla. Definir un objetivo y revisar el aviso.
 
 Seleccionar dos animales para el pesaje consecutivo, provocar un error de valor y guardar ambos sin recargar. Las pruebas automatizadas añaden el caso de una respuesta perdida después de guardar y la concurrencia real contra PostgreSQL. Los resultados y comandos están en [verificación](fase4-verificacion.md).
+
+## Objetivos y avisos de crecimiento persistentes — 8 de octubre
+
+Seguimiento configura un objetivo de GDP por finca y muestra bovinos activos que requieren revisión. Se reutiliza AlertRules con Type=LowWeightGain; el objetivo individual se guarda en Animals.TargetDailyGainKg. Prioridad: objetivo individual, regla vigente habilitada de la finca, sin objetivo. Cero es un objetivo válido; null retira el individual o desactiva el de finca. No se prescribe una GDP universal.
+
+La ficha conserva la comparación temporal del campo y permite Guardar objetivo individual o Usar objetivo de finca. Al recargar se mantiene la configuración guardada y se declara su origen. Editar los datos generales del animal no borra ese objetivo.
+
+GET /api/alerts/growth lee las dos últimas fechas distintas por bovino activo accesible, usando el último registro de cada fecha. Compara la GDP sin redondear: cualquier pérdida de peso produce aviso aun sin objetivo; una GDP inferior al objetivo produce bajo rendimiento. La igualdad no genera aviso. Sin dos mediciones no se calcula GDP y se informa el conteo excluido. Los avisos enlazan la ficha y muestran fechas, pesos, objetivo y origen.
+
+Las políticas y mediciones son persistentes; los avisos se recalculan al consultar y desaparecen cuando el último intervalo deja de satisfacer la condición. No se crean alertas históricas en la tabla Alerts ni se envían mensajes o notificaciones externas. Dashboard y Seguimiento actualizan cada 60 segundos mientras están visibles: es polling, no WebSockets. El filtro temporal del dashboard no altera estos avisos actuales. El servidor lee observaciones resumidas de todos los bovinos accesibles y pagina después de evaluar; aún no existe prueba de carga de grandes rebaños.

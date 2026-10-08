@@ -4,7 +4,7 @@ Fecha de revisión: 8 de octubre de 2026. Este documento contrasta la implementa
 
 ## Fuentes y prioridad
 
-Se revisaron los documentos locales de Desarrollo de Aplicaciones Web: Fase 4/03_Tarea_Asignacion_Fase4_y_Rubrica.docx, el material teórico, la guía de laboratorio, DAW-0423807T Fase 4.pdf y Sistema de Evaluación y Rubricas.docx. El documento de asignación define cinco criterios y 80 puntos. El quiz corresponde a los 20 puntos restantes; un repositorio y sus pruebas no sustituyen ese examen.
+Se revisaron los documentos locales de Desarrollo de Aplicaciones Web: Fase 4/03_Tarea_Asignacion_Fase4_y_Rubrica.docx, el material teórico, la guía de laboratorio, DAW-0423807T Fase 4.pdf y Sistema de Evaluación y Rubricas.docx. El documento anterior de asignación define cinco criterios y 80 puntos. El nuevo instrumento Instrucciones y Evaluación 09 Octubre .docx declara 40 puntos en cuatro criterios y tiene prioridad para la presentación del 9 de octubre; ver [matriz vigente](fase4-evaluacion-09-octubre.md). El quiz corresponde a los 20 puntos restantes; un repositorio y sus pruebas no sustituyen ese examen.
 
 También se volvió a consultar el [sitio del profesor](https://gramirezsunet.github.io/desarrolloAplicacionesWeb/REAF-F4/), sus criterios generales, los diez puntos transversales y la ficha del Grupo 3. Las instrucciones de otros grupos no se trasladan al dominio ganadero. El [contraste con su repositorio de ejemplo](fase4-referencia-profesor.md) registra la revisión concreta: inicio por rol, KPI con acciones y documentación reproducible. La portada administrativa ahora prioriza datos ganaderos; la galería y la guía describen la SPA actual.
 
@@ -17,7 +17,7 @@ La teoría menciona JWT en localStorage; el checklist web permite memoria o cook
 | SPA React/Vite/Tailwind, 20 puntos | src/frontend desacoplado; rutas y componentes React/TypeScript, carga diferida y peticiones JSON. Tailwind compila y compone los controles de la curva diaria con grid-cols-1/md:grid-cols-2 y overflow-x-auto; el sistema visual también usa CSS y tokens compartidos | El estilo no se construye exclusivamente con utilidades. La prueba de pesaje sin navegación pertenece a la regresión completa anterior |
 | Context API/sesión/tema, 20 puntos | AuthContext y ThemeContext; renovación de sesión, permisos, temas y preferencia local persistida. JWT Bearer enviado por un único cliente | Los datos del usuario se obtienen de la sesión validada en la API; no se decodifica el JWT para confiar en sus permisos en React. La persistencia se apoya en refresh cookie; la paleta sustituye Azul UNET |
 | Dashboard KPI, 15 puntos | Costo y valor de referencia, mínimos/máximos, rotación con historial trazable, gráficos/tablas, leche diaria por lote, peso por edad y diagnósticos | USD es una convención de referencia, no moneda histórica persistida. No hay conversión BCV. La actualización visible es por consultas cada 60 segundos |
-| xUnit/Moq, 15 puntos | 122 pruebas aisladas en tests/UnitTests con referencia a Core.Application. ProductCatalogServiceTests ejerce CrudService<Product, ProductRequest>, ProductDefinition y ProductRequestValidator contra IManagementRepository simulado | Son los equivalentes del ProductService/IProductRepository del ejemplo, sin clases artificiales creadas solo para imitar nombres. Reporte Passed y cobertura real adjuntos; no se afirma 100 % |
+| xUnit/Moq, 15 puntos | 153 pruebas aisladas en tests/UnitTests con referencia a Core.Application. ProductCatalogServiceTests ejerce CrudService<Product, ProductRequest>, ProductDefinition y ProductRequestValidator contra IManagementRepository simulado | Son los equivalentes del ProductService/IProductRepository del ejemplo, sin clases artificiales creadas solo para imitar nombres. Reporte Passed y cobertura real adjuntos; no se afirma 100 % |
 | Integración/RBAC/errores, 10 puntos | API .NET 10, PostgreSQL 15 y Nginx; guards y permisos tanto en UI como API; RFC 7807, validaciones, conservación de valores y reintentos idempotentes | Core.Tests usa pipeline HTTP y EF InMemory; las pruebas Playwright dirigidas consumen la API y PostgreSQL físicos. Son evidencias distintas |
 
 ## Checklist transversal
@@ -32,26 +32,26 @@ La teoría menciona JWT en localStorage; el checklist web permite memoria o cook
 | Responsividad | Ubicación comprobada a 390/1365 px y curva diaria en proyectos desktop/mobile; sin desbordamiento horizontal. No es una certificación de todos los navegadores |
 | Cargas | Skeletons/estados y carga diferida de gráficos, búsqueda y exportadores |
 | Moneda/decimales | USD de referencia con dos decimales; cantidades con su precisión. No se implementa cambio oficial ni se inventa tasa |
-| Docker | Compose levanta PostgreSQL/API/Nginx. La primera inicialización todavía requiere el paso --seed del runbook; falta un comando de arranque que lo orqueste desde una base vacía |
+| Docker | Compose levanta PostgreSQL/API/Nginx. initialize aplica --seed antes de iniciar API; docker compose up --build -d --wait se comprobó con un volumen vacío aislado |
 | Defensa E2E | Evidencia seleccionada y recorrido propuesto abajo. Falta ensayo presencial y, si se exige video, su grabación |
 
 ## Grupo 3: capacidades y brechas
 
 - Ficha 360: historial clínico, fotografías, genealogía navegable, reproducción, producción y peso/GDP. La compresión cliente y los reportes XLSX/PDF ya se verificaron en la regresión anterior.
-- GDP: fórmula y selección por fecha en Application. Se agregó aviso automático de pérdida real de peso entre los dos últimos puntos diarios; no depende de un objetivo introducido. Un objetivo positivo permite comparar en la ficha, pero todavía no se persiste ni genera alertas generales por finca.
+- GDP: fórmula y selección por fecha en Application. Se agregó aviso automático de pérdida real de peso entre los dos últimos puntos diarios; no depende de un objetivo introducido. El objetivo se persiste por finca y animal, y Seguimiento/Dashboard recalculan avisos generales de los últimos intervalos; sin dos fechas se informa la exclusión.
 - Retiro sanitario: avisos y bloqueo en servidor de leche/sacrificio durante el retiro; no es una simple decoración del dashboard.
-- Potreros: tarjetas interactivas, capacidad, densidad, residentes y días desde entrada conocida. El panel lateral resuelve detalle y traslado. **El plano espacial de la finca y el semáforo basado en un umbral de días siguen pendientes**; las tarjetas no prueban geometría ni política de rotación.
+- Potreros: tarjetas interactivas, capacidad, densidad, residentes y días desde entrada conocida. El panel lateral resuelve detalle y traslado. El plano configura posiciones/tamaños por finca, con relleno por capacidad y borde según permanencia máxima. No representa GPS ni prescribe una política agronómica.
 - Pesaje en manga: cola consecutiva, foco y confirmación sin recargas; reintentos conservan el identificador.
 - Analítica lechera: ahora entrega y dibuja una serie diaria por finca/lote actual. Las identidades evitan mezclar grupos con nombres iguales. Solo suma litros, informa exclusiones y muestra huecos en días sin registro. No reconstruye una asignación histórica del ordeño.
 - Peso/reproducción: medios de peso y conteos por rango de edad al pesaje; positivos/diagnósticos concluyentes, con denominador visible. No se presenta esa proporción como una tasa de concepción por servicio.
 
 ## Trabajo restante prioritario
 
-1. Completar la política persistida de objetivos de GDP y un resumen de alertas por finca; requiere definir el objetivo de manejo, no imponer un valor universal.
-2. Incorporar un plano espacial configurable de potreros y umbrales de permanencia. Conservar la diferencia entre lote y potrero y los casos de fecha de entrada desconocida.
-3. Automatizar el primer arranque y probarlo con una base vacía aislada. Mantener intactos los datos actuales.
-4. Actualizar la colección Postman para los nuevos contratos operativos y de sesión de navegador; seleccionarla junto con la demo SPA.
-5. Entregar la rama revisada en el repositorio oficial, ensayar el recorrido y preparar defensa/quiz. Esta auditoría no realiza publicación ni inventa una demostración presencial.
+1. Publicar la rama revisada en el repositorio oficial y comprobar su instalación/HTTPS desde otro equipo si corresponde a la entrega.
+2. Ensayar el [recorrido vigente de cuatro criterios](fase4-evaluacion-09-octubre.md), preparar la sustentación y completar el formulario presencial. Las tareas externas no se presentan como realizadas.
+3. Como mejora posterior, reforzar con Moq las rutas que hoy dependen de pruebas de integración y medir rendimiento de grandes rebaños/exportaciones.
+
+Se completaron la política persistente de GDP, los avisos por finca, el plano/umbral de permanencia, la gestión de usuarios, el arranque vacío y la actualización de Postman. Los [reportes actuales](evidence/phase4-final/README.md) distinguen ejecución, cobertura y PostgreSQL.
 
 La corrección de eventos desde la UI, el traslado masivo de lotes, los lotes farmacológicos/caducidad y alertas en segundo plano son ampliaciones del negocio. No aparecen como requisitos literales adicionales de la rúbrica práctica de esta fase. Deben planificarse sin confundirlos con sus cinco criterios.
 

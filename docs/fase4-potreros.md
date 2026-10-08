@@ -49,3 +49,11 @@ El mapa no representa coordenadas ni superficie geográfica a escala. Los días 
 No hay edición ni eliminación pública individual del historial de movimientos. El DELETE administrativo del animal mantiene el comportamiento previo del modelo: sus movimientos se eliminan por la relación en cascada. Los registros de auditoría existentes permanecen; esta limitación debe considerarse antes de eliminar una ficha.
 
 La verificación de concurrencia se realiza contra PostgreSQL físico, además de las pruebas aisladas de Application y del pipeline HTTP. Los resultados actuales están en [verificación](fase4-verificacion.md); las tareas restantes están en [estado](fase4-estado.md).
+
+## Plano espacial y permanencia configurable — 8 de octubre
+
+Cada potrero puede guardar MapX, MapY, MapWidth y MapHeight como porcentajes de un plano 100 × 100. La API exige los cuatro valores o ninguno, precisión de cuatro decimales y límites coherentes. El editor declara que es un esquema de distribución, no cartografía GPS ni medición de hectáreas. El seed nuevo incluye dos posiciones ilustrativas en la finca DEMO; actualizar una instalación existente conserva los potreros y no inventa sus posiciones.
+
+Seleccionar una finca carga todos sus potreros activos configurados mediante GET /api/paddocks/map, incluso si las tarjetas están filtradas o en otra página. Color de relleno: capacidad actual; borde: permanencia frente a MaxStayDays. Con fecha conocida, menos del 80 % es verde, desde 80 % ámbar y desde el límite rojo. Sin fecha o sin límite, estado neutro. Las fechas desconocidas se informan aparte y nunca se infieren de una edición. Un borde verde solo describe las fechas conocidas.
+
+El plano admite clic, Enter y Espacio y abre el mismo panel lateral de residentes/traslados. La geometría se configura numéricamente; no se implementó edición por arrastre, GIS, validación de solapamientos, recomendación agronómica de carga ni traslado masivo.

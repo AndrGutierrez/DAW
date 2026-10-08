@@ -109,3 +109,9 @@ Pruebas E2E, contra un entorno aislado ya sembrado:
     npm --script-shell="C:/Program Files/Git/bin/bash.exe" run test:e2e
 
 Las capturas y trazas pueden contener cookies y datos del entorno de prueba; permanecen ignoradas por Git.
+
+## Actualización: cambios administrativos de acceso
+
+La validación Bearer ahora consulta la cuenta activa y compara el claim security_stamp con el sello vigente de Identity. Crear cuentas conserva el hash de Identity; editar identidad/roles/fincas/permisos, desactivar o restablecer una contraseña cambia ese sello y revoca los refresh tokens de la cuenta. Un JWT previo recibe 401 inmediatamente. Esto agrega una lectura de Identity por solicitud y permite la revocación administrativa inmediata.
+
+La advertencia sobre logout sigue vigente: cerrar una sesión ordinaria revoca su refresh, pero no cambia el sello de toda la cuenta. Los JWT previos al despliegue que no contienen sello deben renovarse o iniciar sesión otra vez; la cookie válida puede restaurar el acceso con el contrato nuevo.

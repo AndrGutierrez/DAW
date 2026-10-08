@@ -1,0 +1,382 @@
+{
+  "stats": {
+    "iterations": {
+      "total": 1,
+      "pending": 0,
+      "failed": 0
+    },
+    "items": {
+      "total": 26,
+      "pending": 0,
+      "failed": 0
+    },
+    "scripts": {
+      "total": 26,
+      "pending": 0,
+      "failed": 0
+    },
+    "prerequests": {
+      "total": 26,
+      "pending": 0,
+      "failed": 0
+    },
+    "requests": {
+      "total": 26,
+      "pending": 0,
+      "failed": 0
+    },
+    "tests": {
+      "total": 26,
+      "pending": 0,
+      "failed": 0
+    },
+    "assertions": {
+      "total": 37,
+      "pending": 0,
+      "failed": 0
+    },
+    "testScripts": {
+      "total": 26,
+      "pending": 0,
+      "failed": 0
+    },
+    "prerequestScripts": {
+      "total": 0,
+      "pending": 0,
+      "failed": 0
+    }
+  },
+  "failures": [],
+  "requests": [
+    {
+      "name": "Login administrador",
+      "method": "POST",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Finca de demostración",
+      "method": "GET",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Crear operador con finca",
+      "method": "POST",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "Password is never returned",
+          "passed": true
+        },
+        {
+          "name": "Farm assignment persisted",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login operador administrado",
+      "method": "POST",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Operador no administra usuarios",
+      "method": "GET",
+      "status": 403,
+      "assertions": [
+        {
+          "name": "HTTP 403",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Restablecer contraseña",
+      "method": "POST",
+      "status": 204,
+      "assertions": [
+        {
+          "name": "HTTP 204",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Token anterior invalidado",
+      "method": "GET",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Contraseña anterior rechazada",
+      "method": "POST",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login con contraseña nueva",
+      "method": "POST",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Leer versión vigente",
+      "method": "GET",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Desactivar cuenta sin borrar historial",
+      "method": "PUT",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Inactive user persists",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Acceso de cuenta desactivada bloqueado",
+      "method": "GET",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Refresh de cuenta desactivada bloqueado",
+      "method": "POST",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Guardar objetivo previo",
+      "method": "GET",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Persistir objetivo GDP",
+      "method": "PUT",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Configured farm goal",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Consultar avisos calculados",
+      "method": "GET",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Paged growth alerts",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Objetivo inválido produce RFC 7807",
+      "method": "PUT",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "Problem content type",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Restaurar objetivo previo",
+      "method": "PUT",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Consultar plano espacial completo",
+      "method": "GET",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Coordinates refer to stored paddocks",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login navegador sin CSRF rechazado",
+      "method": "POST",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Obtener CSRF de navegador",
+      "method": "GET",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login navegador con cookie HttpOnly",
+      "method": "POST",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Refresh is absent from JSON",
+          "passed": true
+        },
+        {
+          "name": "Cookie is HttpOnly and Strict",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Renovar sesión por cookie",
+      "method": "POST",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Access token restored",
+          "passed": true
+        },
+        {
+          "name": "Refresh stays private",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Cerrar sesión por cookie",
+      "method": "POST",
+      "status": 204,
+      "assertions": [
+        {
+          "name": "HTTP 204",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Sesión cerrada no se restaura",
+      "method": "POST",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Renovación sin CSRF rechazada",
+      "method": "POST",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

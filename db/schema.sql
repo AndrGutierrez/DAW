@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict qmqbX7JrrSepUQ9R2I3rgGvz4FuEFpRNrvhdZk9e3OJDgteC3gmhHRIINubWZWa
+\restrict TXxNHVU1H5nb9vzjLixgGx59m2b2W2mFLktSy24yV7Uy57aJ0KXP6QV3KwEjmUd
 
 -- Dumped from database version 15.19
 -- Dumped by pg_dump version 15.19
@@ -30,7 +30,7 @@ CREATE TABLE public."AlertRules" (
     "Id" uuid NOT NULL,
     "FarmId" uuid NOT NULL,
     "Type" integer NOT NULL,
-    "ThresholdValue" numeric(12,2),
+    "ThresholdValue" numeric(12,4),
     "ThresholdDays" integer,
     "IsEnabled" boolean NOT NULL,
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
@@ -141,7 +141,8 @@ CREATE TABLE public."Animals" (
     "SireId" uuid,
     "Notes" character varying(2000),
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
-    "UpdatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "UpdatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "TargetDailyGainKg" numeric(8,4)
 );
 
 
@@ -357,7 +358,12 @@ CREATE TABLE public."Paddocks" (
     "AreaHectares" numeric(14,4),
     "Capacity" integer,
     "IsActive" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "MapHeight" numeric(7,4),
+    "MapWidth" numeric(7,4),
+    "MapX" numeric(7,4),
+    "MapY" numeric(7,4),
+    "MaxStayDays" integer
 );
 
 
@@ -2331,5 +2337,5 @@ ALTER TABLE ONLY public."WeightRecords"
 -- PostgreSQL database dump complete
 --
 
-\unrestrict qmqbX7JrrSepUQ9R2I3rgGvz4FuEFpRNrvhdZk9e3OJDgteC3gmhHRIINubWZWa
+\unrestrict TXxNHVU1H5nb9vzjLixgGx59m2b2W2mFLktSy24yV7Uy57aJ0KXP6QV3KwEjmUd
 

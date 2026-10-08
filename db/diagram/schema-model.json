@@ -1,6 +1,6 @@
 {
   "source": "db/schema.sql",
-  "sourceSha256": "43ec3472413256bd4ffbb61c1d483ad893e4b5c0b00586deba69a1c8b69a5e13",
+  "sourceSha256": "35cec330e37dde1d8610b00418bf5d39b39e74b03a6ee15872219dae66c6fea4",
   "tableCount": 43,
   "foreignKeyCount": 72,
   "modules": [
@@ -129,9 +129,9 @@
         },
         {
           "name": "ThresholdValue",
-          "type": "numeric(12,2)",
+          "type": "numeric(12,4)",
           "nullable": true,
-          "definition": "numeric(12,2)"
+          "definition": "numeric(12,4)"
         },
         {
           "name": "ThresholdDays",
@@ -613,6 +613,12 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "TargetDailyGainKg",
+          "type": "numeric(8,4)",
+          "nullable": true,
+          "definition": "numeric(8,4)"
         }
       ],
       "checks": [],
@@ -1517,6 +1523,36 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "MapHeight",
+          "type": "numeric(7,4)",
+          "nullable": true,
+          "definition": "numeric(7,4)"
+        },
+        {
+          "name": "MapWidth",
+          "type": "numeric(7,4)",
+          "nullable": true,
+          "definition": "numeric(7,4)"
+        },
+        {
+          "name": "MapX",
+          "type": "numeric(7,4)",
+          "nullable": true,
+          "definition": "numeric(7,4)"
+        },
+        {
+          "name": "MapY",
+          "type": "numeric(7,4)",
+          "nullable": true,
+          "definition": "numeric(7,4)"
+        },
+        {
+          "name": "MaxStayDays",
+          "type": "integer",
+          "nullable": true,
+          "definition": "integer"
         }
       ],
       "checks": [],

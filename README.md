@@ -31,11 +31,7 @@ cp .env.example .env
 Completar `.env`: `POSTGRES_PASSWORD`, `JWT_KEY`, `SEED_ADMIN_PASSWORD` y, para probar Employee, `SEED_EMPLOYEE_PASSWORD`. Las contraseñas requieren al menos ocho caracteres, mayúscula, minúscula, número y símbolo. Generar un secreto JWT con `openssl rand -base64 48`. **No volver a copiar `.env.example` si ya existe un `.env` configurado.**
 
 ```bash
-docker compose config -q
-docker compose build
-docker compose up -d db
-docker compose run --rm blazorapp --seed
-docker compose up -d blazorapp nginx
+docker compose up --build -d --wait
 ```
 
 El comando `--seed` aplica las migraciones y carga datos de demostración de forma idempotente. La SPA estará en `http://localhost:18080`, la API en `/api` y Swagger en `http://localhost:18080/swagger`. Usuario Admin: valor de `SEED_ADMIN_USERNAME`; contraseña: valor configurado en `.env`. Employee se crea solamente si tiene contraseña configurada.
@@ -117,3 +113,11 @@ Las pruebas aisladas siguen Arrange–Act–Assert y verifican interacciones del
 - [Visión del negocio completo](docs/guia-de-negocio.md).
 
 La SPA permite recuperar la sesión al recargar, consultar y editar animales, cargar fotografías comprimidas y privadas, revisar la curva Recharts de peso/GDP y registrar pesajes consecutivos. La ficha conecta sanidad, reproducción, retiro farmacológico, producción paginada y un árbol genealógico navegable. El retiro se valida en el servidor para leche y sacrificio. El mapa de potreros muestra ocupación, lotes presentes, densidad y permanencia registrada; el servidor limita la capacidad y guarda los traslados. Inventario, dashboard y exportaciones XLSX/PDF ya están conectados a la API. El dashboard incluye leche diaria por lote actual; la ficha avisa automáticamente ante pérdida de peso. La [auditoría de entrega](docs/fase4-auditoria.md) distingue los requisitos cubiertos, las diferencias deliberadas y los pendientes; los [reportes seleccionados](docs/evidence/phase4-audit/README.md) contienen evidencia real de pruebas y cobertura.
+
+## Cierre técnico para la evaluación del 9 de octubre
+
+La [guía de evaluación vigente](docs/fase4-evaluacion-09-octubre.md) relaciona los cuatro criterios de 10 puntos con el código, la demostración y las pruebas. [Estado actual](docs/fase4-estado.md) y [evidencia seleccionada](docs/evidence/phase4-final/README.md).
+
+Usuarios permite crear/editar cuentas, asignar roles/fincas/permisos adicionales, desactivar y restablecer contraseñas con revocación inmediata de sesiones. Seguimiento guarda objetivos de GDP por finca o animal y presenta avisos calculados. Potreros incluye un plano esquemático configurable con señales de capacidad y permanencia. Las [decisiones de usuarios](docs/fase4-usuarios.md), [crecimiento](docs/fase4-animales.md) y [potreros](docs/fase4-potreros.md) explican sus límites.
+
+La colección [Fase 4](postman/Phase4.postman_collection.json) verifica cuentas, revocación, objetivos, plano y sesión del navegador con cookie/CSRF. Usar el entorno de demostración, configurar secretos localmente y no exportarlos al repositorio.

@@ -159,3 +159,16 @@ Se conservaron [TRX, salidas y cobertura completas comprimidas](evidence/phase4-
 Se revisó el repositorio de ejemplo en b0d3b9ad67ee0f4aa2b60335f168ed5bf314c4c4 y la página REAF-F4. Se adaptó el inicio por rol, la prioridad de los KPI ganaderos y el acceso al reporte con los filtros del dashboard. La galería README y la guía ahora muestran la SPA.
 
 TypeScript, build Docker/Vite y 55 pruebas Vitest aprobados. Playwright dirigido: portada por rol, login directo, recuperación de sesión, destino con pestaña/fragmento, curva diaria/KPI/filtros y actualización. Los [reportes de este incremento](evidence/phase4-home/README.md) registran los conteos finales. No se reejecutaron las suites .NET ni toda la regresión del navegador; no hubo cambios de backend.
+
+## Gestión de usuarios y cierre técnico — 8 de octubre de 2026
+
+Se leyó el instrumento nuevo del profesor para el 9 de octubre: 40 puntos, cuatro criterios de 10. Se implementaron cuentas/roles/fincas/permisos, desactivación y restablecimiento con SecurityStamp y revocación; objetivos GDP persistentes/avisos por finca; plano espacial y permanencia configurable; servicio initialize y Postman operativo/cookie/CSRF.
+
+- .NET: 153 UnitTests/Moq + 144 Core.Tests, 297 Passed. Cobertura Core.Application separada: UnitTests 48,29 % líneas/50,37 % ramas; Core.Tests 88,32 % líneas/58,28 % ramas.
+- Cliente: 61 Vitest Passed, TypeScript y build Docker/Vite correctos. Se mantiene el aviso de tamaño del chunk de ExcelJS cargado bajo demanda.
+- Navegador dirigido: 49/50 en la corrida y 2/2 en la reejecución del selector tras esperar la segunda página; 50 escenarios distintos comprobados. Incluye seis casos nuevos de usuarios/seguimiento/plano en desktop/mobile. No equivale a repetir toda la regresión histórica.
+- Newman: 26 requests, 37 assertions, cero fallos. Comprueba también cookie HttpOnly, CSRF, refresh y cierre, sin incluir el entorno secreto en Git.
+- PostgreSQL: volumen vacío aislado, Compose en un comando, initialize correcto, seis migraciones, login 200 y dos posiciones DEMO. Actualización existente conservada; esquema/DER regenerados, 43 tablas y 72 FK. EF declara sin cambios de modelo pendientes.
+- Limpieza: pesos/animales/potreros nuevos se eliminaron por API y objetivos restaurados; cuentas temporales, incluidas las dos de corridas interrumpidas, se conservaron desactivadas.
+
+[Reportes completos comprimidos y resumen sin credenciales](evidence/phase4-final/README.md), [guía de evaluación](fase4-evaluacion-09-octubre.md) y [gestión de usuarios](fase4-usuarios.md). La publicación remota y la defensa no se presentan como realizadas.

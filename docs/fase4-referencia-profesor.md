@@ -38,3 +38,7 @@ Los 31/31 casos del ejemplo describen éxito de pruebas. No prueban por sí solo
 Cambiar la portada no completa las alertas generales de GDP, una política persistida de objetivos ni el plano espacial/umbral de permanencia de potreros. Esos puntos, el primer arranque automático desde base vacía y el cierre de la entrega siguen en [trabajo restante](fase4-auditoria.md#trabajo-restante-prioritario).
 
 Se reejecutaron TypeScript, build Docker/Vite, 55 pruebas Vitest y las pruebas Playwright dirigidas de portada, sesión, pestaña de destino, filtros/KPI y actualización. El [reporte de este incremento](evidence/phase4-home/README.md) contiene los conteos finales. Las 263 pruebas .NET corresponden al incremento anterior; no hubo cambios de backend en esta revisión.
+
+## Actualización posterior del mismo día
+
+La revisión de usuarios y cierre técnico completa las brechas enumeradas en el apartado histórico anterior: objetivos GDP persistentes, avisos por finca, plano y umbral de permanencia, arranque desde base vacía y Postman. El instrumento nuevo del 9 de octubre declara 40 puntos; ver [guía vigente](fase4-evaluacion-09-octubre.md) y [evidencia actual](evidence/phase4-final/README.md). Los resultados de phase4-home se conservan como evidencia de aquel incremento, sin sustituir los actuales.

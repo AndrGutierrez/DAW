@@ -4,7 +4,7 @@
 
 La operación ganadera necesita identificar sus animales, conocer su ubicación y condición, registrar cuánto producen y controlar los insumos disponibles. La SPA React ofrece esos flujos mediante una API .NET persistente, con permisos de acceso por finca y operación.
 
-**Disponibles:** ficha animal por pestañas, edición, fotos comprimidas y privadas, curva de peso/GDP, pesaje consecutivo, sanidad y retiro farmacológico, reproducción y genealogía, producción, potreros con detalle lateral/traslados, catálogo de insumos, movimientos de inventario, dashboard y reportes XLSX/PDF. La API conserva el CRUD de once recursos y agrega contratos operativos especializados. Swagger permite inspeccionarlos; la interfaz de uso diario es React.
+**Disponibles:** ficha animal por pestañas, edición, fotos comprimidas y privadas, curva de peso/GDP, pesaje consecutivo, sanidad y retiro farmacológico, reproducción y genealogía, producción, potreros con detalle lateral/traslados, catálogo de insumos, movimientos de inventario, dashboard, reportes XLSX/PDF, gestión de usuarios, objetivos de crecimiento y plano configurable de potreros. La API conserva el CRUD de once recursos y agrega contratos operativos especializados. Swagger permite inspeccionarlos; la interfaz de uso diario es React.
 
 El administrador con permisos de indicadores entra al dashboard. Employee y los usuarios sin acceso a ese resumen entran a Animales. Una ruta privada solicitada antes del login tiene prioridad y conserva su query/pestaña; esto también permite compartir enlaces a fichas. El dashboard financiero sigue protegido en la API.
 
@@ -15,7 +15,7 @@ El administrador con permisos de indicadores entra al dashboard. Employee y los 
 1. Iniciar el entorno y la siembra según [setup](setup.md), abrir la raíz del sitio e iniciar sesión. El tema se puede alternar y la sesión se recupera al recargar.
 2. Como Admin, revisar el dashboard por finca/período: leche registrada, bovinos con pesaje comparable, diagnósticos positivos/concluyentes y existencias críticas. El saldo de inventario representa el estado actual.
 3. Entrar a Animales, buscar un arete y abrir su ficha; usar las pestañas para consultar sanidad, reproducción, producción, genealogía, ubicación, crecimiento y fotos.
-4. Registrar pesos en la ficha o en Pesaje para captura consecutiva. La GDP compara fechas de pesajes; la pérdida de peso activa un aviso. El objetivo positivo manual todavía no es una política persistida.
+4. Registrar pesos en la ficha o en Pesaje para captura consecutiva. La GDP compara fechas de pesajes; la pérdida de peso activa un aviso. El objetivo se guarda por finca o animal y el seguimiento muestra los últimos intervalos que requieren revisión.
 5. Explorar un potrero en el panel lateral y registrar un traslado con destino y motivo. Capacidad y retiro sanitario se validan en el servidor.
 6. Registrar movimientos de insumos y revisar su historial. Desde el KPI de leche, Consultar producción conserva el período/finca en el reporte; exportar XLSX/PDF desde Reportes.
 7. Cerrar sesión. Como Employee, verificar las operaciones permitidas y la ausencia del dashboard administrativo.
