@@ -80,6 +80,20 @@ Tailwind 4 está integrado con el plugin de Vite y su configuración CSS. La aus
 
 La distribución de pesos era una brecha: un promedio no muestra distribución. Se incorporó un agregado real del backend y se contrastaron conteos de la interfaz con API en ambos tamaños. No se añadió una tabla o datos inventados para cubrirla.
 
+## Cómo interpretar el cumplimiento y la cobertura
+
+La revisión no calcula un porcentaje de cumplimiento ni predice una nota. El documento **Instrucciones y Evaluación 09 Octubre** exige un «nivel razonable de cobertura», y Classroom pide cobertura adecuada de componentes esenciales; ninguno fija 100% de líneas. Los cuatro criterios del documento tienen implementación y evidencia. El dato de cobertura global se publica como medición técnica, no como porcentaje de requisitos cumplidos.
+
+La referencia a cobertura completa pertenece al material anterior. La ausencia de una tasa verificada es un pendiente para demostrar Bs; JWT y colores son decisiones frente a fuentes que difieren; los permisos del catálogo se contrastan con un antecedente de Fase 3. Estas categorías no equivalen a funcionalidades ausentes de los cuatro criterios vigentes.
+
+## Auditoría persistida y alcance
+
+AuditLogs registra autor, fecha UTC, acción, entidad/ID, finca cuando corresponde y snapshots JSON anteriores/nuevos de escrituras realizadas por ManagementRepository. La gestión de usuarios registra creación, actualización y restablecimiento de contraseña; este último guarda el evento y revocación de sesiones, nunca la contraseña. Las pruebas de integración verifican persistencia de eventos y ausencia de contraseñas en el registro.
+
+Existe auditoría de cambios en la base, pero no un visor administrativo ni un endpoint de consulta de AuditLogs en la SPA/API actual. El campo IpAddress está definido pero no se rellena. Login, logout y escrituras SQL externas no forman parte de este registro. Por tanto, se describe como auditoría persistida de operaciones cubiertas, no como auditoría universal de seguridad. Un visor filtrable sería una mejora útil, pero no aparece como requisito específico de Fase 4 en los instrumentos revisados.
+
+Mi cuenta se abre desde el avatar del encabezado, sin entrada en la barra lateral o Más. El icono de perfil aparece al pasar el cursor o al enfocar con el teclado, y el enlace respeta la protección de cambios sin guardar.
+
 ## Contradicciones y cumplimiento parcial
 
 1. **JWT persistente:** el quiz/material presenta localStorage, mientras REAF recomienda memoria/cookies seguras. Se conserva JWT en memoria y renovación HttpOnly/CSRF, que cumple la recomendación de la página y restaura sesión. Es una decisión técnica que debe defenderse; no se declara que el profesor la haya aprobado.

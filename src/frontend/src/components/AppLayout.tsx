@@ -28,7 +28,6 @@ export function AppLayout() {
     { to: '/reports', label: 'Reportes', icon: 'report', allowed: can('animals.list') && (can('clinical.list') || can('production.list')) },
     { to: '/monitoring', label: 'Seguimiento', icon: 'growth', allowed: can('animals.list') && can('weights.list') },
     { to: '/users', label: 'Usuarios', icon: 'user', allowed: isAdmin && can('users.list') },
-    { to: '/account', label: 'Mi cuenta', icon: 'user', allowed: true },
   ] satisfies { to: string; label: string; icon: IconName; allowed: boolean }[]).filter(item => item.allowed);
   const remaining = items.slice(4);
   useEffect(() => {
@@ -52,7 +51,7 @@ export function AppLayout() {
       <div className="sidebar-footer"><Icon name="paddock" size={16} /><span>Gestión de la finca</span></div>
     </aside>
     <nav className="mobile-nav" aria-label="Principal">{links(items.slice(0,4))}{remaining.length > 0 && <Popover.Root open={moreOpen} onOpenChange={setMoreOpen}><Popover.Trigger asChild><Button className="mobile-more" data-active={remaining.some(item => location.pathname.startsWith(item.to))} aria-label="Más secciones"><Icon name="menu" /><span>Más</span></Button></Popover.Trigger><Popover.Portal><Popover.Content className="mobile-menu" side="top" sideOffset={12} collisionPadding={12} aria-label="Más secciones"><div className="mobile-menu-heading"><strong>Más secciones</strong><Popover.Close asChild><Button className="icon-button" aria-label="Cerrar más secciones"><Icon name="close" /></Button></Popover.Close></div>{links(remaining)}</Popover.Content></Popover.Portal></Popover.Root>}</nav>
-    <div className="main-shell"><header className="app-header"><div className="header-title">{section}</div><div className="header-actions"><ThemeButton /><span className="avatar" aria-hidden="true">{(user.fullName || user.username).slice(0,1).toUpperCase()}</span><div className="header-user">{user.fullName || user.username}<small>{user.roles.join(' · ') || 'Sin rol asignado'}</small></div><Button variant="secondary" onClick={signOut} disabled={busy}><Icon name="logout" size={18} />{busy ? 'Cerrando…' : 'Salir'}</Button></div></header>
+    <div className="main-shell"><header className="app-header"><div className="header-title">{section}</div><div className="header-actions"><ThemeButton /><Link className="avatar account-link" to="/account" aria-label="Mi cuenta" title="Mi cuenta"><span className="avatar-initial" aria-hidden="true">{(user.fullName || user.username).slice(0,1).toUpperCase()}</span><span className="avatar-hover" aria-hidden="true"><Icon name="user" size={21} /></span></Link><div className="header-user">{user.fullName || user.username}<small>{user.roles.join(' · ') || 'Sin rol asignado'}</small></div><Button variant="secondary" onClick={signOut} disabled={busy}><Icon name="logout" size={18} />{busy ? 'Cerrando…' : 'Salir'}</Button></div></header>
       {error && <p role="alert" className="error-message logout-error">{error}</p>}
       <main id="main-content" className="app-main" tabIndex={-1}><Suspense fallback={<RouteLoading />}><Outlet /></Suspense></main>
       <footer className="app-footer">Gestión ganadera · UNET</footer>

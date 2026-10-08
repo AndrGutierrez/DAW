@@ -42,8 +42,8 @@ test('mobile More navigation closes with Escape and restores focus', async ({ pa
  const more = page.getByRole('button', { name: 'Más secciones', exact: true }); await more.click();
  await expect(page.getByRole('link', { name: 'Inventario', exact: true })).toBeVisible();
  await page.keyboard.press('Escape'); await expect(more).toBeFocused();
- await more.click(); await page.getByRole('link', { name: 'Mi cuenta', exact: true }).click();
- await expect(page.getByRole('heading', { name: 'Mi cuenta', exact: true })).toBeVisible();
+ await more.click(); await page.getByRole('link', { name: 'Inventario', exact: true }).click();
+ await expect(page.getByRole('heading', { name: 'Inventario', exact: true })).toBeVisible();
  await expect(page.locator('.mobile-menu')).toHaveCount(0);
 });
 test('reduced motion disables decorative transitions and diagnostic export has no credentials', async ({ page }, info) => {
@@ -54,8 +54,15 @@ test('reduced motion disables decorative transitions and diagnostic export has n
  await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
  expect(await page.locator('.button').first().evaluate(element => getComputedStyle(element).transitionDuration)).toBe('0s');
  await page.goto('/dashboard'); await expect(page.getByRole('article', { name: 'Leche registrada', exact: true })).toBeVisible();
- if (info.project.name === 'mobile') await page.getByRole('button', { name: 'Más secciones', exact: true }).click();
- await page.getByRole('link', { name: 'Mi cuenta', exact: true }).click(); await page.getByRole('link', { name: 'Ver rendimiento de la aplicación' }).click(); await expect(page.getByRole('heading', { name: 'Rendimiento de la aplicación' })).toBeVisible();
+ const account = page.locator('.app-header').getByRole('link', { name: 'Mi cuenta', exact: true });
+ await expect(page.getByRole('navigation').getByRole('link', { name: 'Mi cuenta', exact: true })).toHaveCount(0);
+ await expect(account.locator('.avatar-hover')).toHaveCSS('opacity', '0');
+ await account.hover(); await expect(account.locator('.avatar-hover')).toHaveCSS('opacity', '1');
+ await page.getByRole('heading', { name: 'Dashboard', exact: true }).hover();
+ await expect(account.locator('.avatar-hover')).toHaveCSS('opacity', '0');
+ await account.focus(); await expect(account.locator('.avatar-hover')).toHaveCSS('opacity', '1');
+ await account.press('Enter'); await expect(page.getByRole('heading', { name: 'Mi cuenta', exact: true })).toBeVisible();
+ await page.getByRole('link', { name: 'Ver rendimiento de la aplicación' }).click(); await expect(page.getByRole('heading', { name: 'Rendimiento de la aplicación' })).toBeVisible();
  const downloaded = page.waitForEvent('download'); await page.getByRole('button', { name: 'Exportar mediciones' }).click();
  const download = await downloaded; const stream = await download.createReadStream(); const chunks = []; for await (const chunk of stream!) chunks.push(chunk); const report = JSON.parse(Buffer.concat(chunks).toString());
  expect(report.timings.length).toBeGreaterThan(0);

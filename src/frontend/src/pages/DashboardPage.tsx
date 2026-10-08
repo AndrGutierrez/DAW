@@ -45,7 +45,7 @@ export function DashboardPage() {
   return <section className="operations-page dashboard-page">
     <div className="dashboard-heading"><div><span className="eyebrow">TU FINCA, EN PERSPECTIVA</span><h1>Dashboard</h1><p className="muted">Producción y seguimiento del período.</p></div><Link className="button secondary" to="/animals"><Icon name="animal" />Consultar animales</Link></div>
     <PeriodFilter value={period} farms={farms.data || []} onApply={p => { setPeriod(p); setStockPage(1); data.reload(); }} busy={data.loading} />
-    {data.loading && !d && <div className="panel skeleton" style={{ minHeight: 200 }} aria-label="Cargando indicadores" />}
+    {data.loading && !d && <div className="panel skeleton" style={{ minHeight: 200 }} role="status" aria-label="Cargando indicadores" />}
     {data.error && <p className="error-banner" role="alert">{data.error}<Button onClick={data.reload}>Reintentar</Button></p>}
     {d && <>
       <p className="muted">Actualizado: {new Intl.DateTimeFormat('es-VE', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(d.generatedAt))} · Período: {date(d.from)} a {date(d.to)}. {live === 'live' ? 'Actualización en vivo conectada.' : live === 'paused' ? 'Actualización pausada mientras la página está oculta.' : 'Reconectando actualización en vivo; respaldo cada 60 segundos.'}</p>
