@@ -32,12 +32,17 @@ public sealed class AnalyticsService(IOperationsReader reader, IFarmAccess farms
                 .Select(day => new SeriesPoint(day.Key.ToString("yyyy-MM-dd"), day.Sum(m => m.Quantity), day.Count())).ToArray())).ToArray();
         var latest = input.Weights.GroupBy(w => w.AnimalId).Select(g => g.OrderByDescending(w => w.Date).ThenByDescending(w => w.CreatedAt).ThenByDescending(w => w.Id).First()).ToList();
         var valid = latest.Where(w => w.BirthDate != null && w.BirthDate <= w.Date).ToList();
-        var weight = valid.GroupBy(w => w.Date < w.BirthDate!.Value.AddMonths(6) ? "0–5 meses" : w.Date < w.BirthDate.Value.AddMonths(12) ? "6–11 meses" : w.Date < w.BirthDate.Value.AddMonths(24) ? "12–23 meses" : "24 meses o más")
-            .OrderBy(g => g.Key).Select(g => new SeriesPoint(g.Key, decimal.Round(g.Average(w => w.WeightKg), 2), g.Count())).ToList();
+        var weight = valid.GroupBy(AgeGroup).OrderBy(g => g.Key)
+            .Select(g => new SeriesPoint(AgeLabel(g.Key), decimal.Round(g.Average(w => w.WeightKg), 2), g.Count())).ToList();
+        var distribution = valid.GroupBy(w => new { Age = AgeGroup(w), Band = Math.Min(6, (int)(w.WeightKg / 100m)) })
+            .OrderBy(g => g.Key.Age).ThenBy(g => g.Key.Band)
+            .Select(g => new WeightDistributionPoint(AgeLabel(g.Key.Age), g.Key.Band * 100m, g.Key.Band == 6 ? null : (g.Key.Band + 1) * 100m, g.Count())).ToArray();
         var positive = input.Checks.Count(c => c.Result == PregnancyResult.Positive); var negative = input.Checks.Count(c => c.Result == PregnancyResult.Negative); var uncertain = input.Checks.Count(c => c.Result == PregnancyResult.Uncertain);
         return new(DateTime.UtcNow, q.From, q.To, valuations.Sum(v => v.Cost), valuations.Sum(v => v.ReferenceValue), stocks.Count(i => i.Stock <= i.Min), stocks.Count(i => i.Stock >= i.Max), valuations, stocks, byDay, byLot, input.Milk.Count - milk.Count, weight, latest.Count - valid.Count,
-            positive, negative, uncertain, positive + negative == 0 ? null : decimal.Round(100m * positive / (positive + negative), 2), input.Calvings.Count, input.Calvings.Sum(c => c.OffspringCount - c.StillbornCount), input.Calvings.Sum(c => c.StillbornCount), dailyLots, ReproductionAnalytics.Calculate(q, input.ReproductiveEvents ?? input.Checks.Cast<ReproductiveEvent>().Concat(input.Calvings).ToArray()));
+            positive, negative, uncertain, positive + negative == 0 ? null : decimal.Round(100m * positive / (positive + negative), 2), input.Calvings.Count, input.Calvings.Sum(c => c.OffspringCount - c.StillbornCount), input.Calvings.Sum(c => c.StillbornCount), dailyLots, ReproductionAnalytics.Calculate(q, input.ReproductiveEvents ?? input.Checks.Cast<ReproductiveEvent>().Concat(input.Calvings).ToArray())) { WeightDistributionByAge = distribution };
     }
+    private static int AgeGroup(WeightInput weight) => weight.Date < weight.BirthDate!.Value.AddMonths(6) ? 0 : weight.Date < weight.BirthDate.Value.AddMonths(12) ? 1 : weight.Date < weight.BirthDate.Value.AddMonths(24) ? 2 : 3;
+    private static string AgeLabel(int group) => group switch { 0 => "0–5 meses", 1 => "6–11 meses", 2 => "12–23 meses", _ => "24 meses o más" };
     private static decimal Delta(StockMovement m) => m.Type == StockMovementType.In ? m.Quantity : m.Type == StockMovementType.Out ? -m.Quantity : 0;
 }
 public sealed class ReportService(IOperationsReader reader, IFarmAccess farms)

@@ -16,12 +16,16 @@ public sealed record ReportResult(CarePage<ReportRow> Records, DateTime Generate
 public sealed record Valuation(string Category, decimal Cost, decimal ReferenceValue);
 public sealed record StockMetric(Guid Id, string Farm, string Product, MeasurementUnit Unit, decimal Stock, decimal Min, decimal Max, decimal Outflow, decimal? Rotation, DateOnly? HistorySince);
 public sealed record SeriesPoint(string Label, decimal Value, int Count);
+public sealed record WeightDistributionPoint(string AgeGroup, decimal MinimumKg, decimal? MaximumKg, int Count);
 public sealed record DailyLotSeries(Guid FarmId, Guid? LotId, string Label, IReadOnlyList<SeriesPoint> Points);
 public sealed record AnalyticsResult(DateTime GeneratedAt, DateOnly From, DateOnly To, decimal Cost, decimal ReferenceValue,
     int Critical, int Excess, IReadOnlyList<Valuation> Categories, IReadOnlyList<StockMetric> Stock,
     IReadOnlyList<SeriesPoint> MilkByDay, IReadOnlyList<SeriesPoint> MilkByCurrentLot, int ExcludedMilk,
     IReadOnlyList<SeriesPoint> WeightByAge, int ExcludedWeights, int PositiveChecks, int NegativeChecks, int UncertainChecks,
-    decimal? PositiveCheckPercent, int Calvings, int LiveBirths, int Stillbirths, IReadOnlyList<DailyLotSeries> MilkByDayAndCurrentLot, ReproductionMetrics Reproduction);
+    decimal? PositiveCheckPercent, int Calvings, int LiveBirths, int Stillbirths, IReadOnlyList<DailyLotSeries> MilkByDayAndCurrentLot, ReproductionMetrics Reproduction)
+{
+    public IReadOnlyList<WeightDistributionPoint> WeightDistributionByAge { get; init; } = [];
+}
 public interface IOperationsReader
 {
     Task<CarePage<InventoryRow>> InventoryAsync(InventoryQuery query, IReadOnlyCollection<Guid> farms, CancellationToken ct);

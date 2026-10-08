@@ -82,4 +82,23 @@ public sealed class AnalyticsServiceTests
         var baseline = new StockMovement { FarmId = i.FarmId, ProductId = i.ProductId, ReferenceType = "OpeningBalance", ReferenceId = i.Id, Date = today };
         var result = AnalyticsService.Calculate(Period, source with { Inventory = [i], Movements = [baseline] }); Assert.Null(result.Stock[0].Rotation);
     }
+    [Fact]
+    public void WeightDistributionUsesExclusiveUpperBoundsAndOnlyTheLatestComparableWeight()
+    {
+        var animal = Guid.NewGuid();
+        var result = AnalyticsService.Calculate(Period, Inputs with { Weights = [
+            new(animal, Guid.NewGuid(), DateTime.UtcNow.AddMinutes(-1), today, today.AddMonths(-7), 99),
+            new(animal, Guid.NewGuid(), DateTime.UtcNow, today, today.AddMonths(-7), 100),
+            new(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow, today, today.AddMonths(-7), 199),
+            new(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow, today, today.AddMonths(-25), 601),
+            new(Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow, today, null, 300)
+        ] });
+        Assert.Equal(2, result.WeightDistributionByAge.Count);
+        var young = result.WeightDistributionByAge[0];
+        Assert.Equal("6–11 meses", young.AgeGroup); Assert.Equal(100m, young.MinimumKg); Assert.Equal(200m, young.MaximumKg); Assert.Equal(2, young.Count);
+        var adult = result.WeightDistributionByAge[1];
+        Assert.Equal("24 meses o más", adult.AgeGroup); Assert.Equal(600m, adult.MinimumKg); Assert.Null(adult.MaximumKg); Assert.Equal(1, adult.Count);
+        Assert.Equal(result.WeightByAge.Sum(g => g.Count), result.WeightDistributionByAge.Sum(g => g.Count));
+        Assert.Equal(1, result.ExcludedWeights);
+    }
 }
