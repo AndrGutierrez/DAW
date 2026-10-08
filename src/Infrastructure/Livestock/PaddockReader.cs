@@ -20,13 +20,23 @@ public sealed class PaddockReader(AppDbContext db) : IPaddockReader
     public async Task<CarePage<PaddockSnapshot>> PageAsync(PaddockPageRequest request, IReadOnlyCollection<Guid> farmIds, CancellationToken ct)
     {
         var query = db.Paddocks.AsNoTracking().Where(p => farmIds.Contains(p.FarmId));
+        return await ReadPageAsync(request, query, ct);
+    }
+    public async Task<IReadOnlyList<PaddockSnapshot>> MapAsync(Guid farmId, CancellationToken ct)
+    {
+        var query = db.Paddocks.AsNoTracking().Where(p => p.FarmId == farmId && p.IsActive && p.MapX != null);
+        var count = await query.CountAsync(ct);
+        return (await ReadPageAsync(new PaddockPageRequest(PageSize: Math.Max(1, count)), query, ct)).Items;
+    }
+    private async Task<CarePage<PaddockSnapshot>> ReadPageAsync(PaddockPageRequest request, IQueryable<Paddock> query, CancellationToken ct)
+    {
         if (request.FarmId is Guid farm) query = query.Where(p => p.FarmId == farm);
         if (request.IsActive is bool active) query = query.Where(p => p.IsActive == active);
         var search = request.Search?.Trim().ToLowerInvariant();
         if (!string.IsNullOrEmpty(search)) query = query.Where(p => p.Name.ToLower().Contains(search) || (p.Code != null && p.Code.ToLower().Contains(search)));
         var total = await query.CountAsync(ct);
         var page = await query.OrderBy(p => p.Name).ThenBy(p => p.Id).Skip((request.Page - 1) * request.PageSize).Take(request.PageSize)
-            .Select(p => new { p.Id, p.FarmId, p.Name, p.Code, p.AreaHectares, p.Capacity, p.IsActive, Farm = p.Farm.Name }).ToListAsync(ct);
+            .Select(p => new { p.Id, p.FarmId, p.Name, p.Code, p.AreaHectares, p.Capacity, p.IsActive, p.MaxStayDays, p.MapX, p.MapY, p.MapWidth, p.MapHeight, Farm = p.Farm.Name }).ToListAsync(ct);
         var ids = page.Select(p => p.Id).ToArray();
         var occupancy = await Arrivals(ids).GroupBy(a => a.PaddockId)
             .Select(g => new { Id = g.Key, Count = g.Count(), Oldest = g.Min(a => a.Date), Unknown = g.Count(a => a.Date == null) }).ToDictionaryAsync(g => g.Id, ct);
@@ -34,7 +44,7 @@ public sealed class PaddockReader(AppDbContext db) : IPaddockReader
             .Select(g => new { g.Key.PaddockId, g.Key.LotId, g.Key.Lot, Count = g.Count() }).ToListAsync(ct);
         return new(page.Select(p => {
             occupancy.TryGetValue(p.Id, out var summary);
-            return new PaddockSnapshot(p.Id, new PaddockRequest(p.FarmId, p.Name, p.Code, p.AreaHectares, p.Capacity, p.IsActive), p.Farm,
+            return new PaddockSnapshot(p.Id, new PaddockRequest(p.FarmId, p.Name, p.Code, p.AreaHectares, p.Capacity, p.IsActive, p.MaxStayDays, p.MapX, p.MapY, p.MapWidth, p.MapHeight), p.Farm,
                 summary?.Count ?? 0, summary?.Oldest, summary?.Unknown ?? 0,
                 lots.Where(l => l.PaddockId == p.Id).OrderBy(l => l.Lot).Select(l => new PaddockLotCount(l.LotId, l.Lot, l.Count)).ToList());
         }).ToList(), total, request.Page, request.PageSize);

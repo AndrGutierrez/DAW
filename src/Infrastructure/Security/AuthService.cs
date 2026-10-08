@@ -116,7 +116,7 @@ public sealed class AuthService(
             user.UserName!,
             userResult.Roles,
             user.IsSuperuser,
-            user.Email);
+            user.Email, user.SecurityStamp);
 
         var refreshToken = tokenService.CreateRefreshToken();
 

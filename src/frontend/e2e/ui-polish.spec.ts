@@ -75,6 +75,7 @@ test('animal selector searches on the server, paginates and restores focus after
   const response = page.waitForResponse(r => r.url().includes('/api/animals/page?') && new URL(r.url()).searchParams.get('search') === prefix);
   await search.fill(prefix); await response; await expect(dialog.getByText('21 candidatos · página 1')).toBeVisible();
   await dialog.getByRole('button', { name: 'Siguiente', exact: true }).click(); await expect(dialog.getByText('21 candidatos · página 2')).toBeVisible();
+  await expect(dialog.getByRole('button', { name: prefix + '-21', exact: true })).toBeVisible();
   await search.focus(); await search.press('ArrowDown'); await page.keyboard.press('End'); await expect(dialog.getByRole('button', { name: prefix + '-21', exact: true })).toBeFocused(); await page.keyboard.press('Enter');
   await expect(dialog).not.toBeVisible(); await expect(trigger).toBeFocused(); await expect(trigger).toContainText(prefix + '-21');
   await trigger.click(); await search.press('Escape'); await expect(dialog).not.toBeVisible(); await expect(trigger).toBeFocused();

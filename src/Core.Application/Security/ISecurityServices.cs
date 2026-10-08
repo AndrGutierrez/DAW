@@ -32,7 +32,8 @@ public interface ITokenService
         string username,
         IEnumerable<string> roles,
         bool isSuperuser,
-        string? email = null);
+        string? email = null,
+        string? securityStamp = null);
 
     string CreateRefreshToken();
 }

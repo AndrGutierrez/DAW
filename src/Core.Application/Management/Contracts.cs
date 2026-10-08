@@ -7,7 +7,7 @@ namespace Core.Application.Management;
 public sealed record FarmRequest(string Name, string Code, string? Address = null, string? Phone = null, string? Email = null, bool IsActive = true);
 public sealed record SpeciesRequest(string Name, string Code, ProductivePurpose Purpose, int? GestationDays = null, bool IsActive = true);
 public sealed record BreedRequest(Guid SpeciesId, string Name, ProductivePurpose Purpose, string? Origin = null, bool IsActive = true);
-public sealed record PaddockRequest(Guid FarmId, string Name, string? Code = null, decimal? AreaHectares = null, int? Capacity = null, bool IsActive = true);
+public sealed record PaddockRequest(Guid FarmId, string Name, string? Code = null, decimal? AreaHectares = null, int? Capacity = null, bool IsActive = true, int? MaxStayDays = null, decimal? MapX = null, decimal? MapY = null, decimal? MapWidth = null, decimal? MapHeight = null);
 public sealed record LotRequest(Guid FarmId, Guid SpeciesId, string Name, ProductivePurpose Purpose, Guid? PaddockId = null, bool IsActive = true);
 public sealed record CategoryRequest(string Name, string? Description = null, bool IsActive = true);
 public sealed record ProductRequest(string SKU, string Name, Guid CategoryId, decimal Price, decimal CostPrice, MeasurementUnit Unit, string Brand = "Generic", int? WithdrawalDays = null, bool RequiresPrescription = false, bool IsActive = true);

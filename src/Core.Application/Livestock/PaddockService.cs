@@ -7,6 +7,12 @@ namespace Core.Application.Livestock;
 
 public sealed class PaddockService(IManagementRepository repository, IFarmAccess farms, IPaddockReader reader)
 {
+    public async Task<IReadOnlyList<PaddockSnapshot>> MapAsync(Guid farmId, CancellationToken ct = default)
+    {
+        if (!await farms.CanAccessAsync(farmId, ct) || await repository.GetAsync<Farm>(farmId, ct: ct) == null)
+            throw new KeyNotFoundException("The farm was not found.");
+        return await reader.MapAsync(farmId, ct);
+    }
     public async Task<CarePage<PaddockSnapshot>> PageAsync(PaddockPageRequest query, CancellationToken ct = default)
     {
         await new PaddockPageRequestValidator().ValidateAndThrowAsync(query, ct);

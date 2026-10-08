@@ -50,6 +50,8 @@ public static class DependencyInjection
         services.AddScoped<IPermissionChecker, PermissionChecker>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAccessAdministration, AccessAdministration>();
+        services.AddScoped<IUserManagementStore, UserManagementStore>();
+        services.AddScoped<UserManagementService>();
         services.AddScoped<IAnimalPhotoService, AnimalPhotoService>();
         services.AddScoped<IAnimalQueryService, AnimalQueryService>();
         services.AddScoped<IAnimalWeightReader, AnimalWeightReader>();
@@ -69,6 +71,8 @@ public static class DependencyInjection
         services.AddScoped<IPaddockReader, PaddockReader>();
         services.AddScoped<AnimalReproductionService>();
         services.AddScoped<AnimalGrowthService>();
+        services.AddScoped<GrowthMonitoringService>();
+        services.AddScoped<IGrowthMonitoringReader, GrowthMonitoringReader>();
         services.AddScoped<AnimalWeighingService>();
         AddResource<Farm, FarmRequest, FarmDefinition>(services);
         AddResource<Species, SpeciesRequest, SpeciesDefinition>(services);

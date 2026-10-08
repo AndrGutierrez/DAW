@@ -46,6 +46,14 @@ public sealed class PaddockRequestValidator : AbstractValidator<PaddockRequest>
         RuleFor(x => x.Code).MaximumLength(30);
         RuleFor(x => x.AreaHectares).GreaterThan(0).PrecisionScale(14, 4, false).When(x => x.AreaHectares.HasValue);
         RuleFor(x => x.Capacity).GreaterThan(0).When(x => x.Capacity.HasValue);
+        RuleFor(x => x.MaxStayDays).InclusiveBetween(1, 3650).When(x => x.MaxStayDays.HasValue);
+        RuleFor(x => x).Must(x => {
+            var values = new[] { x.MapX, x.MapY, x.MapWidth, x.MapHeight };
+            return values.All(v => !v.HasValue) || values.All(v => v.HasValue) &&
+                x.MapX >= 0 && x.MapY >= 0 && x.MapWidth > 0 && x.MapHeight > 0 &&
+                x.MapX + x.MapWidth <= 100 && x.MapY + x.MapHeight <= 100 &&
+                values.All(v => decimal.Round(v!.Value, 4) == v.Value);
+        }).WithMessage("Map coordinates must be complete, have up to four decimals, and fit within the 100 by 100 plan.");
     }
 }
 

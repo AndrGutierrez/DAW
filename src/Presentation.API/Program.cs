@@ -93,6 +93,18 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
         };
     });
 
+builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.Events.OnTokenValidated = async context =>
+    {
+        var manager = context.HttpContext.RequestServices.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Infrastructure.Persistence.Identity.ApplicationUser>>();
+        var id = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var user = id == null ? null : await manager.FindByIdAsync(id);
+        if (user == null || !user.IsActive || context.Principal?.FindFirst("security_stamp")?.Value != user.SecurityStamp)
+            context.Fail("The account or session is no longer active.");
+    };
+});
+
 builder.Services.AddAuthorization();
 builder.Services.AddAntiforgery(options =>
 {

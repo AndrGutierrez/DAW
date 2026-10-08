@@ -16,7 +16,7 @@ public sealed class GrowthPageRequestValidator : AbstractValidator<GrowthPageReq
         RuleFor(request => request.PageSize).InclusiveBetween(1, 100);
     }
 }
-public sealed record AnimalGrowthResult(IReadOnlyList<GrowthPoint> Points, IReadOnlyList<WeightHistoryItem> Records, int Total, int Page, int PageSize, int TotalDates);
+public sealed record AnimalGrowthResult(IReadOnlyList<GrowthPoint> Points, IReadOnlyList<WeightHistoryItem> Records, int Total, int Page, int PageSize, int TotalDates, decimal? TargetDailyGainKg = null, string TargetSource = "none");
 
 public sealed class AnimalGrowthService(IManagementRepository repository, IFarmAccess farms)
 {
@@ -44,11 +44,14 @@ public sealed class AnimalGrowthService(IManagementRepository repository, IFarmA
                 4, MidpointRounding.AwayFromZero);
             points.Add(new(current.Id, current.Date, current.WeightKg, current.BodyConditionScore, gain));
         }
+        var policy = (await repository.ListAsync<AlertRule>(r => r.FarmId == animal.FarmId && r.Type == AlertType.LowWeightGain, ct))
+            .OrderByDescending(r => r.CreatedAt).ThenByDescending(r => r.Id).FirstOrDefault();
+        var goal = GrowthMonitoringService.Resolve(animal.TargetDailyGainKg, policy);
         var selected = daily.Select(record => record.Id).ToHashSet();
         return new(points.TakeLast(60).ToArray(), records.OrderByDescending(record => record.Date)
             .ThenByDescending(record => record.CreatedAt).ThenByDescending(record => record.Id)
             .Skip((request.Page - 1) * request.PageSize).Take(request.PageSize)
             .Select(record => new WeightHistoryItem(record.Id, record.Date, record.WeightKg,
-                record.BodyConditionScore, record.Notes, record.CreatedAt, selected.Contains(record.Id))).ToArray(), records.Count, request.Page, request.PageSize, daily.Length);
+                record.BodyConditionScore, record.Notes, record.CreatedAt, selected.Contains(record.Id))).ToArray(), records.Count, request.Page, request.PageSize, daily.Length, goal.DailyGainKg, goal.Source);
     }
 }

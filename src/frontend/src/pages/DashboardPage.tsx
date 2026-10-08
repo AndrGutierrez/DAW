@@ -7,6 +7,7 @@ import { params, periodStart, units } from '../api/operations';
 import type { Analytics, SeriesPoint } from '../api/operations';
 import { today, date, number } from '../api/livestock';
 import type { CatalogItem } from '../api/livestock';
+import { GrowthAlerts } from '../components/GrowthAlerts';
 import { PeriodFilter } from '../components/PeriodFilter';
 import { CarePagination } from '../components/CareForm';
 import { Button } from '../components/ui/Controls';
@@ -49,6 +50,8 @@ export function DashboardPage() {
         <DashboardMetric label="Diagnósticos positivos" value={d.positiveCheckPercent === null ? 'Sin diagnósticos' : number(d.positiveCheckPercent) + '%'} detail={d.positiveChecks + (d.positiveChecks === 1 ? ' positivo de ' : ' positivos de ') + conclusiveChecks + (conclusiveChecks === 1 ? ' concluyente' : ' concluyentes') + '; no es tasa de concepción'} icon="leaf" href="/animals" action="Consultar fichas" />
         <DashboardMetric label="Existencias críticas" value={number(d.critical, 0)} detail="Existencias por finca e insumo en el mínimo o por debajo" icon="inventory" href="/inventory" action="Revisar existencias" attention={d.critical > 0} />
       </div>
+      <GrowthAlerts farmId={period.farmId} />
+      <Link className="button secondary" to={"/monitoring" + (period.farmId ? "?farm=" + period.farmId : "")}>Configurar objetivos de crecimiento</Link>
       <h2>Producción y seguimiento</h2>
       <Suspense fallback={<p role="status">Preparando gráficos…</p>}><Charts data={d} /></Suspense>
     <div className="operations-grid"><SeriesTable title="Leche por día" rows={d.milkByDay} unit="L" /><SeriesTable title="Leche de animales por lote actual" rows={d.milkByCurrentLot} unit="L" /><SeriesTable title="Peso bovino medio por edad al pesaje" rows={d.weightByAge} unit="kg" /></div><p className="muted">Los lotes corresponden a la ubicación actual de los animales y no a una asignación histórica del ordeño. Solo se suma leche en litros ({d.excludedMilk} registros excluidos por unidad). El peso usa el último pesaje de cada bovino en el período y su edad ese día ({d.excludedWeights} bovinos excluidos por fecha de nacimiento desconocida o inválida).</p>

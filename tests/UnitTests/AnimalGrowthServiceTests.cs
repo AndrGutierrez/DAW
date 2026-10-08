@@ -19,6 +19,7 @@ public sealed class AnimalGrowthServiceTests
 
     public AnimalGrowthServiceTests()
     {
+        repository.Setup(r => r.ListAsync(It.IsAny<Expression<Func<AlertRule, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync(Array.Empty<AlertRule>());
         repository.Setup(r => r.GetAsync<Animal>(animal.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(animal);
         farms.Setup(f => f.CanAccessAsync(animal.FarmId, It.IsAny<CancellationToken>())).ReturnsAsync(true);
         repository.Setup(r => r.ListAsync(It.IsAny<Expression<Func<WeightRecord, bool>>>(), It.IsAny<CancellationToken>()))

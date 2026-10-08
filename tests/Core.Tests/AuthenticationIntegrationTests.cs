@@ -248,7 +248,7 @@ public sealed class AuthenticationIntegrationTests
         using var me = await client.GetAsync("/api/auth/me");
         Assert.Equal(HttpStatusCode.Unauthorized, me.StatusCode);
         using var animals = await client.GetAsync("/api/animals");
-        Assert.Equal(HttpStatusCode.Forbidden, animals.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, animals.StatusCode);
     }
 
     [Fact]

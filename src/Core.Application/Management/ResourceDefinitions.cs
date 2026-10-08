@@ -94,7 +94,7 @@ public sealed class PaddockDefinition(IManagementRepository r) : ResourceDefinit
     public override Guid? FarmId(Paddock e) => e.FarmId;
     public override Guid? FarmId(PaddockRequest q) => q.FarmId;
     public override Expression<Func<Paddock, bool>> Scope(IReadOnlyCollection<Guid> ids) => e => ids.Contains(e.FarmId);
-    public override PaddockRequest Read(Paddock e) => new(e.FarmId, e.Name, e.Code, e.AreaHectares, e.Capacity, e.IsActive);
+    public override PaddockRequest Read(Paddock e) => new(e.FarmId, e.Name, e.Code, e.AreaHectares, e.Capacity, e.IsActive, e.MaxStayDays, e.MapX, e.MapY, e.MapWidth, e.MapHeight);
     public override void Apply(Paddock e, PaddockRequest q)
     {
         e.FarmId = q.FarmId;
@@ -102,6 +102,8 @@ public sealed class PaddockDefinition(IManagementRepository r) : ResourceDefinit
         e.Code = Optional(q.Code);
         e.AreaHectares = q.AreaHectares;
         e.Capacity = q.Capacity;
+        e.MaxStayDays = q.MaxStayDays;
+        e.MapX = q.MapX; e.MapY = q.MapY; e.MapWidth = q.MapWidth; e.MapHeight = q.MapHeight;
         e.IsActive = q.IsActive;
     }
 

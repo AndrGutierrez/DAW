@@ -2923,3 +2923,27 @@ table, .metric-grid strong, .stock-value, input[type=number] { font-variant-nume
   .dashboard-heading { align-items: flex-start; flex-direction: column; }
   .dashboard-summary { grid-template-columns: 1fr; }
 }
+
+.user-access-details { padding: 14px 0; border-bottom: 1px solid var(--line); margin: 12px 0; }
+.user-access-details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; }
+.user-access-details .permission-tags { margin-top: 12px; }
+.user-permission-options { max-height: 280px; overflow-y: auto; }
+.user-farm-selection { margin: 20px 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+
+.paddock-plan { display: block; width: min(100%, 42rem); aspect-ratio: 1; margin: 1.5rem auto; background: var(--soft); border: 1px solid var(--line); border-radius: 1rem; }
+.plan-paddock { cursor: pointer; }
+.plan-paddock rect { stroke-width: .65; vector-effect: non-scaling-stroke; }
+.plan-paddock text { fill: var(--text); pointer-events: none; }
+.plan-paddock.fill-positive rect { fill: #9dc4ae; }
+.plan-paddock.fill-warning rect { fill: #e4c38a; }
+.plan-paddock.fill-critical rect { fill: #d69d9d; }
+.plan-paddock.fill-neutral rect { fill: #c2c7bc; }
+.plan-paddock.border-positive rect { stroke: #32604d; }
+.plan-paddock.border-warning rect { stroke: #b47c24; stroke-width: 2; }
+.plan-paddock.border-critical rect { stroke: #a33648; stroke-width: 3; }
+.plan-paddock.border-neutral rect { stroke: #687361; stroke-dasharray: 2 1; }
+.plan-paddock.selected rect, .plan-paddock:focus rect { stroke: var(--text); stroke-width: 3; }
+.plan-paddock:focus { outline: none; }
+.paddock-plan-editor { grid-column: 1 / -1; padding: 1rem; border: 1px solid var(--line); border-radius: .75rem; }
+.growth-alerts { margin-block: 1.5rem; }
+ :root.dark .plan-paddock text { fill: #15251d; }

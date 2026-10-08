@@ -54,6 +54,10 @@ public sealed class PaddockConfiguration : IEntityTypeConfiguration<Paddock>
 
         builder.Property(paddock => paddock.Name).IsRequired().HasMaxLength(150);
         builder.Property(paddock => paddock.Code).HasMaxLength(30);
+        builder.Property(p => p.MapX).HasPrecision(7, 4);
+        builder.Property(p => p.MapY).HasPrecision(7, 4);
+        builder.Property(p => p.MapWidth).HasPrecision(7, 4);
+        builder.Property(p => p.MapHeight).HasPrecision(7, 4);
         builder.Property(paddock => paddock.IsActive).IsRequired();
 
         builder.HasIndex(paddock => new { paddock.FarmId, paddock.Name }).IsUnique();

@@ -205,14 +205,16 @@ public static class DatabaseSeeder
             Farm = farm,
             Name = "Potrero Norte",
             AreaHectares = 12.5m,
-            Capacity = 40
+            Capacity = 40,
+            MapX = 5, MapY = 10, MapWidth = 42, MapHeight = 75
         };
         var south = new Paddock
         {
             Farm = farm,
             Name = "Potrero Sur",
             AreaHectares = 9.0m,
-            Capacity = 30
+            Capacity = 30,
+            MapX = 53, MapY = 25, MapWidth = 42, MapHeight = 60
         };
         var bovine = speciesByCode["BO"];
         var ovine = speciesByCode["OV"];
@@ -357,6 +359,8 @@ public static class DatabaseSeeder
                 throw new InvalidOperationException("Could not seed the employee: " + string.Join(" ", result.Errors.Select(x => x.Description)));
         }
 
+        // Existing accounts retain the access chosen by their administrator.
+        if (await db.UserFarms.AnyAsync(x => x.UserId == employee.Id, ct) || await manager.GetRolesAsync(employee) is { Count: > 0 }) return;
         if (!await manager.IsInRoleAsync(employee, "Employee"))
             await manager.AddToRoleAsync(employee, "Employee");
         var farmId = await db.Farms.Where(x => x.Code == "DEMO").Select(x => x.Id).SingleAsync(ct);

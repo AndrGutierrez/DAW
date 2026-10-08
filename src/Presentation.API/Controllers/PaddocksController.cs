@@ -10,6 +10,9 @@ namespace Presentation.API.Controllers;
 [Route("api/paddocks")]
 public sealed class PaddocksController(ICrudService<PaddockRequest> service, PaddockService occupancy) : ControllerBase
 {
+    [HttpGet("map"), HasPermission("paddocks.list")]
+    public async Task<IActionResult> Map([FromQuery] Guid farmId, CancellationToken ct) => Ok(await occupancy.MapAsync(farmId, ct));
+
     [HttpGet("page"), HasPermission("paddocks.list")]
     public async Task<IActionResult> Page([FromQuery] PaddockPageRequest query, CancellationToken ct) => Ok(await occupancy.PageAsync(query, ct));
 

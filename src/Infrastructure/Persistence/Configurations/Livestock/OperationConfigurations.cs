@@ -77,7 +77,7 @@ public sealed class AlertRuleConfiguration : IEntityTypeConfiguration<AlertRule>
         builder.HasKey(rule => rule.Id);
 
         builder.Property(rule => rule.Type).HasConversion<int>().IsRequired();
-        builder.Property(rule => rule.ThresholdValue).HasPrecision(12, 2);
+        builder.Property(rule => rule.ThresholdValue).HasPrecision(12, 4);
         builder.Property(rule => rule.IsEnabled).IsRequired();
 
         builder.HasIndex(rule => new { rule.FarmId, rule.Type });

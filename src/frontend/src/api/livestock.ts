@@ -14,7 +14,7 @@ export type AnimalPageResult = { items: Animal[]; total: number; page: number; p
 export type CatalogItem = { id: string; data: { name: string; code?: string; isActive: boolean; farmId?: string; speciesId?: string; paddockId?: string | null; purpose?: string } };
 export type GrowthPoint = { recordId: string; date: string; weightKg: number; bodyConditionScore: number | null; dailyGainKg: number | null };
 export type WeightHistoryItem = { id: string; date: string; weightKg: number; bodyConditionScore: number | null; notes: string | null; createdAt: string; usedForCurve: boolean };
-export type GrowthResult = { points: GrowthPoint[]; records: WeightHistoryItem[]; total: number; page: number; pageSize: number; totalDates: number };
+export type GrowthResult = { points: GrowthPoint[]; records: WeightHistoryItem[]; total: number; page: number; pageSize: number; totalDates: number; targetDailyGainKg: number | null; targetSource: string };
 export const labels: Record<string, string> = {
   Active: 'Activo', Sold: 'Vendido', Dead: 'Fallecido', Transferred: 'Transferido', Lost: 'Extraviado',
   Healthy: 'Sano', UnderObservation: 'En observación', InTreatment: 'En tratamiento', Quarantine: 'Cuarentena', Critical: 'Crítico',

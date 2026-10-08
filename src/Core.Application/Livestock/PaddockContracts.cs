@@ -10,6 +10,7 @@ public sealed record PaddockResidentPageRequest(int Page = 1, int PageSize = 10,
 public sealed record PaddockResident(Guid Id, string InternalTag, string? Name, string? Lot, Guid? LotId, Guid SpeciesId, DateOnly? ArrivalDate);
 public interface IPaddockReader
 {
+    Task<IReadOnlyList<PaddockSnapshot>> MapAsync(Guid farmId, CancellationToken ct);
     Task<CarePage<PaddockSnapshot>> PageAsync(PaddockPageRequest request, IReadOnlyCollection<Guid> farmIds, CancellationToken ct);
     Task<CarePage<PaddockResident>> ResidentsAsync(Guid paddockId, PaddockResidentPageRequest query, CancellationToken ct);
 }

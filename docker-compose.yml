@@ -19,10 +19,11 @@ services:
 
   blazorapp:
     build: .
+    image: ${COMPOSE_PROJECT_NAME:-daw}-api
     container_name: blazorapp
     expose:
       - "8080"
-    environment:
+    environment: &api-environment
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=${ASPNETCORE_FORWARDEDHEADERS_ENABLED}
       - DisableHttpsRedirection=${DISABLE_HTTPS_REDIRECTION}
@@ -38,9 +39,21 @@ services:
     volumes:
       - daw-uploads:/app/uploads
     depends_on:
+      initialize:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  initialize:
+    build: .
+    image: ${COMPOSE_PROJECT_NAME:-daw}-api
+    command: ["--seed"]
+    environment: *api-environment
+    volumes:
+      - daw-uploads:/app/uploads
+    depends_on:
       db:
         condition: service_healthy
-    restart: unless-stopped
+    restart: "no"
 
   nginx:
     build:
