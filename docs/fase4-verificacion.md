@@ -2,22 +2,22 @@
 
 Fecha: 7 de octubre de 2026.
 
-Se verificó la rama codex/phase4-cattle-spa en un entorno aislado. Los resultados cubren sesión persistente, consulta y edición del ganado, fotografías, crecimiento, pesaje consecutivo, sanidad, reproducción, retiro, producción por animal, ocupación de potreros y traslados. El [estado de implementación](fase4-estado.md) distingue estos recorridos de la entrega completa.
+Se verificó la rama codex/phase4-cattle-spa en un entorno aislado. Los resultados cubren sesión persistente, consulta y edición del ganado, fotografías, crecimiento, pesaje consecutivo, sanidad, reproducción, retiro, producción por animal, ocupación de potreros, traslados y la interfaz de la finca. El [estado de implementación](fase4-estado.md) distingue estos recorridos de la entrega completa.
 
 ## Resultados ejecutados
 
-| Verificación | Primer incremento | Segundo incremento | Tercer incremento | Cuarto incremento |
-| --- | --- | --- | --- | --- |
-| Core.Tests: dominio, infraestructura y pipeline HTTP | 108 aprobadas | 116 aprobadas | 124 aprobadas | 134 aprobadas |
-| UnitTests: Core.Application con xUnit y Moq | 18 aprobadas | 42 aprobadas | 72 aprobadas | 91 aprobadas |
-| Cliente con Vitest | 13 aprobadas | 28 aprobadas | 28 aprobadas | 41 aprobadas |
-| Playwright en desktop y mobile | 12 aprobadas | 34 aprobadas | 46 aprobadas | 60 aprobadas |
-| TypeScript y Vite | Aprobados | Aprobados en Windows y Docker | Aprobados en Windows y Docker | Aprobados en Windows y Docker |
-| Imágenes API y Nginx | Construidas e iniciadas | Construidas e iniciadas | Construidas e iniciadas | Construidas e iniciadas |
-| Dependencias frontend | Sin vulnerabilidades reportadas | Sin vulnerabilidades reportadas al instalar Recharts | Sin cambios de dependencias | Sin cambios de dependencias |
-| PostgreSQL | 43 tablas | 43 tablas, sin migraciones de eliminación | 43 tablas, sin cambios de esquema | 43 tablas, sin cambios de esquema |
+| Verificación | Primer incremento | Segundo incremento | Tercer incremento | Cuarto incremento | Quinto incremento: UI |
+| --- | --- | --- | --- | --- | --- |
+| Core.Tests: dominio, infraestructura y pipeline HTTP | 108 aprobadas | 116 aprobadas | 124 aprobadas | 134 aprobadas | Sin cambios de backend; no repetidas |
+| UnitTests: Core.Application con xUnit y Moq | 18 aprobadas | 42 aprobadas | 72 aprobadas | 91 aprobadas | Sin cambios de backend; no repetidas |
+| Cliente con Vitest | 13 aprobadas | 28 aprobadas | 28 aprobadas | 41 aprobadas | 41 aprobadas |
+| Playwright en desktop y mobile | 12 aprobadas | 34 aprobadas | 46 aprobadas | 60 aprobadas | 68 aprobadas |
+| TypeScript y Vite | Aprobados | Aprobados en Windows y Docker | Aprobados en Windows y Docker | Aprobados en Windows y Docker | Aprobados en Windows y Docker |
+| Imágenes API y Nginx | Construidas e iniciadas | Construidas e iniciadas | Construidas e iniciadas | Construidas e iniciadas | API conservada; Nginx construido e iniciado |
+| Dependencias frontend | Sin vulnerabilidades reportadas | Sin vulnerabilidades reportadas al instalar Recharts | Sin cambios de dependencias | Sin cambios de dependencias | Sin cambios de dependencias |
+| PostgreSQL | 43 tablas | 43 tablas, sin migraciones de eliminación | 43 tablas, sin cambios de esquema | 43 tablas, sin cambios de esquema | 43 tablas, sin cambios de esquema |
 
-El cuarto incremento tiene 225 pruebas .NET aprobadas en total; el tercero tenía 196 y el segundo 158. Los conteos no son porcentajes de cobertura; no se ha medido ni se afirma cobertura global del 100 %. La línea base anterior al primer incremento tenía 94 pruebas Core.Tests.
+El cuarto incremento tiene 225 pruebas .NET aprobadas en total; el tercero tenía 196 y el segundo 158. El quinto modifica solamente el frontend, por lo que no repite las suites .NET. Los conteos no son porcentajes de cobertura; no se ha medido ni se afirma cobertura global del 100 %. La línea base anterior al primer incremento tenía 94 pruebas Core.Tests.
 
 ## Entorno y evidencia
 
@@ -25,7 +25,7 @@ PostgreSQL 15, API .NET 10 y SPA compilada servida por Nginx, bajo el proyecto C
 
 Las pruebas WebApplicationFactory utilizan una base EF InMemory aislada. Las pruebas UnitTests utilizan Moq y referencian Core.Application; no utilizan EF ni una base física. Playwright comprueba integración contra PostgreSQL real. La distinción importa: una prueba InMemory no demuestra el comportamiento de concurrencia de PostgreSQL.
 
-Se revisaron visualmente el listado y el editor en escritorio, el formulario móvil y la ficha con Recharts en tema oscuro. Las comprobaciones de navegador verifican ausencia de desbordamiento horizontal en los recorridos principales. Sanidad y el mapa de potreros se revisaron también en escritorio y en móvil oscuro. El detalle de ocupación se revisó con filtros por lote. La revisión no equivale a una auditoría completa de accesibilidad ni de todos los navegadores.
+Se revisaron visualmente el listado y el editor en escritorio, el formulario móvil y la ficha con Recharts en tema oscuro. Las comprobaciones de navegador verifican ausencia de desbordamiento horizontal en los recorridos principales. Sanidad y el mapa de potreros se revisaron también en escritorio y en móvil oscuro. El detalle de ocupación se revisó con filtros por lote. La nueva interfaz se revisó en acceso, listado, ficha, editor y potreros, tanto en escritorio como en móvil y ambos temas. La revisión no equivale a una auditoría completa de accesibilidad ni de todos los navegadores.
 
 Los archivos .env, capturas, perfiles del navegador y trazas permanecen fuera del control de versiones. No se modificó .github.
 
@@ -98,3 +98,18 @@ Los siete escenarios nuevos se ejecutan en escritorio y móvil contra PostgreSQL
 Las pruebas Moq cubren autorización, capacidad, estado activo, compatibilidad de finca/especie, identidad del envío y origen esperado. El pipeline HTTP comprueba también las rutas originales de creación/edición del animal, reactivación, reducción de capacidad, desactivación de un potrero ocupado y ausencia de fechas inventadas para registros anteriores. Los cambios solamente de lote conservan la fecha de entrada física. Las referencias antiguas entre fincas no se incluyen en la ocupación consultada.
 
 La concurrencia por el último cupo se demuestra con PostgreSQL real; InMemory no demuestra esa garantía. No se añadieron migraciones. Después del reinicio se recuperó Docker conservando los volúmenes existentes. El alcance y sus límites se explican en [potreros y trazabilidad](fase4-potreros.md).
+
+## Sistema visual y protección de editores
+
+Los cuatro escenarios nuevos de Playwright se ejecutaron en escritorio y móvil:
+
+- Texto y estados semánticos en ambos temas, incluyendo salud crítica, etiquetas y acciones: contraste de al menos 4.5:1 en los elementos seleccionados.
+- Un editor de animal modificado conserva los valores al cancelar una salida mediante menú, Atrás del navegador o logout; confirmar la salida no guarda la ficha.
+- El editor de potrero conserva la capacidad capturada al cancelar la navegación y admite alternar el checkbox con teclado. Descartar no modifica la capacidad persistida.
+- Fotografías y crecimiento son alcanzables mediante el navegador de secciones y el teclado, sin desbordamiento horizontal del documento.
+
+El escenario existente de creación/edición verifica que elegir lote conserva el potrero vacío hasta que el usuario lo asigna expresamente. Los 60 casos anteriores continúan aprobados: sesión persistente, fotos privadas, edición, pesaje, sanidad/reproducción, retiro, producción, capacidad y traslados. El total actual es de 68 casos de navegador.
+
+La regresión completa creó 18 animales clínicos de prueba, identificados mediante su manifiesto. La limpieza comprobó propiedad y ausencia de descendientes externos antes de eliminarlos, conservando la demostración. Se verificaron cero fixtures clínicos, de potreros y de UI restantes. La suite de UI limpia sus animales y potreros por API.
+
+Después del ajuste final de contraste de los campos se repitió el escenario de colores en ambas resoluciones: dos casos aprobados. La comprobación también mide las ayudas de entrada (al menos 4.5:1) y los bordes de los controles seleccionados (al menos 3:1). Los resultados no sustituyen una auditoría completa de accesibilidad. El alcance y los límites están en [interfaz de la finca](fase4-ui.md).

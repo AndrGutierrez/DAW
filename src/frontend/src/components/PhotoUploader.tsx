@@ -1,3 +1,4 @@
+import { Button, Input } from './ui/Controls';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { errorMessage } from '../api/errors';
@@ -35,8 +36,8 @@ export function PhotoUploader({ animalId, onSaved }: { animalId: string; onSaved
     catch (failure) { setError(errorMessage(failure)); notify(errorMessage(failure), 'error'); }
     finally { setBusy(false); }
   }
-  return <div className="photo-uploader"><label className="upload-label">Añadir fotografía<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event => { void prepare(event.target.files?.[0]); event.target.value = ''; }} /></label><p className="muted">JPG, PNG o WebP · hasta 20 MB. Se prepara una copia de hasta 1920 px sin los metadatos del archivo original.</p>
+  return <div className="photo-uploader"><label className="upload-label">Añadir fotografía<Input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event => { void prepare(event.target.files?.[0]); event.target.value = ''; }} /></label><p className="muted">JPG, PNG o WebP · hasta 20 MB. Se prepara una copia de hasta 1920 px sin los metadatos del archivo original.</p>
     {busy && <p role="status">Preparando o subiendo fotografía…</p>}{error && <p className="field-error" role="alert">{error}</p>}
-    {photo && <div className="upload-preview">{preview && <img src={preview} alt="Vista previa de la fotografía preparada" />}<div><strong>Lista para subir</strong><p className="muted">Original: {number(originalSize / 1024)} KB · copia: {number(photo.size / 1024)} KB</p><div className="button-row"><button className="button secondary" disabled={busy} onClick={() => setPhoto(null)}>Descartar</button><button className="button primary" disabled={busy} onClick={() => void upload()}>Subir fotografía</button></div></div></div>}
+    {photo && <div className="upload-preview">{preview && <img src={preview} alt="Vista previa de la fotografía preparada" />}<div><strong>Lista para subir</strong><p className="muted">Original: {number(originalSize / 1024)} KB · copia: {number(photo.size / 1024)} KB</p><div className="button-row"><Button className="button secondary" disabled={busy} onClick={() => setPhoto(null)}>Descartar</Button><Button className="button primary" disabled={busy} onClick={() => void upload()}>Subir fotografía</Button></div></div></div>}
   </div>;
 }

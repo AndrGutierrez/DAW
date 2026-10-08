@@ -1,3 +1,4 @@
+import { Button, Input, Textarea } from './ui/Controls';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '../auth/AuthContext';
@@ -38,11 +39,11 @@ export function WeighingForm({ animalId, initialDate, onSaved, consecutive = fal
   }
   function change(key: keyof typeof values, value: string) { setValues(current => ({ ...current, [key]: value })); setErrors(current => ({ ...current, [key.toLowerCase()]: '' })); }
   return <form noValidate onSubmit={submit} className="weighing-form"><fieldset disabled={busy || uncertain}><div className="form-grid">
-    <Field label="Fecha del pesaje *" error={errors.date}><input type="date" max={today()} value={values.date} onChange={event => change('date', event.target.value)} /></Field>
-    <Field label="Peso vivo (kg) *" error={errors.weightkg}><input type="number" inputMode="decimal" min="0.01" max="999999.99" step="0.01" autoFocus={consecutive} value={values.weightKg} onChange={event => change('weightKg', event.target.value)} /></Field>
-    <Field label="Condición corporal" error={errors.bodyconditionscore} hint="Opcional · escala de 1 a 5"><input type="number" min="1" max="5" step="0.01" value={values.bodyConditionScore} onChange={event => change('bodyConditionScore', event.target.value)} /></Field>
-  </div><Field label="Observaciones del pesaje" error={errors.notes}><textarea maxLength={500} rows={2} value={values.notes} onChange={event => change('notes', event.target.value)} /></Field></fieldset>
+    <Field label="Fecha del pesaje *" error={errors.date}><Input type="date" max={today()} value={values.date} onChange={event => change('date', event.target.value)} /></Field>
+    <Field label="Peso vivo (kg) *" error={errors.weightkg}><Input type="number" inputMode="decimal" min="0.01" max="999999.99" step="0.01" autoFocus={consecutive} value={values.weightKg} onChange={event => change('weightKg', event.target.value)} /></Field>
+    <Field label="Condición corporal" error={errors.bodyconditionscore} hint="Opcional · escala de 1 a 5"><Input type="number" min="1" max="5" step="0.01" value={values.bodyConditionScore} onChange={event => change('bodyConditionScore', event.target.value)} /></Field>
+  </div><Field label="Observaciones del pesaje" error={errors.notes}><Textarea maxLength={500} rows={2} value={values.notes} onChange={event => change('notes', event.target.value)} /></Field></fieldset>
     {error && <p role="alert" className="error-banner">{error}</p>}{uncertain && <p className="warning-banner">Los valores quedan bloqueados hasta confirmar este envío. Reintentar comprueba el mismo registro y evita duplicarlo.</p>}
-    <div className="button-row"><button className="button primary" disabled={busy} type="submit">{busy ? 'Guardando pesaje…' : uncertain ? 'Reintentar y confirmar pesaje' : consecutive ? 'Guardar y continuar' : 'Guardar pesaje'}</button></div>
+    <div className="button-row"><Button className="button primary" disabled={busy} type="submit">{busy ? 'Guardando pesaje…' : uncertain ? 'Reintentar y confirmar pesaje' : consecutive ? 'Guardar y continuar' : 'Guardar pesaje'}</Button></div>
   </form>;
 }

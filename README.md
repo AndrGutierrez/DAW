@@ -83,6 +83,7 @@ Importar [colección Postman](postman/Cattle-Management.full.postman_collection.
 - [Ficha, fotografías, GDP y pesaje consecutivo](docs/fase4-animales.md).
 - [Sanidad, reproducción, retiro y producción del animal](docs/fase4-sanidad.md).
 - [Potreros, capacidad, lotes presentes y traslados](docs/fase4-potreros.md).
+- [Interfaz, paleta semántica y navegación de la finca](docs/fase4-ui.md).
 - [Estado y trabajo restante de Fase 4](docs/fase4-estado.md).
 - [Verificación ejecutada de Fase 4](docs/fase4-verificacion.md).
 - [Decisiones técnicas](docs/engineering-decisions.md).

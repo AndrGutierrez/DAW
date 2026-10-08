@@ -1,6 +1,8 @@
+import { Button } from './components/ui/Controls';
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from './auth/AuthContext';
 import { AppLayout } from './components/AppLayout';
+import { Icon } from './components/ui/Icon';
 import { LoginPage } from './pages/LoginPage';
 import { AnimalEditorPage } from './pages/AnimalEditorPage';
 import { WeighingPage } from './pages/WeighingPage';
@@ -23,8 +25,8 @@ function AccountPage() {
 
 export function App() {
   const auth = useAuth();
-  if (auth.status === 'checking') return <main className="connection-state"><div className="brand-mark">G</div><h1>Preparando tu finca</h1><p className="muted" role="status">Comprobando la sesión…</p><div className="skeleton connection-skeleton" /></main>;
-  if (auth.status === 'unavailable') return <main className="connection-state"><h1>No pudimos conectar</h1><p role="alert">{auth.error}</p><button className="button primary" onClick={() => void auth.retry()}>Reintentar</button></main>;
+  if (auth.status === 'checking') return <main className="connection-state"><div className="brand-mark"><Icon name="leaf" size={25} /></div><h1>Preparando tu finca</h1><p className="muted" role="status">Comprobando la sesión…</p><div className="skeleton connection-skeleton" /></main>;
+  if (auth.status === 'unavailable') return <main className="connection-state"><h1>No pudimos conectar</h1><p role="alert">{auth.error}</p><Button className="button primary" onClick={() => void auth.retry()}>Reintentar</Button></main>;
   return <Routes>
     <Route path="/login" element={<LoginPage />} />
     <Route element={<RequireSession />}><Route element={<AppLayout />}><Route path="/animals" element={<AnimalsPage />} /><Route path="/animals/new" element={<AnimalEditorPage />} /><Route path="/animals/:id/edit" element={<AnimalEditorPage />} /><Route path="/weighing" element={<WeighingPage />} /><Route path="/paddocks" element={<PaddocksPage />} /><Route path="/animals/:id" element={<AnimalPage />} /><Route path="/account" element={<AccountPage />} /></Route></Route>

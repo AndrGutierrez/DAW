@@ -65,6 +65,8 @@ test('create and edit preserve animal identification, location, genealogy and no
   const lots = await (await request.get('/api/lots', { headers })).json();
   const lot = lots.find((item: { data: { farmId: string; speciesId: string; isActive: boolean } }) => item.data.farmId === farmId && item.data.speciesId === speciesId && item.data.isActive);
   await page.getByLabel('Lote', { exact: true }).selectOption(lot.id);
+  await expect(page.getByLabel('Potrero', { exact: true })).toHaveValue('');
+  if (lot.data.paddockId) await page.getByLabel('Potrero', { exact: true }).selectOption(lot.data.paddockId);
   const createdResponse = page.waitForResponse(response => response.url().endsWith('/api/animals') && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Guardar animal' }).click();
   const newAnimal = await (await createdResponse).json(); created.push(newAnimal.id);

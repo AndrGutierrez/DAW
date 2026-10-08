@@ -1,3 +1,4 @@
+import { Button } from './ui/Controls';
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuth } from '../auth/AuthContext';
@@ -34,11 +35,11 @@ export function useCareSubmission(path: string, onSaved: () => void) {
 }
 export function CareFormResult({ state, label }: { state: ReturnType<typeof useCareSubmission>; label: string }) {
   return <>{state.error && <p className="error-banner" role="alert">{state.error}</p>}{state.uncertain && <p className="warning-banner">Conservamos este envío. Reintentar confirma el mismo registro y evita duplicarlo.</p>}
-    <div className="button-row"><button type="submit" className="button primary" disabled={state.busy}>{state.busy ? 'Guardando…' : state.uncertain ? 'Reintentar y confirmar registro' : label}</button></div></>;
+    <div className="button-row"><Button type="submit" className="button primary" disabled={state.busy}>{state.busy ? 'Guardando…' : state.uncertain ? 'Reintentar y confirmar registro' : label}</Button></div></>;
 }
 export function CarePagination({ page, total, pageSize, onPage }: { page: number; total: number; pageSize: number; onPage: (page: number) => void }) {
   return <div className="pagination"><small className="muted">{total} registros · página {page} de {Math.max(1, Math.ceil(total / pageSize))}</small><div>
-    <button className="button secondary" disabled={page <= 1} onClick={() => onPage(page - 1)}>Anterior</button>
-    <button className="button secondary" disabled={page * pageSize >= total} onClick={() => onPage(page + 1)}>Siguiente</button>
+    <Button className="button secondary" disabled={page <= 1} onClick={() => onPage(page - 1)}>Anterior</Button>
+    <Button className="button secondary" disabled={page * pageSize >= total} onClick={() => onPage(page + 1)}>Siguiente</Button>
   </div></div>;
 }
