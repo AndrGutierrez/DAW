@@ -67,7 +67,7 @@ public sealed class ManagementRepository(AppDbContext db, ICurrentUser user) : I
         {
             var old = entry.State == EntityState.Added ? null : entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.OriginalValue);
             var current = entry.State == EntityState.Deleted ? null : entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.CurrentValue);
-            db.AuditLogs.Add(new AuditLog { UserId = user.UserId, FarmId = entry.Metadata.FindProperty("FarmId") != null ? (Guid?)entry.Property("FarmId").CurrentValue : null, Action = entry.State.ToString(), EntityName = entry.Metadata.ClrType.Name, EntityId = entry.Entity.Id.ToString(), OldValues = old == null ? null : JsonSerializer.Serialize(old), NewValues = current == null ? null : JsonSerializer.Serialize(current) });
+            db.AuditLogs.Add(new AuditLog { UserId = user.UserId, IpAddress = user.IpAddress, FarmId = entry.Entity is Farm farm ? farm.Id : entry.Metadata.FindProperty("FarmId") != null ? (Guid?)entry.Property("FarmId").CurrentValue : null, Action = entry.State.ToString(), EntityName = entry.Metadata.ClrType.Name, EntityId = entry.Entity.Id.ToString(), OldValues = old == null ? null : JsonSerializer.Serialize(old), NewValues = current == null ? null : JsonSerializer.Serialize(current) });
         }
 
         try

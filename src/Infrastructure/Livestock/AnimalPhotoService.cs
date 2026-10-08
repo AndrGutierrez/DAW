@@ -1,4 +1,5 @@
 using Core.Application.Livestock;
+using System.Text.Json;
 using Core.Application.Security;
 using Core.Application.Storage;
 using Core.Domain.Livestock;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Livestock;
 
-public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage, IFarmAccess farmAccess) : IAnimalPhotoService
+public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage, IFarmAccess farmAccess, ICurrentUser? actor = null) : IAnimalPhotoService
 {
     public async Task<AnimalPhotoResult> UploadAsync(
         Guid animalId,
@@ -53,6 +54,7 @@ public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage, IF
         photo.Url = $"/api/animals/{animal.Id}/photos/{photo.Id}/content";
 
         db.AnimalPhotos.Add(photo);
+        RecordAudit(photo, "Added", null, Snapshot(photo), actor?.UserId ?? userId);
         animal.UpdatedAt = DateTime.UtcNow;
 
         try
@@ -81,12 +83,27 @@ public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage, IF
                 cancellationToken)
             ?? throw new KeyNotFoundException("The requested photo was not found.");
 
+        RecordAudit(photo, "Deleted", Snapshot(photo), null, actor?.UserId);
         db.AnimalPhotos.Remove(photo);
         animal.UpdatedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync(cancellationToken);
         await storage.DeleteAsync($"animals/{animal.Id}", photo.FileName, cancellationToken);
     }
+
+    private static string Snapshot(AnimalPhoto photo) => JsonSerializer.Serialize(new
+    {
+        photo.Id, photo.FarmId, photo.AnimalId, photo.Url, photo.FileName, photo.ContentType,
+        photo.SizeBytes, photo.UploadedAt, photo.UploadedByUserId
+    });
+
+    private void RecordAudit(AnimalPhoto photo, string action, string? before, string? after, Guid? userId) =>
+        db.AuditLogs.Add(new AuditLog
+        {
+            EntityName = nameof(AnimalPhoto), EntityId = photo.Id.ToString(), Action = action,
+            FarmId = photo.FarmId, UserId = userId, IpAddress = actor?.IpAddress,
+            OldValues = before, NewValues = after
+        });
 
     public async Task<AnimalPhotoContent> OpenReadAsync(Guid animalId, Guid photoId,
         CancellationToken cancellationToken = default)

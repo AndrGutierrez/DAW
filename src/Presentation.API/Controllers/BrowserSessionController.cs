@@ -69,7 +69,7 @@ public sealed class BrowserSessionController(
         var rejection = await ValidateRequestAsync();
         if (rejection is not null) return rejection;
         if (Request.Cookies.TryGetValue(CookieName, out var token))
-            await authService.RevokeRefreshTokenAsync(token, cancellationToken);
+            await authService.LogoutAsync(token, cancellationToken);
         Response.Cookies.Delete(CookieName, CookieOptions());
         return NoContent();
     }

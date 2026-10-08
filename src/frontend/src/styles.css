@@ -2936,3 +2936,36 @@ table, .metric-grid strong, .stock-value, input[type=number] { font-variant-nume
     display: none;
   }
 }
+
+/* Read-only activity history */
+.audit-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }
+.audit-filter-actions { align-self: end; }
+.audit-list-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1rem; }
+.audit-list-heading h2 { margin: 0; }
+.audit-list th, .audit-list td { vertical-align: top; }
+.audit-id { display: block; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; font-size: .85rem; }
+.audit-date { min-width: 9rem; font-variant-numeric: tabular-nums; }
+.audit-event-heading { border-bottom: 1px solid var(--line); padding-bottom: 1rem; margin-bottom: 1.25rem; }
+.audit-event-heading h3 { margin: .75rem 0 .25rem; }
+.audit-event-heading p { margin: 0; }
+.audit-metadata { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.audit-metadata dt { color: var(--muted); font-size: .85rem; margin-bottom: .35rem; }
+.audit-metadata dd { margin: 0; overflow-wrap: anywhere; }
+.audit-metadata small { display: block; overflow-wrap: anywhere; }
+.audit-metadata > div:last-child { grid-column: 1 / -1; }
+.audit-origin-note { font-size: .85rem; }
+.audit-changes-heading { margin: 2rem 0 1rem; }
+.audit-changes-heading h3 { margin-bottom: .75rem; }
+.audit-changes td, .audit-changes th { white-space: pre-wrap; overflow-wrap: anywhere; min-width: 8rem; max-width: 18rem; vertical-align: top; }
+.audit-changes th[scope=row] { font-weight: 600; }
+.audit-changes tr[data-changed=true] td:last-child { background: var(--soft); }
+.audit-empty { padding: 2rem 1rem; text-align: center; }
+.audit-empty svg { color: var(--muted); }
+@media (max-width: 1100px) { .audit-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .audit-list-heading { align-items: flex-start; flex-direction: column; gap: .25rem; } }
+@media (max-width: 600px) { .audit-filters { grid-template-columns: minmax(0, 1fr); } .audit-metadata { grid-template-columns: minmax(0, 1fr); } }
+
+@media (max-width: 760px) {
+  .side-panel .audit-changes th[scope=row] { grid-column: 1 / -1; padding: 0; min-width: 0; max-width: none; }
+  .side-panel .audit-changes td { min-width: 0; max-width: none; }
+  .side-panel .audit-changes td:last-child { grid-column: auto; }
+}

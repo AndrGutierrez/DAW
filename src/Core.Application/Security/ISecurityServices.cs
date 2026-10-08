@@ -10,6 +10,8 @@ public interface IAuthService
 
     Task RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
 
+    Task LogoutAsync(string refreshToken, CancellationToken cancellationToken = default);
+
     Task<UserResult> GetUserAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
@@ -18,6 +20,9 @@ public interface ICurrentUser
     Guid? UserId { get; }
 
     bool IsAuthenticated { get; }
+
+    // Transport peer address; forwarded headers are only accepted from configured trusted proxies.
+    string? IpAddress => null;
 }
 
 public interface IPermissionChecker

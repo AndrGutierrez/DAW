@@ -38,7 +38,7 @@ public sealed class AnimalCatalogServiceTests
         repo.Setup(r => r.GetAsync<Species>(species.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(species);
         repo.Setup(r => r.GetAsync<Animal>(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, bool _, CancellationToken _) => animals.SingleOrDefault(a => a.Id == id));
         repo.Setup(r => r.ListAsync(It.IsAny<Expression<Func<Animal, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync((Expression<Func<Animal, bool>> filter, CancellationToken _) => animals.Where(filter.Compile()).ToArray());
-        Exists(animals); Exists(weights); Exists(health); Exists(reproduction); Exists(production); Exists(photos); Exists(changes); Exists(stock);
+        Exists(animals); Exists(weights); Exists(health); Exists(reproduction); Exists(production); Exists(photos); Exists(changes); Exists(stock); Exists(moves);
         repo.Setup(r => r.Add(It.IsAny<Animal>())).Callback<Animal>(animals.Add);
         repo.Setup(r => r.Add(It.IsAny<HealthStatusChange>())).Callback<HealthStatusChange>(changes.Add);
         repo.Setup(r => r.Add(It.IsAny<AnimalMovement>())).Callback<AnimalMovement>(moves.Add);
@@ -116,9 +116,10 @@ public sealed class AnimalCatalogServiceTests
         await Service.UpdateAsync(animal.Id, Request with { HealthStatus = HealthStatus.InTreatment }); var change = Assert.Single(changes);
         Assert.Equal(HealthStatus.Healthy, change.PreviousStatus); Assert.Equal(HealthStatus.InTreatment, change.NewStatus); Assert.Equal(author, change.UserId);
     }
-    [Theory] [InlineData("supply")] [InlineData("photo")] [InlineData("health")]
+    [Theory] [InlineData("supply")] [InlineData("photo")] [InlineData("health")] [InlineData("movement")]
     public async Task TraceableHistoryPreventsHardDeletion(string history)
     {
+        if (history == "movement") moves.Add(new() { AnimalId = animal.Id });
         if (history == "supply") stock.Add(new() { FarmId = farm.Id, ReferenceType = "Animal", ReferenceId = animal.Id });
         if (history == "photo") photos.Add(new() { AnimalId = animal.Id }); if (history == "health") changes.Add(new() { AnimalId = animal.Id });
         await Assert.ThrowsAsync<ConflictException>(() => Service.DeleteAsync(animal.Id)); Assert.Contains(animal, animals);

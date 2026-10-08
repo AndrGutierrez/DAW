@@ -18,7 +18,7 @@ export function AppLayout() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [moreOpen, setMoreOpen] = useState(false);
-  const section = location.pathname.startsWith('/dashboard') ? 'Indicadores de tu finca' : location.pathname.startsWith('/inventory') ? 'Insumos y existencias' : location.pathname.startsWith('/reports') ? 'Reportes de seguimiento' : location.pathname.startsWith('/paddocks') ? 'Espacios y ocupación' : location.pathname.startsWith('/weighing') ? 'Control de crecimiento' : location.pathname.startsWith('/monitoring') ? 'Seguimiento del ganado' : location.pathname.startsWith('/users') ? 'Personas y accesos' : location.pathname.startsWith('/diagnostics') ? 'Diagnóstico de la aplicación' : location.pathname.startsWith('/account') ? 'Tu cuenta' : 'Tu ganado';
+  const section = location.pathname.startsWith('/dashboard') ? 'Indicadores de tu finca' : location.pathname.startsWith('/inventory') ? 'Insumos y existencias' : location.pathname.startsWith('/reports') ? 'Reportes de seguimiento' : location.pathname.startsWith('/paddocks') ? 'Espacios y ocupación' : location.pathname.startsWith('/weighing') ? 'Control de crecimiento' : location.pathname.startsWith('/monitoring') ? 'Seguimiento del ganado' : location.pathname.startsWith('/auditlogs') ? 'Historial de actividad' : location.pathname.startsWith('/users') ? 'Personas y accesos' : location.pathname.startsWith('/diagnostics') ? 'Diagnóstico de la aplicación' : location.pathname.startsWith('/account') ? 'Tu cuenta' : 'Tu ganado';
   const items: { to: string; label: string; icon: IconName; allowed: boolean }[] = ([
     { to: '/dashboard', label: 'Dashboard', icon: 'growth', allowed: isAdmin && dashboardPermissions.every(can) },
     { to: '/animals', label: 'Animales', icon: 'animal', allowed: true },
@@ -28,6 +28,7 @@ export function AppLayout() {
     { to: '/reports', label: 'Reportes', icon: 'report', allowed: can('animals.list') && (can('clinical.list') || can('production.list')) },
     { to: '/monitoring', label: 'Seguimiento', icon: 'growth', allowed: can('animals.list') && can('weights.list') },
     { to: '/users', label: 'Usuarios', icon: 'user', allowed: isAdmin && can('users.list') },
+    { to: '/auditlogs', label: 'Auditoría', icon: 'audit', allowed: isAdmin && can('auditlogs.list') },
   ] satisfies { to: string; label: string; icon: IconName; allowed: boolean }[]).filter(item => item.allowed);
   const remaining = items.slice(4);
   useEffect(() => {

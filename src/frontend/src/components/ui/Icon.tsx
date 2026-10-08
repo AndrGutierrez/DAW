@@ -1,3 +1,5 @@
+import { ClockCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ClockCounterClockwise';
+import { ArrowsClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowsClockwise';
 import { PackageIcon } from '@phosphor-icons/react/dist/csr/Package';
 import { FileTextIcon } from '@phosphor-icons/react/dist/csr/FileText';
 import { LeafIcon } from '@phosphor-icons/react/dist/csr/Leaf';
@@ -32,6 +34,8 @@ import { DotsThreeIcon } from '@phosphor-icons/react/dist/csr/DotsThree';
 import type { IconProps } from '@phosphor-icons/react';
 
 const icons = {
+  audit: ClockCounterClockwiseIcon,
+  refresh: ArrowsClockwiseIcon,
   menu: DotsThreeIcon,
   inventory: PackageIcon,
   report: FileTextIcon,

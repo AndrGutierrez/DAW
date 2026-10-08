@@ -1,3 +1,4 @@
+import { clearFixtureMovements } from './fixtureCleanup';
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import { mkdir } from 'node:fs/promises';
@@ -7,12 +8,15 @@ let headers: Record<string, string>;
 let animals: string[], lots: string[], productions: string[];
 const username = process.env.E2E_ADMIN_USERNAME!, password = process.env.E2E_ADMIN_PASSWORD!;
 test.beforeEach(async ({ request }) => {
+  test.skip(process.env.E2E_ISOLATED_DATABASE !== '1', 'Mutation fixtures require the named disposable database.');
   animals = []; lots = []; productions = [];
   const auth = await request.post('/api/auth/login', { data: { username, password } });
   expect(auth.status()).toBe(200);
   headers = { Authorization: 'Bearer ' + (await auth.json()).accessToken };
 });
 test.afterEach(async ({ request }) => {
+  if (process.env.E2E_ISOLATED_DATABASE !== '1') return;
+  clearFixtureMovements(animals);
   for (const id of productions) expect((await request.delete('/api/production/' + id, { headers })).status()).toBe(204);
   for (const id of animals) expect((await request.delete('/api/animals/' + id, { headers })).status()).toBe(204);
   for (const id of lots) expect((await request.delete('/api/lots/' + id, { headers })).status()).toBe(204);

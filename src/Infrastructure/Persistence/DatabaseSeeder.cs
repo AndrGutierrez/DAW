@@ -71,7 +71,7 @@ public static class DatabaseSeeder
                 await roleManager.UpdateAsync(role);
             }
 
-            var desired = PermissionCatalog.All().Where(selector).Select(definition => definition.Name).ToHashSet();
+            var desired = PermissionCatalog.All().Where(definition => definition.Resource != "auditlogs" || name is "Admin" or "Administrador").Where(selector).Select(definition => definition.Name).ToHashSet();
             var current = await db.RolePermissions.Where(rolePermission => rolePermission.RoleId == role.Id).Select(rolePermission => rolePermission.Permission.Name).ToListAsync(cancellationToken);
             var missing = desired.Except(current).ToList();
             var extra = current.Except(desired).ToList();

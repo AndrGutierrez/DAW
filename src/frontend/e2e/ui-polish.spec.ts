@@ -1,3 +1,4 @@
+import { clearFixtureMovements } from './fixtureCleanup';
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
@@ -13,6 +14,7 @@ async function login(page: Page, path = '/animals') {
   await expect(page.getByRole('link', { name: 'Animales', exact: true })).toBeVisible();
 }
 test.beforeEach(async ({ request }, info) => {
+  test.skip(process.env.E2E_ISOLATED_DATABASE !== '1', 'Mutation fixtures require the named disposable database.');
   animals = []; prefix = ('P4-UX-' + info.project.name[0] + '-' + randomUUID().slice(0, 8)).toUpperCase();
   const auth = await request.post('/api/auth/login', { data: { username, password } }); expect(auth.status()).toBe(200);
   headers = { Authorization: 'Bearer ' + (await auth.json()).accessToken };
@@ -20,6 +22,8 @@ test.beforeEach(async ({ request }, info) => {
   speciesId = (await (await request.get('/api/species', { headers })).json()).find((s: { data: { code: string } }) => s.data.code === 'BO').id;
 });
 test.afterEach(async ({ request }) => {
+  if (process.env.E2E_ISOLATED_DATABASE !== '1') return;
+  clearFixtureMovements(animals);
   for (const id of animals.reverse()) expect((await request.delete('/api/animals/' + id, { headers })).status()).toBe(204);
 });
 

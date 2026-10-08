@@ -57,6 +57,7 @@ public static class DependencyInjection
         services.AddScoped<IAnimalWeightReader, AnimalWeightReader>();
         services.AddScoped<IFarmAccess, FarmAccess>();
         services.AddScoped<IManagementRepository, ManagementRepository>();
+        services.AddScoped<Core.Application.Auditing.IAuditReader, AuditReader>();
         services.AddScoped<AnimalHealthService>();
         services.AddScoped<WithdrawalPolicy>();
         services.AddScoped<AnimalProductionService>();

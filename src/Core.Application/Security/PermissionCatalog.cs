@@ -44,6 +44,8 @@ public static class PermissionCatalog
         foreach (var resource in new[] { "clinical", "reproduction" })
             foreach (var action in new[] { "list", "create" })
                 yield return new PermissionDefinition($"{resource}.{action}", resource, action, GuardName);
+        foreach (var action in new[] { "list", "get" })
+            yield return new PermissionDefinition($"auditlogs.{action}", "auditlogs", action, GuardName);
         yield return new PermissionDefinition("roles.manage", "roles", "manage", GuardName);
     }
 

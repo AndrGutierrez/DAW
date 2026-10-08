@@ -73,6 +73,28 @@ public sealed class BrowserSessionIntegrationTests
         Assert.Equal(HttpStatusCode.Unauthorized, replay.StatusCode);
         using var restore = await client.PostAsync("/api/auth/session/refresh", null);
         Assert.Equal(HttpStatusCode.Unauthorized, restore.StatusCode);
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var events = await db.AuditLogs.Where(x => x.EntityName == "Authentication").ToListAsync();
+        Assert.Single(events, x => x.Action == "LoginSucceeded");
+        var closed = Assert.Single(events, x => x.Action == "Logout");
+        Assert.NotNull(closed.UserId);
+        Assert.DoesNotContain(original, string.Join(" ", events.Select(x => x.NewValues)));
+        using var repeated = await client.PostAsync("/api/auth/session/logout", null);
+        Assert.Equal(HttpStatusCode.NoContent, repeated.StatusCode);
+        Assert.Equal(1, await db.AuditLogs.CountAsync(x => x.Action == "Logout"));
+    }
+
+    [Fact]
+    public async Task RejectedLoginHasNoAuthenticatedActorOrSubmittedCredentials()
+    {
+        using var factory = CreateFactory(); await SeedAsync(factory); using var client = factory.CreateClient(); await SetCsrfAsync(client);
+        using var response = await client.PostAsJsonAsync("/api/auth/session/login", new { username = "admin", password = "WrongPassword123!" });
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        using var scope = factory.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var row = await db.AuditLogs.SingleAsync(x => x.Action == "LoginRejected");
+        Assert.Null(row.UserId); Assert.Null(row.EntityId); Assert.Contains("CredentialsRejected", row.NewValues!);
+        Assert.DoesNotContain("WrongPassword123!", row.NewValues!); Assert.DoesNotContain("admin", row.NewValues!);
     }
 
     [Theory]

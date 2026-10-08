@@ -1,10 +1,12 @@
 using Core.Application.Security;
+using Core.Domain.Livestock;
+using System.Text.Json;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Security;
 
-public sealed class AccessAdministration(AppDbContext db) : IAccessAdministration
+public sealed class AccessAdministration(AppDbContext db, ICurrentUser actor) : IAccessAdministration
 {
     public async Task<IReadOnlyList<PermissionResult>> ListPermissionsAsync(CancellationToken cancellationToken = default) =>
         await db.Permissions
@@ -67,11 +69,13 @@ public sealed class AccessAdministration(AppDbContext db) : IAccessAdministratio
                 PermissionId = permissionId
             });
 
+            RecordAudit(roleId, role.Name!, permissionId, permission.Name, grant);
             await db.SaveChangesAsync(cancellationToken);
         }
         else if (!grant && link is not null)
         {
             db.RolePermissions.Remove(link);
+            RecordAudit(roleId, role.Name!, permissionId, permission.Name, grant);
             await db.SaveChangesAsync(cancellationToken);
         }
 
@@ -84,4 +88,13 @@ public sealed class AccessAdministration(AppDbContext db) : IAccessAdministratio
 
         return new RoleResult(role.Id, role.Name!, role.GuardName, role.Description, permissions);
     }
+    private void RecordAudit(Guid roleId, string roleName, Guid permissionId, string permissionName, bool grant) =>
+        db.AuditLogs.Add(new AuditLog
+        {
+            UserId = actor.UserId, IpAddress = actor.IpAddress, EntityName = "RolePermission", EntityId = roleId.ToString(),
+            Action = grant ? "RolePermissionGranted" : "RolePermissionRevoked",
+            OldValues = JsonSerializer.Serialize(new { Role = roleName, Permission = permissionName, PermissionId = permissionId, Assigned = !grant }),
+            NewValues = JsonSerializer.Serialize(new { Role = roleName, Permission = permissionName, PermissionId = permissionId, Assigned = grant })
+        });
+
 }

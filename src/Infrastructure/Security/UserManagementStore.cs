@@ -71,7 +71,7 @@ public sealed class UserManagementStore(AppDbContext db, UserManager<Application
     { foreach(var token in await db.RefreshTokens.Where(t=>t.UserId==id&&t.RevokedAt==null).ToListAsync(ct))token.RevokedAt=DateTime.UtcNow;await db.SaveChangesAsync(ct); }
     private async Task<ManagedUser> ReadAsync(ApplicationUser u,CancellationToken ct) => new(u.Id,u.UserName!,u.Email??"",u.FullName,u.IsActive,u.IsSuperuser,(await manager.GetRolesAsync(u)).Order().ToList(),await db.UserFarms.AsNoTracking().Where(f=>f.UserId==u.Id).OrderBy(f=>f.FarmId).Select(f=>f.FarmId).ToListAsync(ct),await db.UserPermissions.AsNoTracking().Where(p=>p.UserId==u.Id).OrderBy(p=>p.Permission.Name).Select(p=>p.Permission.Name).ToListAsync(ct),u.ConcurrencyStamp??"");
     private async Task AuditAsync(Guid id,string action,object? before,object after,CancellationToken ct)
-    { db.AuditLogs.Add(new AuditLog {UserId=actor.UserId,EntityName="ApplicationUser",EntityId=id.ToString(),Action=action,OldValues=before==null?null:JsonSerializer.Serialize(before),NewValues=JsonSerializer.Serialize(after)});await db.SaveChangesAsync(ct); }
+    { db.AuditLogs.Add(new AuditLog {UserId=actor.UserId,IpAddress=actor.IpAddress,EntityName="ApplicationUser",EntityId=id.ToString(),Action=action,OldValues=before==null?null:JsonSerializer.Serialize(before),NewValues=JsonSerializer.Serialize(after)});await db.SaveChangesAsync(ct); }
     private static void Check(IdentityResult result)
     { if(result.Succeeded)return;if(result.Errors.Any(e=>e.Code.StartsWith("Duplicate")||e.Code=="ConcurrencyFailure"))throw new ConflictException("Username or email already exists, or the account changed. Reload and retry.");throw new ArgumentException(string.Join(" ",result.Errors.Select(e=>e.Description))); }
 }

@@ -315,6 +315,7 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user,
 
     public override async Task BeforeDeleteAsync(Animal e, CancellationToken ct)
     {
+        Check(!await Repository.ExistsAsync<AnimalMovement>(m => m.AnimalId == e.Id, ct), "This animal has movement history. Change its operational status to preserve traceability.");
         Check(!await Repository.ExistsAsync<StockMovement>(m => m.FarmId == e.FarmId && m.ReferenceType == "Animal" && m.ReferenceId == e.Id, ct), "This animal has supply history. Deactivate it to preserve traceability.");
         Check(!await Repository.ExistsAsync<AnimalPhoto>(x => x.AnimalId == e.Id, ct), "Delete the animal photos before deleting the animal.");
         Check(!await Repository.ExistsAsync<HealthStatusChange>(x => x.AnimalId == e.Id, ct), "This animal has health history. Deactivate it to preserve traceability.");

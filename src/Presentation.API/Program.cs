@@ -70,6 +70,15 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
+        Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 1;
+    foreach (var proxy in builder.Configuration.GetSection("ReverseProxy:KnownProxies").GetChildren())
+        if (!string.IsNullOrWhiteSpace(proxy.Value))
+            options.KnownProxies.Add(System.Net.IPAddress.Parse(proxy.Value));
+});
 builder.Services.AddSingleton<Presentation.API.Realtime.AnalyticsChanges>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
@@ -127,6 +136,7 @@ if (args.Contains("--seed"))
     return;
 }
 
+app.UseForwardedHeaders();
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (!app.Environment.IsDevelopment())

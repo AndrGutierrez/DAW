@@ -166,5 +166,8 @@ public sealed class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         builder.Property(log => log.OccurredAt).IsRequired();
 
         builder.HasIndex(log => new { log.EntityName, log.EntityId });
+        builder.HasIndex(log => new { log.OccurredAt, log.Id });
+        builder.HasIndex(log => new { log.UserId, log.OccurredAt });
+        builder.HasIndex(log => new { log.FarmId, log.OccurredAt });
     }
 }

@@ -1,3 +1,4 @@
+import { clearFixtureMovements } from './fixtureCleanup';
 import { test, expect } from '@playwright/test';
 import type { APIRequestContext, Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
@@ -25,6 +26,7 @@ async function create(request: APIRequestContext, suffix: string, extra: Record<
   return result.id as string;
 }
 test.beforeEach(async ({ request }, testInfo) => {
+  test.skip(process.env.E2E_ISOLATED_DATABASE !== '1', 'Mutation fixtures require the named disposable database.');
   created = []; prefix = ('P4-' + testInfo.project.name[0] + '-' + randomUUID().slice(0, 8)).toUpperCase();
   const response = await request.post('/api/auth/login', { data: { username, password } });
   expect(response.status()).toBe(200); headers = { Authorization: 'Bearer ' + (await response.json()).accessToken };
@@ -32,6 +34,8 @@ test.beforeEach(async ({ request }, testInfo) => {
   speciesId = (await (await request.get('/api/species', { headers })).json()).find((item: { data: { code: string } }) => item.data.code === 'BO').id;
 });
 test.afterEach(async ({ request }) => {
+  if (process.env.E2E_ISOLATED_DATABASE !== '1') return;
+  clearFixtureMovements(created);
   for (const id of [...created].reverse()) {
     const growth = await request.get('/api/animals/' + id + '/growth?pageSize=100', { headers });
     if (growth.ok()) for (const record of (await growth.json()).records)

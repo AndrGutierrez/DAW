@@ -1,3 +1,4 @@
+import { clearFixtureMovements } from './fixtureCleanup';
 import { test, expect } from '@playwright/test';
 import type { Page, APIRequestContext } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
@@ -21,6 +22,7 @@ async function createAnimal(request: APIRequestContext, name: string, paddockId:
   expect(response.status()).toBe(201); const id = (await response.json()).id; animals.push(id); return id;
 }
 test.beforeEach(async ({ request }, info) => {
+  test.skip(process.env.E2E_ISOLATED_DATABASE !== '1', 'Mutation fixtures require the named disposable database.');
   animals = []; paddocks = []; lots = []; prefix = ('P4-PAD-' + info.project.name[0] + '-' + randomUUID().slice(0, 8)).toUpperCase();
   const response = await request.post('/api/auth/login', { data: { username, password } });
   expect(response.status()).toBe(200); headers = { Authorization: 'Bearer ' + (await response.json()).accessToken };
@@ -28,6 +30,8 @@ test.beforeEach(async ({ request }, info) => {
   speciesId = (await (await request.get('/api/species', { headers })).json()).find((x: { data: { code: string } }) => x.data.code === 'BO').id;
 });
 test.afterEach(async ({ request }) => {
+  if (process.env.E2E_ISOLATED_DATABASE !== '1') return;
+  clearFixtureMovements(animals);
   for (const id of animals) expect((await request.delete('/api/animals/' + id, { headers })).status()).toBe(204);
   for (const id of lots) expect((await request.delete('/api/lots/' + id, { headers })).status()).toBe(204);
   for (const id of paddocks) expect((await request.delete('/api/paddocks/' + id, { headers })).status()).toBe(204);

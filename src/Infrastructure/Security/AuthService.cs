@@ -1,4 +1,6 @@
 using Core.Application.Security;
+using Core.Domain.Livestock;
+using System.Text.Json;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +13,8 @@ public sealed class AuthService(
     UserManager<ApplicationUser> userManager,
     AppDbContext db,
     ITokenService tokenService,
-    IOptions<JwtOptions> jwtOptions) : IAuthService
+    IOptions<JwtOptions> jwtOptions,
+    ICurrentUser currentUser) : IAuthService
 {
     private readonly JwtOptions _jwtOptions = jwtOptions.Value;
 
@@ -31,6 +34,7 @@ public sealed class AuthService(
             throw new ArgumentException(string.Join(" ", result.Errors.Select(error => error.Description)));
         }
 
+        RecordAccess("RegistrationSucceeded", user.Id);
         return await BuildResponseAsync(user, cancellationToken);
     }
 
@@ -39,6 +43,7 @@ public sealed class AuthService(
         var identifier = request.Username?.Trim();
         if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(request.Password))
         {
+            await RecordRejectedLoginAsync("CredentialsRejected", cancellationToken);
             throw new UnauthorizedAccessException("Invalid username or password.");
         }
 
@@ -47,14 +52,17 @@ public sealed class AuthService(
 
         if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
         {
+            await RecordRejectedLoginAsync("CredentialsRejected", cancellationToken);
             throw new UnauthorizedAccessException("Invalid username or password.");
         }
 
         if (!user.IsActive)
         {
+            await RecordRejectedLoginAsync("InactiveAccount", cancellationToken);
             throw new UnauthorizedAccessException("The user account is inactive.");
         }
 
+        RecordAccess("LoginSucceeded", user.Id);
         return await BuildResponseAsync(user, cancellationToken);
     }
 
@@ -72,13 +80,36 @@ public sealed class AuthService(
         }
     }
 
-    public async Task RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default)
+    public Task RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default) =>
+        RevokeAsync(refreshToken, false, cancellationToken);
+
+    public Task LogoutAsync(string refreshToken, CancellationToken cancellationToken = default) =>
+        RevokeAsync(refreshToken, true, cancellationToken);
+
+    private async Task RevokeAsync(string value, bool logLogout, CancellationToken ct)
     {
-        var token = await FindRefreshTokenAsync(refreshToken, cancellationToken);
+        var token = await FindRefreshTokenAsync(value, ct);
         if (token is null || token.RevokedAt is not null) return;
+        var wasActive = token.IsActive;
         token.RevokedAt = DateTime.UtcNow;
-        try { await db.SaveChangesAsync(cancellationToken); }
-        catch (DbUpdateConcurrencyException) { /* Another request already revoked this token. */ }
+        if (logLogout) RecordAccess("Logout", token.UserId, new { SessionWasActive = wasActive });
+        try { await db.SaveChangesAsync(ct); }
+        catch (DbUpdateConcurrencyException) { /* The token and event are rolled back together if already revoked. */ }
+    }
+
+    private void RecordAccess(string action, Guid? userId, object? details = null) =>
+        db.AuditLogs.Add(new AuditLog
+        {
+            UserId = userId, EntityName = "Authentication", EntityId = userId?.ToString(),
+            Action = action, IpAddress = currentUser.IpAddress,
+            NewValues = details is null ? null : JsonSerializer.Serialize(details)
+        });
+
+    private async Task RecordRejectedLoginAsync(string reason, CancellationToken ct)
+    {
+        // A claimed username is not an authenticated actor. Do not store submitted identifiers or credentials.
+        RecordAccess("LoginRejected", null, new { Reason = reason });
+        await db.SaveChangesAsync(ct);
     }
 
     private Task<RefreshToken?> FindRefreshTokenAsync(string value, CancellationToken cancellationToken)
