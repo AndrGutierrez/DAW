@@ -129,3 +129,5 @@ Mi cuenta → **Ver rendimiento de la aplicación** permite a Admin revisar LCP,
 La colección [Fase 4](postman/Phase4.postman_collection.json) verifica cuentas, revocación, objetivos, plano y sesión del navegador con cookie/CSRF. Usar el entorno de demostración, configurar secretos localmente y no exportarlos al repositorio.
 
 Rama publicada para revisión en el [PR #8](https://github.com/AndrGutierrez/DAW/pull/8), en borrador. main conserva su estado anterior hasta integrar la revisión.
+
+El módulo **Auditoría** permite consultar actividad y comparar cambios desde un panel lateral, exclusivamente para administradores. Incluye eventos de login/rechazo/logout y origen de conexión, con proxies explícitamente confiables. Las [decisiones de auditoría y conservación](docs/fase4-registros-auditoria.md) explican el borrado físico frente a la desactivación y los límites del registro; la [evidencia de esta ampliación](docs/evidence/phase4-audit-module/README.md) acredita 237 UnitTests, 169 Core.Tests, 117 Vitest y 133 Playwright aprobadas (una omisión exclusiva móvil).

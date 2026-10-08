@@ -1,0 +1,41 @@
+{
+  "verifiedAt": "2026-10-08T21:50:12.004Z",
+  "scope": "Audit module, access and role permission events, photos, origin IP and movement history protection",
+  "unitTests": {
+    "passed": 237
+  },
+  "integrationTests": {
+    "passed": 169
+  },
+  "frontendTests": {
+    "passed": 117
+  },
+  "playwright": {
+    "passed": 133,
+    "skipped": 1,
+    "skipReason": "Mobile-only navigation case in the desktop project"
+  },
+  "accessibility": {
+    "essentialViews": 48,
+    "auditDetails": 2,
+    "detectedViolations": 0
+  },
+  "frontendCoverage": {
+    "lines": 40.04,
+    "branches": 24.41,
+    "auditPageLines": 100,
+    "auditPageBranches": 76
+  },
+  "database": {
+    "provider": "PostgreSQL 15",
+    "disposableProject": "daw-phase4-empty",
+    "migration": "20261008211202_AuditQueryIndexes",
+    "pendingModelChanges": false
+  },
+  "limitations": [
+    "Audit entries created before IP collection keep their missing address.",
+    "Only configured trusted proxies can supply the client IP.",
+    "Direct SQL and ordinary read requests are outside application mutation auditing.",
+    "Audit history is not a complete database backup or a tamper-evident ledger."
+  ]
+}
