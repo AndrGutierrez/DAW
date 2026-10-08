@@ -6,7 +6,7 @@ Fecha de revisión: 8 de octubre de 2026. Este documento contrasta la implementa
 
 Se revisaron los documentos locales de Desarrollo de Aplicaciones Web: Fase 4/03_Tarea_Asignacion_Fase4_y_Rubrica.docx, el material teórico, la guía de laboratorio, DAW-0423807T Fase 4.pdf y Sistema de Evaluación y Rubricas.docx. El documento de asignación define cinco criterios y 80 puntos. El quiz corresponde a los 20 puntos restantes; un repositorio y sus pruebas no sustituyen ese examen.
 
-También se volvió a consultar el [sitio del profesor](https://gramirezsunet.github.io/desarrolloAplicacionesWeb/REAF-F4/), sus criterios generales, los diez puntos transversales y la ficha del Grupo 3. Las instrucciones de otros grupos no se trasladan al dominio ganadero.
+También se volvió a consultar el [sitio del profesor](https://gramirezsunet.github.io/desarrolloAplicacionesWeb/REAF-F4/), sus criterios generales, los diez puntos transversales y la ficha del Grupo 3. Las instrucciones de otros grupos no se trasladan al dominio ganadero. El [contraste con su repositorio de ejemplo](fase4-referencia-profesor.md) registra la revisión concreta: inicio por rol, KPI con acciones y documentación reproducible. La portada administrativa ahora prioriza datos ganaderos; la galería y la guía describen la SPA actual.
 
 La teoría menciona JWT en localStorage; el checklist web permite memoria o cookies seguras. Se conserva la solución de JWT en memoria y refresh persistente HttpOnly, autorizada para este proyecto. La paleta ganadera también es una decisión explícita del proyecto, aunque difiere del Azul UNET literal de la rúbrica. Estas diferencias deben explicarse en la defensa; no se presume aprobación del docente.
 

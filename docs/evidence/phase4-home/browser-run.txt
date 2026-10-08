@@ -1,0 +1,29 @@
+
+Running 16 tests using 1 worker
+
+  ok  1 [desktop] › e2e\analytics.spec.ts:20:1 › daily milk chart changes lot and preserves recorded totals and gaps (1.1s)
+  ok  2 [desktop] › e2e\home.spec.ts:10:3 › admin home respects role on root, restored session and login (842ms)
+  ok  3 [desktop] › e2e\home.spec.ts:10:3 › employee home respects role on root, restored session and login (806ms)
+  ok  4 [desktop] › e2e\home.spec.ts:21:1 › admin direct login opens live cattle indicators (635ms)
+  ok  5 [desktop] › e2e\home.spec.ts:36:1 › login returns to the requested animal tab and fragment (667ms)
+  ok  6 [desktop] › e2e\session.spec.ts:18:1 › persistent session survives reload and a new tab without exposing tokens to storage (887ms)
+  ok  7 [desktop] › e2e\ui-polish.spec.ts:26:1 › password visibility preserves value and focus and Enter sends only once while pending (845ms)
+  ok  8 [desktop] › e2e\ui-polish.spec.ts:56:1 › expired session explains the return to login and preserves the intended destination (1.5s)
+  ok  9 [mobile] › e2e\analytics.spec.ts:20:1 › daily milk chart changes lot and preserves recorded totals and gaps (1.2s)
+  ok 10 [mobile] › e2e\home.spec.ts:10:3 › admin home respects role on root, restored session and login (871ms)
+  ok 11 [mobile] › e2e\home.spec.ts:10:3 › employee home respects role on root, restored session and login (820ms)
+  ok 12 [mobile] › e2e\home.spec.ts:21:1 › admin direct login opens live cattle indicators (660ms)
+  ok 13 [mobile] › e2e\home.spec.ts:36:1 › login returns to the requested animal tab and fragment (718ms)
+  ok 14 [mobile] › e2e\session.spec.ts:18:1 › persistent session survives reload and a new tab without exposing tokens to storage (935ms)
+  ok 15 [mobile] › e2e\ui-polish.spec.ts:26:1 › password visibility preserves value and focus and Enter sends only once while pending (804ms)
+  ok 16 [mobile] › e2e\ui-polish.spec.ts:56:1 › expired session explains the return to login and preserves the intended destination (1.6s)
+
+  16 passed (16.5s)
+
+
+Running 2 tests using 1 worker
+
+  ok 1 [desktop] › e2e\operations.spec.ts:72:1 › dashboard refreshes visible inventory indicators after one minute (1.5s)
+  ok 2 [mobile] › e2e\operations.spec.ts:72:1 › dashboard refreshes visible inventory indicators after one minute (1.4s)
+
+  2 passed (4.3s)

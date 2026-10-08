@@ -1,6 +1,7 @@
 import { Button } from './components/ui/Controls';
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from './auth/AuthContext';
+import { homePath } from './auth/navigation';
 import { AppLayout } from './components/AppLayout';
 import { Icon } from './components/ui/Icon';
 import { LoginPage } from './pages/LoginPage';
@@ -16,7 +17,7 @@ function RequireSession() {
   const auth = useAuth();
   const location = useLocation();
   if (auth.status !== 'authenticated')
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+    return <Navigate to="/login" state={{ from: location.pathname + location.search + location.hash }} replace />;
   return <Outlet />;
 }
 
@@ -32,7 +33,7 @@ export function App() {
   if (auth.status === 'unavailable') return <main className="connection-state"><h1>No pudimos conectar</h1><p role="alert">{auth.error}</p><Button className="button primary" onClick={() => void auth.retry()}>Reintentar</Button></main>;
   return <Routes>
     <Route path="/login" element={<LoginPage />} />
-    <Route element={<RequireSession />}><Route element={<AppLayout />}><Route path="/animals" element={<AnimalsPage />} /><Route path="/animals/new" element={<AnimalEditorPage />} /><Route path="/animals/:id/edit" element={<AnimalEditorPage />} /><Route path="/weighing" element={<WeighingPage />} /><Route path="/paddocks" element={<PaddocksPage />} /><Route path="/animals/:id" element={<AnimalPage />} /><Route path="/account" element={<AccountPage />} /><Route path="/inventory" element={<InventoryPage />} /><Route path="/dashboard" element={<DashboardPage />} /><Route path="/reports" element={<ReportsPage />} /></Route></Route>
-    <Route path="*" element={<Navigate to="/animals" replace />} />
+    <Route element={<RequireSession />}><Route element={<AppLayout />}><Route path="/" element={<Navigate to={homePath(auth.isAdmin, auth.can)} replace />} /><Route path="/animals" element={<AnimalsPage />} /><Route path="/animals/new" element={<AnimalEditorPage />} /><Route path="/animals/:id/edit" element={<AnimalEditorPage />} /><Route path="/weighing" element={<WeighingPage />} /><Route path="/paddocks" element={<PaddocksPage />} /><Route path="/animals/:id" element={<AnimalPage />} /><Route path="/account" element={<AccountPage />} /><Route path="/inventory" element={<InventoryPage />} /><Route path="/dashboard" element={<DashboardPage />} /><Route path="/reports" element={<ReportsPage />} /></Route></Route>
+    <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>;
 }

@@ -2905,3 +2905,21 @@ input[readonly] { opacity: .8; }
 }
 
 table, .metric-grid strong, .stock-value, input[type=number] { font-variant-numeric: tabular-nums; }
+
+/* The admin landing page prioritizes cattle indicators and their next action. */
+.dashboard-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.dashboard-heading .button { flex-shrink: 0; }
+.dashboard-summary .dashboard-metric { display: flex; flex-direction: column; min-width: 0; border-top: 3px solid var(--primary); }
+.dashboard-metric-title { display: flex; align-items: center; gap: 10px; }
+.dashboard-metric-title h2 { font-size: .95rem; line-height: 1.4; margin: 0; }
+.dashboard-metric-icon { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 12px; background: var(--soft); color: var(--accent); }
+.dashboard-metric-value { line-height: 1.3; }
+.dashboard-metric p { font-size: .8rem; line-height: 1.55; margin-bottom: 18px; }
+.dashboard-metric a { display: flex; align-items: center; gap: 6px; margin-top: auto; font-size: .85rem; min-height: 44px; }
+.dashboard-summary .needs-attention { border-top-color: var(--warning); }
+.dashboard-summary .needs-attention .dashboard-metric-icon { background: var(--warning-soft); color: var(--warning); }
+.dashboard-section-heading { margin-top: 36px; }
+@media (max-width: 760px) {
+  .dashboard-heading { align-items: flex-start; flex-direction: column; }
+  .dashboard-summary { grid-template-columns: 1fr; }
+}

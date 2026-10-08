@@ -6,7 +6,7 @@ import { Field } from './Field';
 import { date, number } from '../api/livestock';
 
 export default function AnalyticsCharts({ data }: { data: Analytics }) {
-  const [view, setView] = useState('valuation');
+  const [view, setView] = useState('milk');
   const [lotKey, setLotKey] = useState('');
   const seriesKey = (series: Analytics['milkByDayAndCurrentLot'][number]) => series.farmId + ':' + (series.lotId || 'unassigned');
   const lot = data.milkByDayAndCurrentLot.find(series => seriesKey(series) === lotKey) || data.milkByDayAndCurrentLot[0];

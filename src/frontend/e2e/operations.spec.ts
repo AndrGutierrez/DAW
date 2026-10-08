@@ -71,7 +71,7 @@ test('clinical and production reports export the filtered data as Excel and PDF'
 
 test('dashboard refreshes visible inventory indicators after one minute', async ({ page, request }) => {
   await page.clock.install(); await login(page); await page.goto('/dashboard');
-  const row = page.getByRole('table').first().getByRole('row').filter({ hasText: prefix }); await expect(row).toBeVisible(); const initial = await row.innerText();
+  const row = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'Valoración por categoría', exact: true }) }).getByRole('row').filter({ hasText: prefix }); await expect(row).toBeVisible(); const initial = await row.innerText();
   expect((await request.post('/api/inventory/' + inventoryId + '/movements', { headers, data: { submissionId: randomUUID(), type: 'In', quantity: 1, expectedStock: 20.1234, reason: 'Dashboard refresh evidence' } })).status()).toBe(201);
   await page.clock.runFor(60100); await expect.poll(async () => row.innerText()).not.toBe(initial); await expect(row).toContainText('42,25');
 });

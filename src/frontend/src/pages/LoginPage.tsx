@@ -6,6 +6,7 @@ import { StatusNotice } from '../components/ui/StatusNotice';
 import type { FormEvent } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { homePath, loginDestination } from '../auth/navigation';
 import { ApiError } from '../auth/session';
 import { ThemeButton } from '../components/ThemeButton';
 
@@ -22,7 +23,7 @@ export function LoginPage() {
   const [busy, setBusy] = useState(false);
   if (auth.status === 'authenticated') {
     const destination = (location.state as { from?: string } | null)?.from;
-    return <Navigate to={destination?.startsWith('/') && !destination.startsWith('//') && destination !== '/login' ? destination : '/animals'} replace />;
+    return <Navigate to={loginDestination(destination, homePath(auth.isAdmin, auth.can))} replace />;
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

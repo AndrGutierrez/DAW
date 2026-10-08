@@ -31,9 +31,10 @@ test('daily milk chart changes lot and preserves recorded totals and gaps', asyn
     const production = await request.post('/api/animals/' + animalId + '/production', { headers, data: { submissionId: randomUUID(), date, quantity, productType: 'Milk', method: 'Milking', unit: 'Liter' } });
     expect(production.status()).toBe(201); productions.push((await production.json()).id);
   }
-  await page.goto('/login'); await page.getByLabel('Usuario o correo').fill(username); await page.getByLabel('Contraseña', { exact: true }).fill(password); await page.getByRole('button', { name: 'Entrar a mi finca' }).click(); await expect(page.getByRole('heading', { name: 'Animales', exact: true })).toBeVisible();
-  await page.getByRole('link', { name: 'Dashboard', exact: true }).click();
+  await page.goto('/login'); await page.getByLabel('Usuario o correo').fill(username); await page.getByLabel('Contraseña', { exact: true }).fill(password); await page.getByRole('button', { name: 'Entrar a mi finca' }).click(); await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+  await expect(page.getByRole('article', { name: 'Leche registrada', exact: true })).toBeVisible();
   await page.getByLabel('Desde', { exact: true }).fill('2026-01-10'); await page.getByLabel('Hasta', { exact: true }).fill('2026-01-12'); await page.getByRole('button', { name: 'Aplicar filtros', exact: true }).click();
+  await expect(page.getByRole('article', { name: 'Leche registrada', exact: true }).locator('strong')).toHaveText('10,579 L');
   await page.getByLabel('Gráfico', { exact: true }).selectOption('lot-daily');
   await page.getByLabel('Lote de la curva diaria', { exact: true }).selectOption(farmId + ':' + lots[0]);
   const table = page.getByRole('table', { name: new RegExp('Leche diaria.*' + prefix + '-A') });
@@ -44,4 +45,8 @@ test('daily milk chart changes lot and preserves recorded totals and gaps', asyn
   await page.getByLabel('Lote de la curva diaria', { exact: true }).selectOption(farmId + ':' + lots[1]);
   const other = page.getByRole('table', { name: new RegExp('Leche diaria.*' + prefix + '-B') });
   await expect(other.getByRole('row')).toHaveCount(2); await expect(other).toContainText('7'); await expect(other).not.toContainText('2,345');
+  await page.getByRole('link', { name: 'Consultar producción', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Producción', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByLabel('Desde', { exact: true })).toHaveValue('2026-01-10'); await expect(page.getByLabel('Hasta', { exact: true })).toHaveValue('2026-01-12');
+  await expect(page.getByRole('table')).toContainText(prefix + '-A'); await expect(page.getByRole('table')).toContainText(prefix + '-B');
 });

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { dashboardPermissions } from '../api/operations';
+import { homePath } from '../auth/navigation';
 import { ThemeButton } from './ThemeButton';
 import { Button } from './ui/Controls';
 import { Icon } from './ui/Icon';
@@ -29,9 +30,9 @@ export function AppLayout() {
   const user = session!.user;
   return <div className="app-shell"><a className="skip-link" href="#main-content">Saltar al contenido</a>
     <aside className="sidebar">
-      <Link className="brand" to="/animals"><span className="brand-mark"><Icon name="leaf" size={25} /></span><span>Gestión ganadera<small>Tu finca, en perspectiva</small></span></Link>
+      <Link className="brand" to={homePath(isAdmin, can)}><span className="brand-mark"><Icon name="leaf" size={25} /></span><span>Gestión ganadera<small>Tu finca, en perspectiva</small></span></Link>
       <div className="sidebar-section">TU FINCA</div>
-      <nav aria-label="Principal"><NavLink to="/animals"><Icon name="animal" /><span>Animales</span></NavLink>{can('weights.create') && can('animals.list') && can('animals.get') && <NavLink to="/weighing"><Icon name="scale" /><span>Pesaje</span></NavLink>}{can('paddocks.list') && <NavLink to="/paddocks"><Icon name="paddock" /><span>Potreros</span></NavLink>}{can("inventory.list") && can("products.list") && <NavLink to="/inventory"><Icon name="inventory" /><span>Inventario</span></NavLink>}{isAdmin && dashboardPermissions.every(can) && <NavLink to="/dashboard"><Icon name="growth" /><span>Dashboard</span></NavLink>}{can("animals.list") && (can("clinical.list") || can("production.list")) && <NavLink to="/reports"><Icon name="report" /><span>Reportes</span></NavLink>}<NavLink to="/account"><Icon name="user" /><span>Mi cuenta</span></NavLink></nav>
+      <nav aria-label="Principal">{isAdmin && dashboardPermissions.every(can) && <NavLink to="/dashboard"><Icon name="growth" /><span>Dashboard</span></NavLink>}<NavLink to="/animals"><Icon name="animal" /><span>Animales</span></NavLink>{can('weights.create') && can('animals.list') && can('animals.get') && <NavLink to="/weighing"><Icon name="scale" /><span>Pesaje</span></NavLink>}{can('paddocks.list') && <NavLink to="/paddocks"><Icon name="paddock" /><span>Potreros</span></NavLink>}{can("inventory.list") && can("products.list") && <NavLink to="/inventory"><Icon name="inventory" /><span>Inventario</span></NavLink>}{can("animals.list") && (can("clinical.list") || can("production.list")) && <NavLink to="/reports"><Icon name="report" /><span>Reportes</span></NavLink>}<NavLink to="/account"><Icon name="user" /><span>Mi cuenta</span></NavLink></nav>
       <div className="sidebar-note"><Icon name="leaf" size={24} /><p>Una finca conectada.<br />Cada animal cuenta.</p><small>Proyecto académico · Grupo 3</small></div>
     </aside>
     <div className="main-shell">

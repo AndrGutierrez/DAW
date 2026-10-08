@@ -37,7 +37,7 @@ test('password visibility preserves value and focus and Enter sends only once wh
   await page.route('**/api/auth/session/login', async route => { calls++; await gate; await route.continue(); });
   await input.focus(); await page.keyboard.press('Enter'); await expect(page.getByRole('button', { name: 'Iniciando sesión…' })).toBeDisabled();
   await page.keyboard.press('Enter'); await expect.poll(() => calls).toBe(1); await expect(input).toHaveValue(password); release();
-  await expect(page.getByRole('heading', { name: 'Animales', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
 });
 
 test('login distinguishes missing fields, invalid credentials and connection failure without losing values', async ({ page }) => {

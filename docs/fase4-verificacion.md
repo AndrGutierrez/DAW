@@ -153,3 +153,9 @@ Se agregó aviso automático ante descenso del último peso diario frente al ant
 - Fixtures: pesos/animales/lotes/producción de los nuevos casos se eliminaron por API; no se alteraron los animales de demostración. No se ejecutó seed ni migración en la instancia vigente.
 
 Se conservaron [TRX, salidas y cobertura completas comprimidas](evidence/phase4-audit/README.md), además de capturas de Ubicación y la curva diaria. La [auditoría](fase4-auditoria.md) diferencia lo que falta para entrega, las desviaciones acordadas y las ampliaciones de negocio.
+
+## Portada y referencia del profesor — 8 de octubre de 2026
+
+Se revisó el repositorio de ejemplo en b0d3b9ad67ee0f4aa2b60335f168ed5bf314c4c4 y la página REAF-F4. Se adaptó el inicio por rol, la prioridad de los KPI ganaderos y el acceso al reporte con los filtros del dashboard. La galería README y la guía ahora muestran la SPA.
+
+TypeScript, build Docker/Vite y 55 pruebas Vitest aprobados. Playwright dirigido: portada por rol, login directo, recuperación de sesión, destino con pestaña/fragmento, curva diaria/KPI/filtros y actualización. Los [reportes de este incremento](evidence/phase4-home/README.md) registran los conteos finales. No se reejecutaron las suites .NET ni toda la regresión del navegador; no hubo cambios de backend.

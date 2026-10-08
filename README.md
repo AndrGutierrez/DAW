@@ -6,6 +6,20 @@ Un animal puede producir leche, lana, carne u otros productos a lo largo de su v
 
 Los productos obtenidos se distinguen de los **insumos comprados**: alimentos, medicamentos y vacunas se catalogan en `Products`, y sus existencias, umbrales y ubicación se guardan **por finca** en `FarmInventory`.
 
+## Uso y galería de la SPA
+
+La raíz del sitio y el login directo llevan al administrador con permisos al dashboard; Employee entra a Animales. Los enlaces privados conservan la pantalla/pestaña solicitada. La [guía de uso](docs/product-and-technical-guide.md) explica el recorrido y los contratos; el [contraste con el ejemplo del profesor](docs/fase4-referencia-profesor.md) justifica la adaptación al dominio ganadero.
+
+El dashboard prioriza leche registrada, bovinos con pesaje comparable, diagnósticos positivos/concluyentes y existencias críticas. Cada tarjeta declara su alcance y permite continuar una operación. El filtro de finca/período se conserva al abrir el reporte de producción; inventario y valoración muestran el saldo actual.
+
+![Dashboard ganadero: resumen, filtros y seguimiento](docs/screenshots/dashboard-light.png)
+
+El acceso incluye mostrar/ocultar contraseña, validación por campo y avisos que explican qué hacer. La fuente Source Sans 3 se sirve localmente; tema y colores comparten tokens semánticos.
+
+![Acceso a la finca en tema claro](docs/screenshots/login-light.png)
+
+[Dashboard en tema oscuro](docs/screenshots/dashboard-dark.png) y [recorrido de dashboard móvil](docs/screenshots/dashboard-mobile.png): mismas operaciones y datos, con tarjetas en columna y navegación adaptada. Son capturas del entorno de demostración, no cifras de una finca real.
+
 ## Iniciar con Docker Desktop
 
 Ejecutar desde la raíz del repositorio en Git Bash. Docker Desktop debe estar iniciado; `docker version` debe mostrar cliente y servidor.
@@ -61,6 +75,18 @@ MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/src" -w /src \
 
 Importar [colección Postman](postman/Cattle-Management.full.postman_collection.json) y [entorno](postman/Daw.postman_environment.json). Completar las contraseñas del entorno sin exportarlas al repositorio y ejecutar la colección en orden. Para ejecución automatizada consultar [pruebas reproducibles](docs/setup.md). [db/verification.sql](db/verification.sql) comprueba tablas, índices, restricciones y datos sembrados.
 
+### Relación entre reglas y pruebas
+
+| SUT / flujo | Pruebas | Comportamiento comprobado |
+| --- | --- | --- |
+| CrudService<Product, ProductRequest> + ProductDefinition | [ProductCatalogServiceTests](tests/UnitTests/ProductCatalogServiceTests.cs) | Precios decimales, SKU normalizado, categoría inexistente/inactiva, conflictos y ausencia de escritura; Moq estricto |
+| AnalyticsService | [AnalyticsServiceTests](tests/UnitTests/AnalyticsServiceTests.cs) | Valoración y umbrales, rotación trazable, exclusión de unidades incompatibles, identidad finca/lote, último peso y denominador reproductivo |
+| Cuidados y crecimiento animal | [AnimalCareServiceTests](tests/UnitTests/AnimalCareServiceTests.cs), [WithdrawalPolicyTests](tests/UnitTests/WithdrawalPolicyTests.cs), [AnimalGrowthServiceTests](tests/UnitTests/AnimalGrowthServiceTests.cs) | Integridad de eventos, retiro farmacológico y orden/fórmula de GDP |
+| Sesión y autorización HTTP | [BrowserSessionIntegrationTests](tests/Core.Tests/BrowserSessionIntegrationTests.cs), [FarmAccessSecurityTests](tests/Core.Tests/FarmAccessSecurityTests.cs) | Cookies, protección de sesión y aislamiento de fincas en el pipeline de prueba |
+| Portada y seguimiento en la SPA | [home.spec.ts](src/frontend/e2e/home.spec.ts), [analytics.spec.ts](src/frontend/e2e/analytics.spec.ts) | Inicio por rol, recuperación de sesión/destino, KPI contrastados con API/PostgreSQL y filtros conservados hasta el reporte |
+
+Las pruebas aisladas siguen Arrange–Act–Assert y verifican interacciones del repositorio sin EF/PostgreSQL. Core.Tests usa EF InMemory/pipeline HTTP; Playwright dirigido usa API/PostgreSQL del entorno de prueba. Los [reportes .NET y cobertura medida](docs/evidence/phase4-audit/README.md) y la [verificación de portada](docs/evidence/phase4-home/README.md) distinguen cada evidencia. Casos aprobados y cobertura de líneas son métricas diferentes.
+
 ## Arquitectura y documentación
 
 | Capa | Responsabilidad |
@@ -84,6 +110,7 @@ Importar [colección Postman](postman/Cattle-Management.full.postman_collection.
 - [Sanidad, reproducción, retiro y producción del animal](docs/fase4-sanidad.md).
 - [Potreros, capacidad, lotes presentes y traslados](docs/fase4-potreros.md).
 - [Interfaz, paleta semántica y navegación de la finca](docs/fase4-ui.md).
+- [Referencia del profesor y adaptación de dashboard/documentación](docs/fase4-referencia-profesor.md).
 - [Estado y trabajo restante de Fase 4](docs/fase4-estado.md).
 - [Verificación ejecutada de Fase 4](docs/fase4-verificacion.md).
 - [Decisiones técnicas](docs/engineering-decisions.md).

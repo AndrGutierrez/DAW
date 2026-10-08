@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useResource } from '../api/useResource';
 import { errorMessage } from '../api/errors';
@@ -14,7 +15,10 @@ import { useFeedback } from '../components/Feedback';
 export function ReportsPage() {
   const { can, request } = useAuth(); const { notify } = useFeedback();
   const clinical = can('clinical.list') && can('animals.list'); const production = can('production.list') && can('animals.list');
-  const [kind, setKind] = useState<'clinical' | 'production'>(clinical ? 'clinical' : 'production'); const [period, setPeriod] = useState({ from: periodStart(), to: today(), farmId: '' }); const [page, setPage] = useState(1); const [busy, setBusy] = useState(''); const [error, setError] = useState('');
+  const [search] = useSearchParams();
+  const [kind, setKind] = useState<'clinical' | 'production'>(search.get('kind') === 'production' && production ? 'production' : clinical ? 'clinical' : 'production');
+  const dateFilter = (key: string, fallback: string) => /^\d{4}-\d{2}-\d{2}$/.test(search.get(key) || '') ? search.get(key)! : fallback;
+  const [period, setPeriod] = useState({ from: dateFilter('from', periodStart()), to: dateFilter('to', today()), farmId: search.get('farmId') || '' }); const [page, setPage] = useState(1); const [busy, setBusy] = useState(''); const [error, setError] = useState('');
   const data = useResource<ReportResult>('/api/reports/' + kind + '?' + params({ ...period, page, pageSize: 20 }), clinical || production);
   const farms = useResource<CatalogItem[]>('/api/farms', can('farms.list'));
   async function exportReport(format: string) {
