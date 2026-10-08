@@ -1,3 +1,4 @@
+import { validateInventoryLimits } from '../api/clientValidation';
 import { useEffect, useState } from 'react';
 import { SearchPicker } from '../components/ui/SearchPicker';
 import type { FormEvent } from 'react';
@@ -56,6 +57,10 @@ function InventoryEditor({ editor, farms, categories, onClose, onSaved }: { edit
     if (editor.kind === 'inventory') payload = { farmId: editor.row?.data.farmId || v.text('farmId'), productId: editor.row?.data.productId || v.text('productId'), stock: editor.row?.data.stock ?? v.number('stock'), minStock: v.number('minStock'), maxStock: v.number('maxStock'), location: v.text('location') };
     else if (editor.kind === 'product') payload = { sku: v.text('sku'), name: v.text('name'), categoryId: v.text('categoryId'), costPrice: v.number('costPrice'), price: v.number('price'), unit: v.text('unit'), brand: v.text('brand'), withdrawalDays: v.number('withdrawalDays'), requiresPrescription: data.has('requiresPrescription'), isActive: data.has('isActive') };
     else payload = { name: v.text('name'), description: v.text('description'), isActive: data.has('isActive') };
+    if (editor.kind === 'inventory') {
+      const localErrors = validateInventoryLimits({ stock: editor.row?.data.stock ?? v.number('stock'), minStock: v.number('minStock'), maxStock: v.number('maxStock') });
+      if (Object.keys(localErrors).length) { setErrors(localErrors); setError('Revisa los límites señalados.'); requestAnimationFrame(() => form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus()); return; }
+    }
     setBusy(true); setError(''); setErrors({}); const path = editor.kind === 'inventory' ? 'inventory' : editor.kind === 'product' ? 'products' : 'categories';
     try { await request('/api/' + path + (editor.row ? '/' + editor.row.id : ''), { method: editor.row ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); clearDirty(); notify('Registro guardado.'); onSaved(); }
     catch (failure) { setError(errorMessage(failure)); setErrors(fieldErrors(failure)); } finally { setBusy(false); }

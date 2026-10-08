@@ -55,10 +55,10 @@ export function LoginPage() {
   }
   return <main className="login-page">
     <section className="login-story" aria-label="Gestión ganadera">
-      <div className="brand"><span className="brand-mark"><Icon name="leaf" size={25} /></span><span>Gestión ganadera<small>Desarrollo de Aplicaciones Web · UNET</small></span></div>
-      <div className="story-copy"><span className="eyebrow">CADA ANIMAL, UNA HISTORIA</span><h1>Conoce tu ganado.<br /><em>Cuida su futuro.</em></h1><p>Identificación, seguimiento y decisiones con los datos de tu finca en un mismo lugar.</p></div>
-      <div className="pasture-art" aria-hidden="true"><div className="sun" /><div className="hill hill-back" /><div className="hill hill-front" /><span className="field-label">REGISTRAR · OBSERVAR · CUIDAR</span></div>
-      <p className="story-foot">Proyecto de gestión ganadera · Grupo 3</p>
+      <div className="brand"><span className="brand-mark"><Icon name="leaf" size={25} /></span><span>Gestión ganadera<small>Registro y seguimiento del ganado</small></span></div>
+      <div className="story-copy"><span className="eyebrow">GESTIÓN DE LA FINCA</span><h1>Los datos de tu ganado.<br /><em>Decisiones para tu finca.</em></h1><p>Identificación, seguimiento y decisiones con los datos de tu finca en un mismo lugar.</p></div>
+      <div className="pasture-art" aria-hidden="true"><div className="sun" /><div className="hill hill-back" /><div className="hill hill-front" /></div>
+      <p className="story-foot">Animales, sanidad, pesajes y producción</p>
     </section>
     <section className="login-form-panel"><div className="login-theme"><ThemeButton /></div><div className="login-form-content">
       <span className="eyebrow">BIENVENIDO A TU FINCA</span><h2>Inicia sesión</h2><p className="muted">Accede con tu usuario o correo electrónico.</p>

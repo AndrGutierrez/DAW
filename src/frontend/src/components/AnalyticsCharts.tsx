@@ -1,3 +1,4 @@
+import { TableScroll } from './TableScroll';
 import { useState } from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { Analytics } from '../api/operations';
@@ -8,6 +9,7 @@ import { date, number } from '../api/livestock';
 export default function AnalyticsCharts({ data }: { data: Analytics }) {
   const [view, setView] = useState('milk');
   const [lotKey, setLotKey] = useState('');
+  const [ageGroup, setAgeGroup] = useState('');
   const seriesKey = (series: Analytics['milkByDayAndCurrentLot'][number]) => series.farmId + ':' + (series.lotId || 'unassigned');
   const lot = data.milkByDayAndCurrentLot.find(series => seriesKey(series) === lotKey) || data.milkByDayAndCurrentLot[0];
   const lotPoints = new Map(lot?.points.map(point => [point.label, point.value]));
@@ -19,8 +21,11 @@ export default function AnalyticsCharts({ data }: { data: Analytics }) {
       dailyRows.push({ label, value: lotPoints.get(label) ?? null });
     }
   }
+  const groups = [...new Set((data.weightDistributionByAge || []).map(p => p.ageGroup))];
+  const selectedAge = groups.includes(ageGroup) ? ageGroup : groups[0];
+  const distribution = (data.weightDistributionByAge || []).filter(p => p.ageGroup === selectedAge).map(p => ({ label: p.minimumKg + (p.maximumKg === null ? '+ kg' : '–<' + p.maximumKg + ' kg'), value: p.count }));
   const rows: Record<string, string | number | null>[] = view === 'valuation' ? data.categories
-    : view === 'milk' ? data.milkByDay : view === 'lot' ? data.milkByCurrentLot : view === 'lot-daily' ? dailyRows : data.weightByAge;
+    : view === 'milk' ? data.milkByDay : view === 'lot' ? data.milkByCurrentLot : view === 'lot-daily' ? dailyRows : view === 'distribution' ? distribution : data.weightByAge;
   return <div className="panel analytics-chart">
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <Field label="Gráfico"><Select value={view} onChange={event => setView(event.target.value)}>
@@ -28,28 +33,30 @@ export default function AnalyticsCharts({ data }: { data: Analytics }) {
         <option value="milk">Leche por día (L)</option>
         <option value="lot-daily">Leche por día y lote actual (L)</option>
         <option value="lot">Leche de animales por lote actual (L)</option>
+        <option value="distribution">Distribución de peso por edad (bovinos)</option>
         <option value="weight">Peso medio por edad al pesaje (kg)</option>
       </Select></Field>
+      {view === 'distribution' && <Field label="Edad al pesaje"><Select value={selectedAge || ''} onChange={event => setAgeGroup(event.target.value)} disabled={!groups.length}>{!groups.length && <option value="">Sin pesajes comparables</option>}{groups.map(group => <option key={group} value={group}>{group}</option>)}</Select></Field>}
       {view === 'lot-daily' && <Field label="Lote de la curva diaria"><Select value={lot ? seriesKey(lot) : ''} onChange={event => setLotKey(event.target.value)} disabled={!lot}>
         {!lot && <option value="">Sin registros de leche en litros</option>}
         {data.milkByDayAndCurrentLot.map(series => <option key={seriesKey(series)} value={seriesKey(series)}>{series.label}</option>)}
       </Select></Field>}
     </div>
-    {!rows.length ? <p className="muted">No hay datos comparables para este gráfico.</p> : <div className="chart-container" style={{ height: 320 }} aria-label="Gráfico de los indicadores seleccionados">
+    {!rows.length ? <p className="muted">No hay datos comparables para este gráfico.</p> : <div className="chart-container" role="img" style={{ height: 320 }} aria-label="Gráfico de los indicadores seleccionados">
       <ResponsiveContainer width="100%" height="100%">{view === 'milk' || view === 'lot-daily' ? <LineChart data={view === 'milk' ? data.milkByDay : dailyRows}>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" /><XAxis dataKey="label" stroke="var(--muted)" /><YAxis stroke="var(--muted)" /><Tooltip />
         <Line type="monotone" dataKey="value" name="Leche (L)" stroke="var(--primary)" strokeWidth={3} connectNulls={false} />
       </LineChart> : <BarChart data={rows}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" /><XAxis dataKey={view === 'valuation' ? 'category' : 'label'} stroke="var(--muted)" /><YAxis stroke="var(--muted)" /><Tooltip /><Legend />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" /><XAxis dataKey={view === 'valuation' ? 'category' : 'label'} stroke="var(--muted)" /><YAxis stroke="var(--muted)" allowDecimals={view !== 'distribution'} /><Tooltip /><Legend />
         {view === 'valuation' ? <><Bar dataKey="cost" name="Costo (USD)" fill="var(--primary)" radius={[4, 4, 0, 0]} /><Bar dataKey="referenceValue" name="Referencia (USD)" fill="var(--info)" radius={[4, 4, 0, 0]} /></>
-          : <Bar dataKey="value" name={view === 'weight' ? 'Peso medio (kg)' : 'Leche (L)'} fill="var(--primary)" radius={[4, 4, 0, 0]} />}
+          : <Bar dataKey="value" name={view === 'distribution' ? 'Bovinos' : view === 'weight' ? 'Peso medio (kg)' : 'Leche (L)'} fill="var(--primary)" radius={[4, 4, 0, 0]} />}
       </BarChart>}</ResponsiveContainer>
     </div>}
     {view === 'lot-daily' && <>
       <p className="muted">Agrupación según el lote actual del animal. Las fechas sin registros aparecen como huecos; no representan producción cero.</p>
-      {lot && <div className="table-scroll overflow-x-auto"><table><caption>Leche diaria · {lot.label}</caption><thead><tr><th>Fecha</th><th>Leche (L)</th><th>Registros</th></tr></thead>
+      {lot && <TableScroll className="table-scroll overflow-x-auto"><table><caption>Leche diaria · {lot.label}</caption><thead><tr><th>Fecha</th><th>Leche (L)</th><th>Registros</th></tr></thead>
         <tbody>{lot.points.map(point => <tr key={point.label}><td>{date(point.label)}</td><td>{number(point.value, 3)}</td><td>{point.count}</td></tr>)}</tbody>
-      </table></div>}
+      </table></TableScroll>}
     </>}
     <p className="muted">Los valores también están disponibles en las tablas del dashboard.</p>
   </div>;

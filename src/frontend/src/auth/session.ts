@@ -1,3 +1,5 @@
+import { clearRequestTimings } from '../performance/store';
+
 export type User = {
   id: string;
   username: string;
@@ -137,6 +139,7 @@ export class SessionClient {
 
   clearLocalSession = (reason?: AuthState['reason']) => {
     this.version++;
+    clearRequestTimings();
     this.publish({ status: 'anonymous', session: null, error: null, reason });
   };
 

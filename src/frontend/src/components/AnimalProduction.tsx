@@ -1,3 +1,4 @@
+import { TableScroll } from './TableScroll';
 import { Button, Input, Select, Textarea } from './ui/Controls';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
@@ -41,6 +42,6 @@ export function AnimalProduction({ animal, onAnimalChanged }: { animal: AnimalDe
   return <section className="panel animal-details" aria-label="Producción"><div className="section-heading"><div><span className="eyebrow">RESULTADOS PRODUCTIVOS</span><h2>Producción</h2></div>{can('production.create') && animal.status === 'Active' && <Button className="button secondary" aria-expanded={open} onClick={() => setOpen(!open)}>Registrar producción</Button>}</div>
     {result.loading && <p role="status">Cargando producción…</p>}{result.error && <p className="error-banner" role="alert">{result.error}<Button className="text-button" onClick={result.reload}>Reintentar</Button></p>}
     {open && <ProductionForm animal={animal} onSaved={onAnimalChanged} />}
-    {result.data && <><div className="table-scroll"><table><thead><tr><th>Fecha</th><th>Producto</th><th>Método</th><th>Cantidad</th><th>Observaciones</th></tr></thead><tbody>{result.data.items.map(record => <tr key={record.id}><td>{date(record.data.date)}</td><td>{careText(record.data.productType)}</td><td>{careText(record.data.method)}</td><td>{record.data.quantity.toLocaleString('es-VE')} {careText(record.data.unit)}</td><td>{record.data.notes || '—'}</td></tr>)}</tbody></table></div>{result.data.total === 0 && <p className="muted">Aún no hay producción registrada.</p>}<CarePagination {...result.data} onPage={setPage} /></>}
+    {result.data && <><TableScroll className="table-scroll"><table><thead><tr><th>Fecha</th><th>Producto</th><th>Método</th><th>Cantidad</th><th>Observaciones</th></tr></thead><tbody>{result.data.items.map(record => <tr key={record.id}><td>{date(record.data.date)}</td><td>{careText(record.data.productType)}</td><td>{careText(record.data.method)}</td><td>{record.data.quantity.toLocaleString('es-VE')} {careText(record.data.unit)}</td><td>{record.data.notes || '—'}</td></tr>)}</tbody></table></TableScroll>{result.data.total === 0 && <p className="muted">Aún no hay producción registrada.</p>}<CarePagination {...result.data} onPage={setPage} /></>}
   </section>;
 }

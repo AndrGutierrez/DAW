@@ -274,3 +274,7 @@ src/frontend/dist/
 src/frontend/*.tsbuildinfo
 src/frontend/playwright-report/
 src/frontend/test-results/
+
+# Local coverage and diagnostic results
+src/frontend/coverage/
+.test-results/

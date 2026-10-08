@@ -10,5 +10,5 @@ export default defineConfig({
       '/api': { target: env.API_PROXY_TARGET || 'http://127.0.0.1:8080', changeOrigin: true },
     },
   },
-  test: { include: ['src/**/*.test.ts'], environment: 'node' },
+  test: { include: ['src/**/*.test.{ts,tsx}'], environment: 'node', setupFiles: ['./src/test/setup.ts'], coverage: { provider: 'v8', reporter: ['text', 'json-summary', 'lcov', 'html'], include: ['src/**/*.{ts,tsx}'], exclude: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/main.tsx', 'src/vite-env.d.ts'] } },
 });

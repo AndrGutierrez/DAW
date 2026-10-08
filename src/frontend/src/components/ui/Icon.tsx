@@ -28,9 +28,11 @@ import { CaretDownIcon } from '@phosphor-icons/react/dist/csr/CaretDown';
 import { LockKeyIcon } from '@phosphor-icons/react/dist/csr/LockKey';
 import { InfoIcon } from '@phosphor-icons/react/dist/csr/Info';
 import { CircleNotchIcon } from '@phosphor-icons/react/dist/csr/CircleNotch';
+import { DotsThreeIcon } from '@phosphor-icons/react/dist/csr/DotsThree';
 import type { IconProps } from '@phosphor-icons/react';
 
 const icons = {
+  menu: DotsThreeIcon,
   inventory: PackageIcon,
   report: FileTextIcon,
   leaf: LeafIcon,

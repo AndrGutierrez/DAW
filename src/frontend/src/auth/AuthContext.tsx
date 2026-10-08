@@ -2,9 +2,10 @@ import { createContext, useContext, useEffect, useSyncExternalStore } from 'reac
 import type { PropsWithChildren } from 'react';
 import { SessionClient } from './session';
 import type { AuthState } from './session';
+import { monitoredFetch } from '../performance/store';
 
 const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('daw-session-events') : null;
-const client = new SessionClient(fetch.bind(globalThis),
+const client = new SessionClient(monitoredFetch(fetch.bind(globalThis)),
   async action => navigator.locks ? await navigator.locks.request('daw-session-cookie', action) : await action(),
   () => channel?.postMessage('logout'),
 );

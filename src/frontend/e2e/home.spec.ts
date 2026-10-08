@@ -41,3 +41,19 @@ test('login returns to the requested animal tab and fragment', async ({ page, re
   await page.goto(path); await signIn(page); await expect(page).toHaveURL(new URL(path, process.env.E2E_BASE_URL || 'http://localhost:18086').href);
   await expect(page.getByRole('tab', { name: 'Ubicación', exact: true })).toHaveAttribute('aria-selected', 'true');
 });
+
+test('weight distribution matches the protected API and filters the histogram by age', async ({ page }) => {
+ await page.goto('/login');
+ const response = page.waitForResponse(r => r.url().includes('/api/analytics/overview?') && r.status() === 200);
+ await signIn(page); const data = await (await response).json();
+ expect(data.weightDistributionByAge.reduce((sum: number, p: { count: number }) => sum + p.count, 0)).toBe(data.weightByAge.reduce((sum: number, p: { count: number }) => sum + p.count, 0));
+ const table = page.getByRole('heading', { name: 'Distribución de peso por edad', exact: true }).locator('..').getByRole('table');
+ await expect(table.locator('tbody tr')).toHaveCount(data.weightDistributionByAge.length);
+ await page.getByLabel('Gráfico', { exact: true }).selectOption('distribution');
+ const groups = [...new Set<string>(data.weightDistributionByAge.map((p: { ageGroup: string }) => p.ageGroup))];
+ if (groups.length) {
+  await expect(page.getByLabel('Edad al pesaje', { exact: true })).toHaveValue(groups[0]);
+  if (groups.length > 1) { await page.getByLabel('Edad al pesaje', { exact: true }).selectOption(groups[groups.length - 1]); await expect(page.getByLabel('Edad al pesaje', { exact: true })).toHaveValue(groups[groups.length - 1]); }
+ }
+ expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+});
