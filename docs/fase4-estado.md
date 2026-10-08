@@ -6,7 +6,7 @@ La rama codex/phase4-cattle-spa incluye cinco incrementos: sesión persistente y
 | --- | --- | --- |
 | SPA React, Vite y TypeScript | React 18, Tailwind, navegación, animales, editor, pesaje, sanidad, reproducción, producción y mapa de potreros; carga, errores, toasts y diseño móvil | Inventario y dashboard |
 | AuthContext | Cookie persistente, JWT en memoria, renovación, logout, usuario, roles, permisos y autorización de los nuevos flujos | Demostración final completa |
-| ThemeContext y UI | Paleta semántica de granja en ambos temas, preferencia persistida, controles compartidos e iconos SVG; navegación móvil inferior; ficha con accesos a ocho secciones | Extender la misma base a inventario/dashboard y completar auditoría de accesibilidad |
+| ThemeContext y UI | Paleta semántica de granja en ambos temas, preferencia persistida, controles compartidos e iconos SVG; navegación móvil inferior; ficha con ocho pestañas reales y detalle lateral de ocupación | Extender la misma base a inventario/dashboard y completar auditoría de accesibilidad |
 | Dashboard | Pendiente | Inventario, umbrales, rotación, leche por lote, peso por edad y métricas reproductivas con denominadores |
 | UnitTests y Moq | Proyecto separado con referencia a Core.Application; cambio sanitario, GDP, idempotencia, eventos clínicos, retiro, capacidad y traslados | Casos de los siguientes módulos y cobertura real |
 | Integración | PostgreSQL, API y SPA en Nginx; búsquedas e historiales paginados en servidor; escritura serializable y RFC 7807 | Integrar inventario, reportes y analítica |

@@ -56,7 +56,9 @@ test('search is performed by the API and animal details load on a direct URL', a
   await expect(page.getByRole('article')).toHaveCount(1);
   await page.getByRole('link', { name: 'Ver ficha de DEMO-001' }).click();
   await expect(page.getByRole('heading', { name: 'Identificación y ubicación' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Genealogía', exact: true }).click();
   await page.reload();
+  await expect(page.getByRole('tab', { name: 'Genealogía', exact: true })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('heading', { name: 'Genealogía' })).toBeVisible();
   await expect(page.getByText('DEMO-001', { exact: true }).first()).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);

@@ -32,7 +32,7 @@ test.afterEach(async () => {
 test('clinical form snapshots withdrawal and production refuses milk and slaughter', async ({ page, request }) => {
   const created = await request.post('/api/animals', { headers, data: { farmId, speciesId, internalTag: prefix + '-CLINICAL', sex: 'Female', purpose: 'DualPurpose' } });
   expect(created.status()).toBe(201); const animal = (await created.json()).id; animals.push(animal);
-  await login(page); await page.goto('/animals/' + animal);
+  await login(page); await page.goto('/animals/' + animal + '?tab=clinical');
   await page.getByRole('button', { name: 'Registrar evento sanitario', exact: true }).click();
   await page.getByLabel('Producto *', { exact: true }).selectOption(productId);
   await page.getByLabel('Dosis administrada *', { exact: true }).fill('2.125');
@@ -45,6 +45,7 @@ test('clinical form snapshots withdrawal and production refuses milk and slaught
   const history = await (await request.get('/api/animals/' + animal + '/clinical', { headers })).json();
   expect(history.history.total).toBe(1);
   expect(history.history.items[0].data.withdrawalDays).toBe(7);
+  await page.getByRole('tab', { name: 'Producción', exact: true }).click();
   await page.getByRole('button', { name: 'Registrar producción', exact: true }).click();
   await page.getByLabel('Cantidad (L) *', { exact: true }).fill('12.5');
   await page.getByRole('button', { name: 'Guardar producción', exact: true }).click();
@@ -64,7 +65,7 @@ test('reproductive diagnosis and calving update status and genealogy stays inter
   expect(parentResponse.status()).toBe(201); const parent = (await parentResponse.json()).id; animals.push(parent);
   const childResponse = await request.post('/api/animals', { headers, data: { farmId, speciesId, internalTag: prefix + '-CHILD', sex: 'Female', purpose: 'Milk', birthDate: '2025-01-01', damId: parent } });
   expect(childResponse.status()).toBe(201); const child = (await childResponse.json()).id; animals.push(child);
-  await login(page); await page.goto('/animals/' + parent);
+  await login(page); await page.goto('/animals/' + parent + '?tab=reproduction');
   await page.getByRole('button', { name: 'Registrar evento reproductivo', exact: true }).click();
   await page.getByLabel('Resultado del diagnóstico *').selectOption('Positive');
   await page.getByRole('button', { name: 'Guardar evento reproductivo', exact: true }).click();
@@ -76,7 +77,7 @@ test('reproductive diagnosis and calving update status and genealogy stays inter
   await page.getByLabel('Crías nacidas muertas *').fill('1');
   await page.getByRole('button', { name: 'Guardar evento reproductivo', exact: true }).click();
   await expect(reproduction.getByText('Parto registrado', { exact: true })).toBeVisible();
-  await page.goto('/animals/' + child);
+  await page.goto('/animals/' + child + '?tab=genealogy');
   const genealogy = page.getByRole('region', { name: 'Genealogía', exact: true });
   await genealogy.getByRole('link', { name: prefix + '-DAM' }).click();
   await expect(page).toHaveURL('/animals/' + parent);
@@ -86,7 +87,7 @@ test('reproductive diagnosis and calving update status and genealogy stays inter
 test('lost clinical response retries one immutable submission', async ({ page, request }) => {
   const created = await request.post('/api/animals', { headers, data: { farmId, speciesId, internalTag: prefix + '-RETRY', sex: 'Female', purpose: 'Milk' } });
   expect(created.status()).toBe(201); const animal = (await created.json()).id; animals.push(animal);
-  await login(page); await page.goto('/animals/' + animal);
+  await login(page); await page.goto('/animals/' + animal + '?tab=clinical');
   await page.getByRole('button', { name: 'Registrar evento sanitario', exact: true }).click();
   await page.getByLabel('Evento sanitario *', { exact: true }).selectOption('Quarantine');
   await page.getByLabel('Motivo de cuarentena *').fill('Arrival check');
@@ -113,7 +114,7 @@ test('clinical paging uses the server and employee can record care without destr
   await page.getByLabel('Contraseña', { exact: true }).fill(process.env.E2E_EMPLOYEE_PASSWORD!);
   await page.getByRole('button', { name: 'Entrar a mi finca' }).click();
   await expect(page.getByRole('heading', { name: 'Animales', exact: true })).toBeVisible();
-  await page.goto('/animals/' + animal);
+  await page.goto('/animals/' + animal + '?tab=clinical');
   const clinical = page.getByRole('region', { name: 'Sanidad', exact: true });
   await expect(clinical.locator('.care-timeline').first().locator('li')).toHaveCount(10);
   const next = page.waitForResponse(response => response.url().includes('/clinical?page=2'));

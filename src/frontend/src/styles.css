@@ -1756,7 +1756,7 @@ td {
   gap: 1rem;
   margin: 1.5rem 0;
 }
-.animal-section-links a {
+.animal-section-links .animal-tab {
   font-weight: 600;
 }
 .care-form {
@@ -2449,7 +2449,7 @@ td small {
   background: var(--panel);
   box-shadow: var(--shadow);
 }
-.animal-section-links a {
+.animal-section-links .animal-tab {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -2460,11 +2460,11 @@ td small {
   border-radius: 9px;
   white-space: nowrap;
 }
-.animal-section-links a:hover {
+.animal-section-links .animal-tab:hover {
   color: var(--text);
   background: var(--soft);
 }
-.animal-section-links a[aria-current=location] {
+.animal-section-links .animal-tab[aria-selected=true] {
   color: var(--accent);
   background: var(--success-soft);
 }
@@ -2500,7 +2500,7 @@ td small {
 .photo-uploader {
   background: var(--page);
 }
-/* A schematic parcel is an illustration, never a geographic boundary. */
+/* Paddock cards prioritize recorded occupancy and capacity. */
 .paddock-card {
   border-top: 0;
   border-radius: 18px;
@@ -2511,44 +2511,6 @@ td small {
 }
 .paddock-select:hover {
   background: var(--page);
-}
-.paddock-landscape {
-  display: block;
-  width: 100%;
-  height: 118px;
-}
-.land-ground {
-  fill: var(--soft);
-}
-.land-path {
-  stroke: var(--earth-soft);
-}
-.land-grass {
-  fill: #c3d6a9;
-}
-.land-fence {
-  stroke: #809366;
-}
-.land-row {
-  stroke: #a5bb87;
-}
-.land-tree {
-  fill: #719664;
-}
-.land-tree-trunk {
-  stroke: #886f4c;
-}
-.dark .land-grass {
-  fill: #425a39;
-}
-.dark .land-fence {
-  stroke: #91a57f;
-}
-.dark .land-row {
-  stroke: #59714b;
-}
-.dark .land-tree {
-  fill: #58714c;
 }
 .paddock-card-body {
   display: flex;
@@ -2728,7 +2690,7 @@ td small {
     margin: 20px -2px;
     scrollbar-width: thin;
   }
-  .animal-section-links a {
+  .animal-section-links .animal-tab {
     padding-inline: 11px;
   }
   .animal-workspace > [id], #growth, #weigh, #location {
@@ -2777,3 +2739,71 @@ input::placeholder, textarea::placeholder {
 .summary-health .status-dot {
   margin-right: 6px;
 }
+
+/* Record tabs and paddock side panel. */
+.animal-section-links .animal-tab {
+  border: 0;
+  background: transparent;
+  font-weight: 600;
+  box-shadow: none;
+}
+.animal-section-links .animal-tab[aria-selected=true] {
+  color: var(--accent);
+  background: var(--success-soft);
+}
+.animal-tab-panel[hidden] { display: none; }
+.animal-tab-panel { min-width: 0; }
+.animal-tab-panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; border-radius: 12px; }
+.side-panel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  width: min(880px, 88vw);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 20px 0 0 20px;
+  color: var(--text);
+  background: var(--panel);
+  box-shadow: -16px 0 60px #0003;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.side-panel[open] { animation: side-panel-enter 180ms ease-out; }
+.side-panel::backdrop { background: #101a16a6; }
+.side-panel-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.side-panel-header h2 { margin: 4px 0 0; font-size: 1.5rem; overflow-wrap: anywhere; }
+.side-panel-header .icon-button { flex-shrink: 0; }
+.side-panel-body { padding: 24px 28px max(28px, env(safe-area-inset-bottom)); }
+.side-panel .table-scroll { margin-inline: 0; }
+.side-panel .pagination { flex-wrap: wrap; gap: 12px; }
+.side-panel .care-form { margin-block: 20px; padding: 20px; background: var(--soft); border: 1px solid var(--line); border-radius: 14px; }
+.paddock-residents h3 { margin: 0 0 8px; }
+@keyframes side-panel-enter { from { opacity: 0; transform: translateX(35px); } to { opacity: 1; transform: translateX(0); } }
+@media(max-width:760px) {
+  .side-panel { width: 100%; border-radius: 0; }
+  .side-panel-header, .side-panel-body { padding: 20px; }
+  .side-panel .table-scroll { overflow: visible; }
+  .side-panel table, .side-panel tbody { display: block; width: 100%; min-width: 0; }
+  .side-panel thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .side-panel tr { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+  .side-panel td { display: block; padding: 0; border: 0; overflow-wrap: anywhere; }
+  .side-panel td::before { display: block; content: attr(data-label); color: var(--muted); font-size: .75rem; margin-bottom: 4px; }
+  .side-panel td:first-child, .side-panel td:last-child { grid-column: 1 / -1; }
+  .side-panel td .button-row { flex-wrap: wrap; }
+}
+@media(prefers-reduced-motion:reduce) { .side-panel[open] { animation: none; } }

@@ -24,7 +24,7 @@ export function MovementForm({ animal, onSaved }: { animal: MovableAnimal; onSav
       expectedFromPaddockId: animal.paddockId, expectedFromLotId: animal.lotId, reason: String(values.get('reason') || '').trim() });
   }
   const error = paddocks.error || lots.error;
-  return <form className="care-form" onSubmit={submit}>
+  return <form className="care-form" aria-busy={state.busy} onSubmit={submit}>
     <p className="muted">Traslado de {animal.internalTag} con fecha de hoy. El lote identifica el grupo; el potrero identifica la ubicación física.</p>
     {error && <div className="error-banner"><p role="alert">{error}</p><Button type="button" className="button secondary" onClick={() => { paddocks.reload(); lots.reload(); }}>Reintentar catálogos</Button></div>}
     <fieldset disabled={state.busy || state.uncertain || paddocks.loading || lots.loading || !!error}><div className="form-grid">

@@ -11,7 +11,7 @@ Se verificó la rama codex/phase4-cattle-spa en un entorno aislado. Los resultad
 | Core.Tests: dominio, infraestructura y pipeline HTTP | 108 aprobadas | 116 aprobadas | 124 aprobadas | 134 aprobadas | Sin cambios de backend; no repetidas |
 | UnitTests: Core.Application con xUnit y Moq | 18 aprobadas | 42 aprobadas | 72 aprobadas | 91 aprobadas | Sin cambios de backend; no repetidas |
 | Cliente con Vitest | 13 aprobadas | 28 aprobadas | 28 aprobadas | 41 aprobadas | 41 aprobadas |
-| Playwright en desktop y mobile | 12 aprobadas | 34 aprobadas | 46 aprobadas | 60 aprobadas | 68 aprobadas |
+| Playwright en desktop y mobile | 12 aprobadas | 34 aprobadas | 46 aprobadas | 60 aprobadas | 70 verificadas (68 + 2 reejecutadas) |
 | TypeScript y Vite | Aprobados | Aprobados en Windows y Docker | Aprobados en Windows y Docker | Aprobados en Windows y Docker | Aprobados en Windows y Docker |
 | Imágenes API y Nginx | Construidas e iniciadas | Construidas e iniciadas | Construidas e iniciadas | Construidas e iniciadas | API conservada; Nginx construido e iniciado |
 | Dependencias frontend | Sin vulnerabilidades reportadas | Sin vulnerabilidades reportadas al instalar Recharts | Sin cambios de dependencias | Sin cambios de dependencias | Sin cambios de dependencias |
@@ -101,14 +101,15 @@ La concurrencia por el último cupo se demuestra con PostgreSQL real; InMemory n
 
 ## Sistema visual y protección de editores
 
-Los cuatro escenarios nuevos de Playwright se ejecutaron en escritorio y móvil:
+Los cinco escenarios de UI se ejecutaron en escritorio y móvil:
 
 - Texto y estados semánticos en ambos temas, incluyendo salud crítica, etiquetas y acciones: contraste de al menos 4.5:1 en los elementos seleccionados.
 - Un editor de animal modificado conserva los valores al cancelar una salida mediante menú, Atrás del navegador o logout; confirmar la salida no guarda la ficha.
 - El editor de potrero conserva la capacidad capturada al cancelar la navegación y admite alternar el checkbox con teclado. Descartar no modifica la capacidad persistida.
-- Fotografías y crecimiento son alcanzables mediante el navegador de secciones y el teclado, sin desbordamiento horizontal del documento.
+- Las pestañas muestran un solo panel, admiten flechas/Inicio/Fin y Enter/Espacio, conservan valores al alternarlas y recuperan la selección al recargar.
+- El detalle de ocupación abre como diálogo lateral, contiene el foco, cierra con Escape y devuelve el foco al activador; cancelar un descarte conserva el motivo de traslado. No hay desbordamiento horizontal del documento.
 
-El escenario existente de creación/edición verifica que elegir lote conserva el potrero vacío hasta que el usuario lo asigna expresamente. Los 60 casos anteriores continúan aprobados: sesión persistente, fotos privadas, edición, pesaje, sanidad/reproducción, retiro, producción, capacidad y traslados. El total actual es de 68 casos de navegador.
+El escenario existente de creación/edición verifica que elegir lote conserva el potrero vacío hasta que el usuario lo asigna expresamente. Los 60 casos anteriores continúan aprobados: sesión persistente, fotos privadas, edición, pesaje, sanidad/reproducción, retiro, producción, capacidad y traslados. El total actual es de 70 escenarios verificados. En esta revisión la ejecución completa aprobó 68; los dos casos de acceso directo todavía esperaban Genealogía visible por defecto. Tras actualizar esa expectativa para seleccionar la pestaña y comprobar su persistencia, ambos casos pasaron en la reejecución dirigida, sin cambios adicionales en la aplicación.
 
 La regresión completa creó 18 animales clínicos de prueba, identificados mediante su manifiesto. La limpieza comprobó propiedad y ausencia de descendientes externos antes de eliminarlos, conservando la demostración. Se verificaron cero fixtures clínicos, de potreros y de UI restantes. La suite de UI limpia sus animales y potreros por API.
 

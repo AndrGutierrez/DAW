@@ -101,15 +101,52 @@ test('paddock edits keep values after cancellation and checkbox supports keyboar
   expect((await (await request.get('/api/paddocks/' + paddockId, { headers })).json()).data.capacity).toBe(5);
 });
 
-test('record sections navigate by keyboard and remain reachable on mobile', async ({ page }) => {
+test('record tabs show one panel, support keyboard and preserve entered values', async ({ page }) => {
   await login(page); await page.goto('/animals/' + animalId);
-  const nav = page.getByRole('navigation', { name: 'Secciones de la ficha', exact: true });
-  const photos = nav.getByRole('link', { name: 'Fotografías', exact: true });
-  await photos.focus(); await photos.press('Enter');
-  await expect(page).toHaveURL(/#photos$/);
-  await expect(page.getByRole('heading', { name: 'Fotografías', exact: true })).toBeInViewport();
-  await nav.getByRole('link', { name: 'Crecimiento', exact: true }).click();
-  await expect(page).toHaveURL(/#growth$/);
-  await expect(page.getByRole('heading', { name: 'Crecimiento e historial de peso', exact: true })).toBeInViewport();
+  const tabs = page.getByRole('tablist', { name: 'Secciones de la ficha', exact: true });
+  const summary = tabs.getByRole('tab', { name: 'Resumen', exact: true });
+  await expect(summary).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('tabpanel')).toHaveCount(1);
+  await summary.focus(); await summary.press('End');
+  const photos = tabs.getByRole('tab', { name: 'Fotografías', exact: true });
+  await expect(photos).toBeFocused(); await expect(summary).toHaveAttribute('aria-selected', 'true');
+  await photos.press('Enter');
+  await expect(page).toHaveURL(/tab=photos$/);
+  await expect(page.getByRole('tabpanel', { name: 'Fotografías', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Identificación y ubicación', exact: true })).not.toBeVisible();
+  await photos.press('ArrowLeft');
+  const growth = tabs.getByRole('tab', { name: 'Crecimiento', exact: true });
+  await expect(growth).toBeFocused(); await growth.press('Space');
+  await expect(page.getByRole('tabpanel', { name: 'Crecimiento', exact: true })).toBeVisible();
+  await page.getByLabel('Peso vivo (kg) *', { exact: true }).fill('145');
+  await summary.click(); await growth.click();
+  await expect(page.getByLabel('Peso vivo (kg) *', { exact: true })).toHaveValue('145');
+  await page.reload(); await expect(growth).toHaveAttribute('aria-selected', 'true');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+});
+
+test('paddock occupancy opens in a modal side panel and restores focus on close', async ({ page }) => {
+  await login(page); await page.goto('/paddocks?search=' + prefix);
+  const trigger = page.locator('.paddock-select');
+  await trigger.click();
+  const drawer = page.getByRole('dialog', { name: prefix, exact: true });
+  await expect(drawer).toBeVisible();
+  await expect(drawer.getByRole('table', { name: 'Animales presentes en el potrero' })).toContainText(prefix);
+  const width = page.viewportSize()!.width;
+  await expect.poll(async () => { const bounds = await drawer.boundingBox(); return bounds!.x + bounds!.width; }).toBeCloseTo(width, 0);
+  await page.getByRole('button', { name: 'Cerrar detalle del potrero' }).press('Tab');
+  expect(await page.evaluate(() => !!document.activeElement?.closest('dialog.side-panel'))).toBe(true);
+  await page.keyboard.press('Escape'); await expect(drawer).not.toBeVisible();
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await drawer.getByRole('button', { name: 'Trasladar ' + prefix, exact: true }).click();
+  await page.getByLabel('Motivo del traslado *').fill('Keep this draft');
+  await page.keyboard.press('Escape');
+  const confirm = page.getByRole('dialog', { name: 'Confirmar acción', exact: true });
+  await confirm.getByRole('button', { name: 'Cancelar', exact: true }).click();
+  await expect(page.getByLabel('Motivo del traslado *')).toHaveValue('Keep this draft');
+  await page.getByRole('button', { name: 'Cerrar detalle del potrero' }).click();
+  await confirm.getByRole('button', { name: 'Descartar y cerrar', exact: true }).click();
+  await expect(drawer).not.toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });

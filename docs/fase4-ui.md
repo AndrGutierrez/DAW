@@ -32,9 +32,9 @@ Se aumentó la legibilidad de etiquetas, tablas y estados. Botones y acciones de
 
 En móvil, Principal permanece en una barra inferior; deja de ocupar varias filas sobre el contenido. Los toasts y el final del documento reservan espacio para esa barra y para el área segura del dispositivo. Actualmente muestra los cuatro recorridos existentes; al añadir módulos se deberá revisar su organización.
 
-La ficha 360 incluye un resumen antes de los historiales y un navegador de ocho secciones: resumen, sanidad, reproducción, producción, genealogía, ubicación, crecimiento y fotografías. Son enlaces a secciones presentes en el documento, no paneles ocultos. El indicador de sección responde a desplazamiento y selección. Las comprobaciones de permisos permanecen en cada módulo.
+La ficha 360 conserva su resumen superior y dispone de ocho pestañas reales: resumen, sanidad, reproducción, producción, genealogía, ubicación, crecimiento y fotografías. Solo un panel es visible. Las flechas, Inicio/Fin y Enter/Espacio permiten recorrer y activar pestañas; tablist, tab y tabpanel comunican selección y relaciones. La URL conserva la pestaña mediante tab. Los paneles permanecen montados para mantener valores al alternarlos. Registrar peso abre Crecimiento y enfoca su formulario. Las comprobaciones de permisos permanecen en cada módulo.
 
-Los potreros incorporan una ilustración SVG decorativa y conservan la ocupación, capacidad, densidad y permanencia reales. La ilustración no representa el tamaño o límite geográfico de una parcela. Los residentes, filtros y traslados siguen consultando la API; no se sustituyeron por datos de presentación.
+Las tarjetas de potreros presentan ocupación, capacidad, densidad y permanencia reales; se retiró la ilustración decorativa. Explorar ocupación abre un diálogo lateral desde la derecha, con fondo modal, foco contenido, Escape, cierre explícito y retorno al activador. En móvil ocupa el ancho disponible y adapta las filas de residentes. Los filtros y traslados siguen consultando la API. El listado permanece montado durante su actualización para conservar el activador.
 
 Elegir un lote en el editor del animal ya no cambia el potrero de manera implícita. El lote productivo y la ubicación física se seleccionan por separado. La suite comprueba esa separación antes de asignar expresamente un destino.
 
@@ -42,14 +42,16 @@ Elegir un lote en el editor del animal ya no cambia el potrero de manera implíc
 
 NavigationProtectionProvider registra los editores modificados y bloquea la navegación interna, incluyendo el botón Atrás. El usuario puede conservar sus valores o confirmar que quiere salir sin guardar. Cerrar sesión también consulta esa protección. Una recarga o cierre utiliza la advertencia nativa del navegador, sujeta al comportamiento de este.
 
-La protección cubre el editor del animal y el mantenimiento de potreros. No persiste borradores después de cerrar el navegador ni cubre todavía todos los formularios clínicos o la cola de pesaje. Guardar correctamente libera la protección antes de navegar; un error conserva los datos. Cancelar un editor solicita confirmación cuando corresponde.
+La protección cubre el editor del animal, el mantenimiento de potreros y los cambios del traslado abierto en el panel lateral. Cerrar este detalle solicita descarte si el traslado tiene modificaciones; mientras se envía, el cierre permanece bloqueado. No persiste borradores después de cerrar el navegador ni cubre todavía todos los formularios clínicos o la cola de pesaje. Guardar correctamente libera la protección antes de navegar; un error conserva los datos. Cancelar un editor solicita confirmación cuando corresponde.
 
 Se utiliza el modo de datos del React Router ya instalado para soportar useBlocker. Se conserva la configuración de rutas de App y el contrato de sesión. No se añadieron dependencias. El fundamento del bloqueo está en la [documentación oficial de React Router](https://reactrouter.com/how-to/navigation-blocking).
 
 ## Verificación y límites
 
-Se verifican TypeScript, Vite, Vitest y los recorridos Playwright existentes contra PostgreSQL. Los cuatro nuevos escenarios se ejecutan en escritorio y móvil: contraste en ambos temas, cambios sin guardar ante menú/Atrás/logout, cancelación del potrero y checkbox con teclado, y navegación de secciones con teclado.
+Se verifican TypeScript, Vite, Vitest y los recorridos Playwright existentes contra PostgreSQL. Los cinco escenarios de UI se ejecutan en escritorio y móvil: contraste en ambos temas, cambios sin guardar ante menú/Atrás/logout, cancelación del potrero y checkbox con teclado, pestañas con teclado y conservación de valores, y panel lateral con foco, Escape y descarte de un traslado.
 
 La comprobación de contraste mide texto/fondo de los controles y estados renderizados seleccionados, con una relación mínima de 4.5:1. No es una auditoría completa de accesibilidad. La revisión visual incluye acceso, listado, ficha, formulario y potreros en escritorio/móvil y ambos temas; no demuestra compatibilidad universal de navegadores. Los resultados ejecutados se documentan en [verificación](fase4-verificacion.md).
 
 El incremento no cambia el backend ni la base de datos. Inventario, dashboard, alertas generales, exportaciones y evidencia final siguen pendientes según el [estado de Fase 4](fase4-estado.md).
+
+La selección de recursos externos y el siguiente pulido del login se documentan en [investigación UI](fase4-ui-investigacion.md). No se instalaron esos recursos ni se cambió el login en este ajuste.

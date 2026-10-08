@@ -52,7 +52,7 @@ test('map reads actual occupancy and moves an animal with recorded arrival', asy
   await expect(page.getByRole('status').filter({ hasText: 'Registro guardado.' })).toBeVisible();
   const detail = await (await request.get('/api/animals/' + animal, { headers })).json();
   expect(detail.paddockId).toBe(target);
-  await page.goto('/animals/' + animal);
+  await page.goto('/animals/' + animal + '?tab=location');
   await expect(page.getByRole('region', { name: 'Potrero y lote' })).toContainText('Browser paddock rotation');
   expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
 });
@@ -60,7 +60,7 @@ test('full paddock blocks transfer without losing form values', async ({ page, r
   const target = await createPaddock(request, 'FULL', 1);
   await createAnimal(request, 'RESIDENT', target);
   const animal = await createAnimal(request, 'WAITING');
-  await login(page); await page.goto('/animals/' + animal);
+  await login(page); await page.goto('/animals/' + animal + '?tab=location');
   await page.getByRole('button', { name: 'Registrar traslado', exact: true }).click();
   await page.getByLabel('Potrero de destino', { exact: true }).selectOption(target);
   await page.getByLabel('Motivo del traslado *').fill('Keep my reason');
@@ -108,7 +108,7 @@ test('admin and employee maintain assigned paddocks while deletion remains restr
 });
 test('lost movement response replays one submission and preserves its source', async ({ page, request }) => {
   const target = await createPaddock(request, 'REPLAY', 2), animal = await createAnimal(request, 'RETRY');
-  await login(page); await page.goto('/animals/' + animal);
+  await login(page); await page.goto('/animals/' + animal + '?tab=location');
   await page.getByRole('button', { name: 'Registrar traslado', exact: true }).click();
   await page.getByLabel('Potrero de destino', { exact: true }).selectOption(target);
   await page.getByLabel('Motivo del traslado *').fill('One movement');
@@ -133,7 +133,7 @@ test('lost movement response replays one submission and preserves its source', a
 test('stale movement source can be refreshed from the form', async ({ page, request }) => {
   const source = await createPaddock(request, 'ORIGINAL', 2), changed = await createPaddock(request, 'CHANGED', 2), target = await createPaddock(request, 'FINAL', 2);
   const animal = await createAnimal(request, 'STALE', source);
-  await login(page); await page.goto('/animals/' + animal);
+  await login(page); await page.goto('/animals/' + animal + '?tab=location');
   await page.getByRole('button', { name: 'Registrar traslado', exact: true }).click();
   await page.getByLabel('Potrero de destino', { exact: true }).selectOption(target);
   await page.getByLabel('Motivo del traslado *').fill('Stale browser draft');
