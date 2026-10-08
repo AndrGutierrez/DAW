@@ -1,3 +1,5 @@
+using Core.Application.Operations;
+using Infrastructure.Operations;
 using Core.Application.Livestock;
 using Core.Application.Management;
 using Core.Domain.Livestock;
@@ -60,6 +62,10 @@ public static class DependencyInjection
         services.AddScoped<AnimalLocationPolicy>();
         services.AddScoped<AnimalMovementService>();
         services.AddScoped<PaddockService>();
+        services.AddScoped<InventoryService>();
+        services.AddScoped<AnalyticsService>();
+        services.AddScoped<ReportService>();
+        services.AddScoped<IOperationsReader, OperationsReader>();
         services.AddScoped<IPaddockReader, PaddockReader>();
         services.AddScoped<AnimalReproductionService>();
         services.AddScoped<AnimalGrowthService>();

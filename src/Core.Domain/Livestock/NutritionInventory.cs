@@ -78,6 +78,8 @@ public sealed class ProductBatch : BaseEntity
 
 public sealed class StockMovement : BaseEntity
 {
+    public StockMovement() { }
+    public StockMovement(Guid id) : base(id) { }
     public Guid FarmId { get; set; }
 
     public Guid ProductId { get; set; }

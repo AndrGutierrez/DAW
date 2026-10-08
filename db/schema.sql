@@ -577,7 +577,7 @@ CREATE TABLE public."StockMovements" (
     "ProductId" uuid NOT NULL,
     "ProductBatchId" uuid,
     "Type" integer NOT NULL,
-    "Quantity" numeric(12,3) NOT NULL,
+    "Quantity" numeric(14,4) NOT NULL,
     "Reason" character varying(300),
     "Date" date NOT NULL,
     "ReferenceType" character varying(100),

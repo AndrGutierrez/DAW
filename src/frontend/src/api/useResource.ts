@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { errorMessage } from './errors';
 import { useAuth } from '../auth/AuthContext';
 
@@ -20,5 +20,6 @@ export function useResource<T>(path: string, enabled = true, preserveOnReload = 
     }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [path, request, enabled, revision, preserveOnReload]);
-  return { data, loading, error, reload: () => setRevision(value => value + 1) };
+  const reload = useCallback(() => setRevision(value => value + 1), []);
+  return { data, loading, error, reload };
 }

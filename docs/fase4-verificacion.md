@@ -1,6 +1,6 @@
 # Verificación de los incrementos de Fase 4
 
-Fecha: 7 de octubre de 2026.
+Fecha: 7 y 8 de octubre de 2026.
 
 Se verificó la rama codex/phase4-cattle-spa en un entorno aislado. Los resultados cubren sesión persistente, consulta y edición del ganado, fotografías, crecimiento, pesaje consecutivo, sanidad, reproducción, retiro, producción por animal, ocupación de potreros, traslados y la interfaz de la finca. El [estado de implementación](fase4-estado.md) distingue estos recorridos de la entrega completa.
 
@@ -114,3 +114,17 @@ El escenario existente de creación/edición verifica que elegir lote conserva e
 La regresión completa creó 18 animales clínicos de prueba, identificados mediante su manifiesto. La limpieza comprobó propiedad y ausencia de descendientes externos antes de eliminarlos, conservando la demostración. Se verificaron cero fixtures clínicos, de potreros y de UI restantes. La suite de UI limpia sus animales y potreros por API.
 
 Después del ajuste final de contraste de los campos se repitió el escenario de colores en ambas resoluciones: dos casos aprobados. La comprobación también mide las ayudas de entrada (al menos 4.5:1) y los bordes de los controles seleccionados (al menos 3:1). Los resultados no sustituyen una auditoría completa de accesibilidad. El alcance y los límites están en [interfaz de la finca](fase4-ui.md).
+
+
+## Inventario, dashboard y reportes (7 y 8 de octubre, fecha local)
+
+- .NET: 109 pruebas UnitTests/Moq y 140 Core.Tests, 249 aprobadas. Incluyen precisión del saldo, insuficiencia, saldo obsoleto, reintentos, permisos, vínculos entre fincas, protección de referencias y rechazo de una exportación con más de 10.000 filas. La rotación no se calcula sobre el día incompleto de apertura.
+- Frontend: 41 pruebas Vitest aprobadas, TypeScript y build Vite correctos en Windows/Git Bash y Docker. El build avisa del chunk de ExcelJS cargado bajo demanda. npm audit del frontend: cero vulnerabilidades conocidas en el árbol instalado.
+- Playwright: 84 escenarios aprobados en una ejecución completa, escritorio y móvil, con PostgreSQL físico. Los siete escenarios nuevos por resolución cubren reintento tras perder la respuesta de un retiro, saldo obsoleto con conservación del formulario, dos retiros por el mismo saldo, permisos del empleado, edición de catálogos/límites y valoración, exportaciones clínicas/productivas y actualización del dashboard tras un minuto mediante reloj controlado.
+- Reanudación del 8 de octubre: 14 escenarios dirigidos de operaciones aprobados sobre las imágenes finales, después del ajuste de espaciado móvil. Se verificó el inventario cargado a 390 px sin desbordamiento horizontal. Las exportaciones se volvieron a descargar y validar.
+- Exportaciones: ocho archivos descargados (clínico/producción × XLSX/PDF × escritorio/móvil). Se verificaron fechas Excel tipadas, cantidades numéricas, filtros, inmovilización del encabezado, acentos y ausencia de fórmulas. Una observación que comienza con =SUM(A1:A2) permanece como texto. Se inspeccionaron las hojas mediante Artifact Tool y los PDF mediante extracción de texto y renderizado Poppler. Estas verificaciones usan datos de prueba; no equivalen a pruebas de carga o compatibilidad con todas las versiones de Excel.
+- Base: migración aplicada, StockMovements.Quantity con precisión 14/4, 43 tablas; esquema/ERD con 72 claves externas. Limpieza transaccional de 38 productos/categorías/inventarios, 58 movimientos y 42 animales de los escenarios de esta sesión, con manifiestos, comprobación de códigos/fechas y rechazo de descendientes externos. Cero animales P4 y productos P4-OPS restantes; DEMO-001 y DEMO-F4-AURORA conservados.
+
+La ejecución dirigida de la reanudación generó otros 14 productos/categorías/inventarios, 22 movimientos, dos animales, dos eventos sanitarios y dos registros de producción. Se retiraron mediante sus 14 manifiestos y comprobaciones de propiedad, junto con 92 registros de auditoría asociados. Se volvió a confirmar que no quedaran animales P4 ni productos P4-OPS y que los dos animales de demostración siguieran presentes.
+
+El alcance, fórmulas, supuestos y límites están en [operaciones](fase4-operaciones.md). No se modificó .github ni se publicó la rama. Falta la revisión final de entrega y evidencia académica.

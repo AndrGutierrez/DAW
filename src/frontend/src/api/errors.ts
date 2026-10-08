@@ -1,6 +1,17 @@
 import { ApiError } from '../auth/session';
 export type FieldErrors = Record<string, string>;
 const messages: Record<string, string> = {
+  "A farm with stock movements cannot be deleted. Deactivate it instead.": "Esta finca tiene movimientos de inventario y debe conservarse. Puedes desactivarla.",
+  "This animal has supply history. Deactivate it to preserve traceability.": "El animal tiene historial de insumos y debe conservarse. Puedes cambiar su estado.",
+  'The stock changed. Refresh the balance before recording a movement.': 'Otro usuario cambió el saldo. Actualiza el saldo y revisa la cantidad antes de registrar el movimiento.',
+  'The movement exceeds the available stock or storage limit.': 'La cantidad supera el saldo disponible o el límite de almacenamiento. Revisa la cantidad.',
+  'The farm or product is inactive.': 'La finca o el producto están inactivos. Revisa su estado antes de registrar movimientos.',
+  'Use a stock movement to change a traced balance.': 'Este saldo tiene historial. Registra una entrada o salida para modificarlo.',
+  'A traced inventory cannot be deleted. Deactivate the product instead.': 'Este inventario tiene movimientos y debe conservarse. Puedes desactivar el producto.',
+  'The submission identifier belongs to a different stock movement.': 'Este envío ya corresponde a otro movimiento. Actualiza el saldo antes de crear un nuevo registro.',
+  'The report exceeds 10000 records. Narrow the period or farm before exporting.': 'El reporte supera 10.000 registros. Reduce el período o selecciona una finca para exportarlo.',
+  'Choose a period of at most 367 days.': 'Selecciona un período de hasta 367 días.',
+
   'The paddock has reached its configured capacity.': 'El potrero alcanzó su capacidad máxima. Elige otro destino o libera espacio antes de trasladar el animal.',
   'The capacity cannot be lower than the current occupancy.': 'La capacidad no puede ser menor que la cantidad de animales activos presentes.',
   'An occupied paddock cannot be deactivated.': 'Traslada los animales activos antes de desactivar este potrero.',

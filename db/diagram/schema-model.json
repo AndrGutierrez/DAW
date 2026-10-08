@@ -1,6 +1,6 @@
 {
   "source": "db/schema.sql",
-  "sourceSha256": "0ba326dbae5917ecc85e955f581ce5fcf1546ec21888dbd358eda8ee8e61902c",
+  "sourceSha256": "43ec3472413256bd4ffbb61c1d483ad893e4b5c0b00586deba69a1c8b69a5e13",
   "tableCount": 43,
   "foreignKeyCount": 72,
   "modules": [
@@ -2310,9 +2310,9 @@
         },
         {
           "name": "Quantity",
-          "type": "numeric(12,3)",
+          "type": "numeric(14,4)",
           "nullable": false,
-          "definition": "numeric(12,3) NOT NULL"
+          "definition": "numeric(14,4) NOT NULL"
         },
         {
           "name": "Reason",

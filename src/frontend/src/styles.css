@@ -2807,3 +2807,42 @@ input::placeholder, textarea::placeholder {
   .side-panel td .button-row { flex-wrap: wrap; }
 }
 @media(prefers-reduced-motion:reduce) { .side-panel[open] { animation: none; } }
+
+/* Operational modules share the farm palette and bounded responsive grids. */
+.operations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 20px; margin: 20px 0; }
+.operations-grid .panel { margin: 0; min-width: 0; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin: 20px 0; }
+.metric-grid strong { display: block; font-size: 1.7rem; margin: 10px 0; overflow-wrap: anywhere; }
+.metric-grid span { color: var(--muted); font-size: .875rem; }
+.stock-value { display: block; font-size: 2rem; margin: 18px 0; }
+.stock-value small { font-size: 1rem; font-weight: 400; color: var(--muted); }
+.stock-low { color: var(--danger) !important; background: var(--danger-soft) !important; }
+.stock-high { color: var(--warning) !important; background: var(--warning-soft) !important; }
+.filter-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; margin: 22px 0; }
+.filter-bar .form-field { flex: 1; min-width: min(100%, 180px); }
+.module-tabs { margin: 20px 0; }
+.checkbox-label { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+.table-scroll { overflow-x: auto; max-width: 100%; }
+.table-scroll table { width: 100%; }
+.table-scroll td small { display: block; margin-top: 5px; }
+.report-notes { min-width: 180px; max-width: 360px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.analytics-chart { min-width: 0; }
+.analytics-chart .recharts-default-tooltip { background: var(--panel) !important; color: var(--text); border-color: var(--line) !important; }
+@media (max-width: 760px) {
+ .sidebar nav { grid-template-columns: repeat(4, minmax(0, 1fr)); display: grid; gap: 2px; }
+ .sidebar nav a { min-height: 52px; padding: 5px 2px; gap: 3px; font-size: .68rem; }
+ .app-main { padding-bottom: 145px; }
+ .filter-bar { display: grid; grid-template-columns: 1fr; }
+ .filter-bar .form-field { min-width: 0; }
+ .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+ .metric-grid strong { font-size: 1.35rem; }
+}
+
+.operations-page .panel { padding: 24px; margin: 22px 0; }
+.operations-page .operations-grid .panel, .operations-page .metric-grid .panel { margin: 0; }
+.operations-page .panel > h2 { margin-bottom: 12px; }
+.operations-page .stock-card > p.tag { display: inline-block; margin-bottom: 12px; }
+.operations-page .stock-card .button-row { margin-top: 18px; }
+.operations-page .stock-value small { display: inline; margin-left: 5px; }
+.operations-page .analytics-chart .form-field { margin-bottom: 20px; }
+@media (max-width: 760px) { .operations-page .panel { padding: 18px; } }

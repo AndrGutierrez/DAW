@@ -110,7 +110,7 @@ public sealed class StockMovementConfiguration : IEntityTypeConfiguration<StockM
         builder.HasKey(movement => movement.Id);
 
         builder.Property(movement => movement.Type).HasConversion<int>().IsRequired();
-        builder.Property(movement => movement.Quantity).HasPrecision(12, 3).IsRequired();
+        builder.Property(movement => movement.Quantity).HasPrecision(14, 4).IsRequired();
         builder.Property(movement => movement.Reason).HasMaxLength(300);
         builder.Property(movement => movement.ReferenceType).HasMaxLength(100);
 

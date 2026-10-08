@@ -1,6 +1,8 @@
 import type { SVGProps } from 'react';
 
 const paths = {
+  inventory: "M3 7l9-4 9 4v13H3V7Zm0 0 9 4 9-4m-9 4v9m-5-6h2",
+  report: "M6 3h9l4 4v14H6V3Zm9 0v5h4M9 12h7m-7 4h7",
   leaf: 'M20 4c-7-1-14 1-14 8a6 6 0 0 0 6 6c7 0 9-7 8-14ZM4 20l11-11',
   animal: 'M7 8 4 5H2v5l4 2m11-4 3-3h2v5l-4 2M8 6h8l2 6-2 8H8l-2-8 2-6Zm1 9h6m-5-4h.01m4 0h.01',
   scale: 'M5 8h14v12H5V8Zm3 0a4 4 0 0 1 8 0m-4 3 2-2m-5 5h6',

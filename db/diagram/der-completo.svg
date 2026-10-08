@@ -2187,7 +2187,7 @@
 <text xml:space="preserve" text-anchor="start" x="1193.83" y="-6604" font-family="Arial" font-size="9.00" fill="#758295">·</text>
 <text xml:space="preserve" text-anchor="start" x="1198.83" y="-6604" font-family="Arial" font-size="12.00"> &#160;Quantity</text>
 <polygon fill="#f8fafb" stroke="none" points="1310.06,-6593.4 1310.06,-6619.8 1383.75,-6619.8 1383.75,-6593.4 1310.06,-6593.4"/>
-<text xml:space="preserve" text-anchor="start" x="1316.06" y="-6602.6" font-family="Arial" font-size="10.00" fill="#637187">numeric(12,3)</text>
+<text xml:space="preserve" text-anchor="start" x="1316.06" y="-6602.6" font-family="Arial" font-size="10.00" fill="#637187">numeric(14,4)</text>
 <polygon fill="#ffffff" stroke="none" points="1187.83,-6567 1187.83,-6593.4 1310.06,-6593.4 1310.06,-6567 1187.83,-6567"/>
 <text xml:space="preserve" text-anchor="start" x="1193.83" y="-6577.6" font-family="Arial" font-size="9.00" fill="#758295">·</text>
 <text xml:space="preserve" text-anchor="start" x="1198.83" y="-6577.6" font-family="Arial" font-size="12.00"> &#160;Reason ?</text>

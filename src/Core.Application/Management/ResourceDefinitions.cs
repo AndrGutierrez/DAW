@@ -33,6 +33,10 @@ public abstract class ResourceDefinition<TEntity, TRequest>(IManagementRepositor
 
 public sealed class FarmDefinition(IManagementRepository r) : ResourceDefinition<Farm, FarmRequest>(r)
 {
+    public override async Task BeforeDeleteAsync(Farm e, CancellationToken ct)
+    {
+        Check(!await Repository.ExistsAsync<StockMovement>(m => m.FarmId == e.Id, ct), "A farm with stock movements cannot be deleted. Deactivate it instead.");
+    }
     public override Guid? FarmId(Farm e) => e.Id;
     public override Expression<Func<Farm, bool>> Scope(IReadOnlyCollection<Guid> ids) => e => ids.Contains(e.Id);
     public override FarmRequest Read(Farm e) => new(e.Name, e.Code, e.Address, e.Phone, e.Email, e.IsActive);
@@ -180,6 +184,11 @@ public sealed class ProductDefinition(IManagementRepository r) : ResourceDefinit
 
 public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefinition<FarmInventory, InventoryRequest>(r)
 {
+    private Task<bool> RepositoryHasHistory(FarmInventory e, CancellationToken ct) => Repository.ExistsAsync<StockMovement>(m => m.FarmId == e.FarmId && m.ProductId == e.ProductId && m.ReferenceType == "OpeningBalance", ct);
+    public override async Task BeforeDeleteAsync(FarmInventory e, CancellationToken ct)
+    {
+        if (await RepositoryHasHistory(e, ct)) throw new ConflictException("A traced inventory cannot be deleted. Deactivate the product instead.");
+    }
     public override Guid? FarmId(FarmInventory e) => e.FarmId;
     public override Guid? FarmId(InventoryRequest q) => q.FarmId;
     public override Expression<Func<FarmInventory, bool>> Scope(IReadOnlyCollection<Guid> ids) => e => ids.Contains(e.FarmId);
@@ -199,6 +208,8 @@ public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefin
         await Require<Farm>(q.FarmId, ct);
         Check((await Require<Product>(q.ProductId, ct)).IsActive, "The product is inactive.");
         Check(e.ProductId == Guid.Empty || e.ProductId == q.ProductId, "An inventory record cannot change product.");
+        if (e.ProductId != Guid.Empty && e.Stock != q.Stock && await RepositoryHasHistory(e, ct))
+            throw new ConflictException("Use a stock movement to change a traced balance.");
         await Unique<FarmInventory>(x => x.Id != e.Id && x.FarmId == q.FarmId && x.ProductId == q.ProductId, ct);
     }
 }
@@ -302,6 +313,7 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user,
 
     public override async Task BeforeDeleteAsync(Animal e, CancellationToken ct)
     {
+        Check(!await Repository.ExistsAsync<StockMovement>(m => m.FarmId == e.FarmId && m.ReferenceType == "Animal" && m.ReferenceId == e.Id, ct), "This animal has supply history. Deactivate it to preserve traceability.");
         Check(!await Repository.ExistsAsync<AnimalPhoto>(x => x.AnimalId == e.Id, ct), "Delete the animal photos before deleting the animal.");
         Check(!await Repository.ExistsAsync<HealthStatusChange>(x => x.AnimalId == e.Id, ct), "This animal has health history. Deactivate it to preserve traceability.");
     }
