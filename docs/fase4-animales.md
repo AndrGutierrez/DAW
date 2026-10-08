@@ -43,7 +43,9 @@ La API entrega como máximo 60 puntos diarios. Calcula también el intervalo ant
 
 Recharts presenta la curva de peso y la de GDP, tooltips y acceso mediante teclado. Los controles anterior/siguiente muestran la fecha, el peso y la GDP del punto seleccionado. La tabla permite revisar los registros que sustentan la curva. El peso al nacer se presenta como característica de la ficha y no se añade como un pesaje inventado.
 
-El aviso de bajo rendimiento requiere que el usuario defina un objetivo de GDP. No se inventa un umbral universal: su pertinencia depende del manejo y del animal. El objetivo de esta pantalla no se guarda todavía como política de finca y no produce alertas globales ni notificaciones en segundo plano.
+La ficha muestra automáticamente un aviso cuando el peso de su último punto diario es menor que el anterior, con cantidad perdida y fechas. Compara los pesos, incluso si una GDP muy pequeña se redondea a cero. No dispara el aviso con un solo punto ni lo mantiene cuando el último intervalo muestra recuperación.
+
+Para comparar una GDP positiva con lo esperado, el usuario define un objetivo explícito. No se inventa un umbral universal: su pertinencia depende del manejo y del animal. El objetivo de esta pantalla no se guarda todavía como política de finca y no produce alertas globales ni notificaciones en segundo plano. Si hay pérdida de peso, se muestra ese aviso específico sin duplicar el mensaje de objetivo.
 
 ## Registro individual y consecutivo
 

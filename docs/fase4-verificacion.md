@@ -139,3 +139,17 @@ El alcance, fórmulas, supuestos y límites están en [operaciones](fase4-operac
 - Limpieza: la suite nueva retiró sus animales sin historial mediante la API. Se retiraron además 14 productos/categorías/inventarios, 22 movimientos y 20 animales de operaciones/sanidad mediante los manifiestos de esta ejecución, con comprobaciones de propiedad y referencias externas; se eliminaron 226 auditorías asociadas. Cero animales P4 y productos P4-OPS restantes; DEMO-001 y DEMO-F4-AURORA conservados.
 
 No se cambió el backend, el esquema ni .github. Las suites .NET no se repitieron para este pulido exclusivo del frontend. El alcance y límites se explican en [pulido de UI](fase4-ui-pulido.md). Estos resultados no sustituyen una auditoría completa de accesibilidad ni el cierre académico de Fase 4.
+
+## Revisión de entrega: ubicación, alertas y curva diaria por lote
+
+El 8 de octubre de 2026 se corrigió Ubicación para reutilizar animal-details: padding de 26 px en escritorio y 20 px a 390 px. Se comprobó la apertura de traslado y ausencia de desbordamiento. No se cambió el padding global de los paneles.
+
+Se agregó aviso automático ante descenso del último peso diario frente al anterior, separado de objetivos positivos explícitos. La analítica incorporó series diarias de leche por finca/lote actuales, con IDs, litros y fechas; los días ausentes son huecos. Los selectores usan composición responsiva Tailwind y la tabla permite consultar los valores. Se ajustaron los mensajes de conflicto del catálogo y el máximo de 100 caracteres de categoría.
+
+- .NET: 122 UnitTests/Moq y 141 Core.Tests, **263 Passed**. Las nuevas pruebas de catálogo ejercen las implementaciones reales de Application y verifican éxitos, categorías inválidas, SKU duplicado, precios y unidad con inventario. Core.Tests prueba el nuevo contrato JSON, filtro de finca y lectura por IDs.
+- Cliente: TypeScript y build Vite/Docker aprobados; **43 pruebas Vitest Passed**.
+- Navegador: **10 pruebas dirigidas Passed** en desktop/mobile contra API y PostgreSQL físicos: curva diaria, pérdida de peso, objetivos, pestañas y legibilidad. Después del ajuste responsivo de selectores se repitió la curva: **2 Passed**. No se reejecutó la regresión completa anterior de 94 casos.
+- Cobertura: collector real, reportes separados de UnitTests y Core.Tests. Core.Application tiene 43,35 % de líneas en la suite aislada y 91,81 % en Core.Tests; no se suman los porcentajes ni se afirma 100 % global.
+- Fixtures: pesos/animales/lotes/producción de los nuevos casos se eliminaron por API; no se alteraron los animales de demostración. No se ejecutó seed ni migración en la instancia vigente.
+
+Se conservaron [TRX, salidas y cobertura completas comprimidas](evidence/phase4-audit/README.md), además de capturas de Ubicación y la curva diaria. La [auditoría](fase4-auditoria.md) diferencia lo que falta para entrega, las desviaciones acordadas y las ampliaciones de negocio.

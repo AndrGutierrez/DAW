@@ -1,0 +1,24 @@
+
+Running 10 tests using 1 worker
+
+  ok  1 [desktop] › e2e\analytics.spec.ts:20:1 › daily milk chart changes lot and preserves recorded totals and gaps (4.1s)
+  ok  2 [desktop] › e2e\livestock.spec.ts:120:1 › growth uses recorded weights, same-day selection and an explicit gain target (1.5s)
+  ok  3 [desktop] › e2e\livestock.spec.ts:297:1 › recorded weight loss warns automatically without a growth target (1.5s)
+  ok  4 [desktop] › e2e\ui.spec.ts:31:1 › text and semantic states remain readable in both themes (1.2s)
+  ok  5 [desktop] › e2e\ui.spec.ts:104:1 › record tabs show one panel, support keyboard and preserve entered values (1.2s)
+  ok  6 [mobile] › e2e\analytics.spec.ts:20:1 › daily milk chart changes lot and preserves recorded totals and gaps (1.5s)
+  ok  7 [mobile] › e2e\livestock.spec.ts:120:1 › growth uses recorded weights, same-day selection and an explicit gain target (1.3s)
+  ok  8 [mobile] › e2e\livestock.spec.ts:297:1 › recorded weight loss warns automatically without a growth target (1.5s)
+  ok  9 [mobile] › e2e\ui.spec.ts:31:1 › text and semantic states remain readable in both themes (1.0s)
+  ok 10 [mobile] › e2e\ui.spec.ts:104:1 › record tabs show one panel, support keyboard and preserve entered values (1.1s)
+
+  10 passed (17.7s)
+
+Comprobación después del ajuste Tailwind:
+
+Running 2 tests using 1 worker
+
+  ok 1 [desktop] › e2e\analytics.spec.ts:20:1 › daily milk chart changes lot and preserves recorded totals and gaps (1.4s)
+  ok 2 [mobile] › e2e\analytics.spec.ts:20:1 › daily milk chart changes lot and preserves recorded totals and gaps (1.4s)
+
+  2 passed (4.2s)

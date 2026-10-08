@@ -31,6 +31,7 @@ Se amplió StockMovements.Quantity de numeric(12,3) a numeric(14,4) mediante 202
 | Historia suficiente | El saldo inicial debe ser anterior al primer día del período, cubrirlo y reconciliar con el saldo actual. Su propio día puede estar incompleto. Ajustes no interpretables, saldo medio cero o inconsistencia devuelven null |
 | Leche | Solamente cantidades Milk/Liter. Las unidades incompatibles se excluyen y se informa su número |
 | Leche por lote | Agrupa a los animales por su finca y lote actuales. No atribuye ordeños pasados a una ubicación histórica que no está persistida |
+| Curva diaria por lote | Series separadas por FarmId/LotId, con suma diaria exacta en litros y conteo de registros. Selector de lote, gráfico y tabla. Días sin registro se representan con null, no con cero ni interpolación entre huecos |
 | Peso por edad | Último pesaje de cada bovino BO en el período, desempate por CreatedAt/Id y edad en la fecha del pesaje; fecha de nacimiento desconocida/inválida excluida con conteo visible |
 | Diagnósticos positivos | Positivos / (positivos + negativos). Los inciertos se muestran y excluyen del denominador; cero concluyentes produce null. No es tasa de concepción por servicio |
 | Partos | Partos registrados, crías vivas = OffspringCount − StillbornCount y mortinatos del período |
@@ -47,4 +48,4 @@ Referencias técnicas: [ExcelJS](https://github.com/exceljs/exceljs), [jsPDF](ht
 
 ## Verificación y entrega
 
-Los resultados ejecutados están en fase4-verificacion.md. InMemory verifica autorización y contratos HTTP; la carrera por el saldo y la idempotencia tras perder la respuesta se ejecutan sobre PostgreSQL físico. No se ha medido rendimiento con el límite de 10.000 filas ni cobertura porcentual. El avance funcional no equivale al cierre de la entrega: quedan revisión final de rúbrica, evidencia seleccionada, recorrido de demostración y defensa/quiz.
+Los resultados ejecutados están en fase4-verificacion.md. InMemory verifica autorización y contratos HTTP; la carrera por el saldo y la idempotencia tras perder la respuesta se ejecutan sobre PostgreSQL físico. No se ha medido rendimiento con el límite de 10.000 filas. La revisión posterior midió cobertura y seleccionó [reportes reales](evidence/phase4-audit/README.md). La [auditoría](fase4-auditoria.md) identifica las brechas restantes y prepara el recorrido. El avance funcional no equivale al cierre de la entrega: quedan publicación, ensayo y defensa/quiz.

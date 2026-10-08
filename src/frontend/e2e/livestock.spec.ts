@@ -292,3 +292,30 @@ test('weight history requests the next page from the server and preserves the GD
   await expect(page.getByRole('button', { name: 'GDP', exact: true })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#growth').getByText('Página 2 de 2')).toBeVisible();
 });
+
+
+test('recorded weight loss warns automatically without a growth target', async ({ page, request }) => {
+  const id = await create(request, 'LOSS');
+  const record = async (date: string, weightKg: number) => {
+    expect((await request.post('/api/weights', { headers, data: { farmId, animalId: id, date, weightKg } })).status()).toBe(201);
+  };
+  await record('2026-01-01', 100);
+  await login(page); await page.goto('/animals/' + id + '?tab=growth');
+  await expect(page.getByRole('table', { name: 'Historial completo de pesajes' })).toBeVisible();
+  await expect(page.getByText('Descenso de peso detectado', { exact: true })).not.toBeVisible();
+  await record('2026-01-11', 90);
+  await page.reload();
+  await expect(page.getByLabel('Objetivo de GDP (kg/día)')).toHaveValue('');
+  const notice = page.getByRole('status').filter({ hasText: 'Descenso de peso detectado' });
+  await expect(notice).toBeVisible();
+  await expect(notice).toContainText('10 kg');
+  await expect(notice).toContainText('1/1/2026');
+  await expect(notice).toContainText('11/1/2026');
+  await page.getByLabel('Objetivo de GDP (kg/día)').fill('2');
+  await expect(page.getByText(/La última GDP está por debajo/)).not.toBeVisible();
+  await record('2026-01-21', 105);
+  await page.reload();
+  await expect(page.getByRole('table', { name: 'Historial completo de pesajes' }).getByRole('row')).toHaveCount(4);
+  await expect(page.getByText('Descenso de peso detectado', { exact: true })).not.toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+});

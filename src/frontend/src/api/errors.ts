@@ -1,6 +1,10 @@
 import { ApiError } from '../auth/session';
 export type FieldErrors = Record<string, string>;
 const messages: Record<string, string> = {
+  'A Product with the same identifying value already exists.': 'Ya existe un producto con ese código SKU. Revisa el código antes de guardar.',
+  'A InventoryCategory with the same identifying value already exists.': 'Ya existe una categoría con ese nombre. Revisa el nombre antes de guardar.',
+  'The category is inactive.': 'Selecciona una categoría activa para este producto.',
+  'A stocked product cannot change its measurement unit.': 'El producto tiene inventario. Conserva su unidad para mantener coherentes los saldos y movimientos.',
   "A farm with stock movements cannot be deleted. Deactivate it instead.": "Esta finca tiene movimientos de inventario y debe conservarse. Puedes desactivarla.",
   "This animal has supply history. Deactivate it to preserve traceability.": "El animal tiene historial de insumos y debe conservarse. Puedes cambiar su estado.",
   'The stock changed. Refresh the balance before recording a movement.': 'Otro usuario cambió el saldo. Actualiza el saldo y revisa la cantidad antes de registrar el movimiento.',

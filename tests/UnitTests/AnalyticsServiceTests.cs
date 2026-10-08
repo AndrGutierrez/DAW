@@ -34,6 +34,35 @@ public sealed class AnalyticsServiceTests
         Assert.Equal(10, Assert.Single(result.MilkByDay).Value); Assert.Equal(1, result.ExcludedMilk);
     }
     [Fact]
+    public void DailyMilkKeepsFarmAndLotIdentitiesEvenWhenNamesMatch()
+    {
+        var farmA = Guid.Parse("10000000-0000-0000-0000-000000000001");
+        var farmB = Guid.Parse("10000000-0000-0000-0000-000000000002");
+        var lot = Guid.Parse("20000000-0000-0000-0000-000000000001");
+        var day = new DateOnly(2026, 1, 10);
+        var result = AnalyticsService.Calculate(new(day, day.AddDays(2)), Inputs with { Milk = [
+            new(day, "Farm · Lot", 1.234m, MeasurementUnit.Liter, farmA, lot),
+            new(day, "Farm · Lot", 2.111m, MeasurementUnit.Liter, farmA, lot),
+            new(day.AddDays(2), "Farm · Lot", 4m, MeasurementUnit.Liter, farmA, lot),
+            new(day, "Farm · Lot", 99m, MeasurementUnit.Kilogram, farmA, lot),
+            new(day, "Farm · Lot", 8m, MeasurementUnit.Liter, farmB, lot),
+            new(day, "Farm · Sin lote actual", 3m, MeasurementUnit.Liter, farmA)
+        ] });
+        Assert.Equal(3, result.MilkByDayAndCurrentLot.Count);
+        var series = result.MilkByDayAndCurrentLot.Single(s => s.FarmId == farmA && s.LotId == lot);
+        Assert.Equal(["2026-01-10", "2026-01-12"], series.Points.Select(p => p.Label).ToArray());
+        Assert.Equal(3.345m, series.Points[0].Value);
+        Assert.Equal(2, series.Points[0].Count);
+        Assert.Equal(4m, series.Points[1].Value);
+        Assert.Equal(8m, Assert.Single(result.MilkByDayAndCurrentLot.Single(s => s.FarmId == farmB).Points).Value);
+        Assert.Equal(1, result.ExcludedMilk);
+    }
+    [Fact]
+    public void MissingMilkHasNoInventedDailyLotSeries()
+    {
+        Assert.Empty(AnalyticsService.Calculate(Period, Inputs).MilkByDayAndCurrentLot);
+    }
+    [Fact]
     public void DiagnosticProportionUsesOnlyConclusiveChecks()
     {
         var result = AnalyticsService.Calculate(Period, Inputs with { Checks = [new() { Result = PregnancyResult.Positive }, new() { Result = PregnancyResult.Negative }, new() { Result = PregnancyResult.Uncertain }] });

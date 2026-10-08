@@ -16,11 +16,12 @@ public sealed record ReportResult(CarePage<ReportRow> Records, DateTime Generate
 public sealed record Valuation(string Category, decimal Cost, decimal ReferenceValue);
 public sealed record StockMetric(Guid Id, string Farm, string Product, MeasurementUnit Unit, decimal Stock, decimal Min, decimal Max, decimal Outflow, decimal? Rotation, DateOnly? HistorySince);
 public sealed record SeriesPoint(string Label, decimal Value, int Count);
+public sealed record DailyLotSeries(Guid FarmId, Guid? LotId, string Label, IReadOnlyList<SeriesPoint> Points);
 public sealed record AnalyticsResult(DateTime GeneratedAt, DateOnly From, DateOnly To, decimal Cost, decimal ReferenceValue,
     int Critical, int Excess, IReadOnlyList<Valuation> Categories, IReadOnlyList<StockMetric> Stock,
     IReadOnlyList<SeriesPoint> MilkByDay, IReadOnlyList<SeriesPoint> MilkByCurrentLot, int ExcludedMilk,
     IReadOnlyList<SeriesPoint> WeightByAge, int ExcludedWeights, int PositiveChecks, int NegativeChecks, int UncertainChecks,
-    decimal? PositiveCheckPercent, int Calvings, int LiveBirths, int Stillbirths);
+    decimal? PositiveCheckPercent, int Calvings, int LiveBirths, int Stillbirths, IReadOnlyList<DailyLotSeries> MilkByDayAndCurrentLot);
 public interface IOperationsReader
 {
     Task<CarePage<InventoryRow>> InventoryAsync(InventoryQuery query, IReadOnlyCollection<Guid> farms, CancellationToken ct);
@@ -29,7 +30,7 @@ public interface IOperationsReader
     Task<ReportResult> ReportAsync(ReportQuery query, bool clinical, IReadOnlyCollection<Guid> farms, CancellationToken ct);
 }
 public sealed record InventoryInput(Guid Id, Guid FarmId, Guid ProductId, string Farm, string Product, string Category, MeasurementUnit Unit, decimal Stock, decimal Min, decimal Max, decimal Cost, decimal Price);
-public sealed record MilkInput(DateOnly Date, string CurrentLot, decimal Quantity, MeasurementUnit Unit);
+public sealed record MilkInput(DateOnly Date, string CurrentLot, decimal Quantity, MeasurementUnit Unit, Guid FarmId = default, Guid? CurrentLotId = null);
 public sealed record WeightInput(Guid AnimalId, Guid Id, DateTime CreatedAt, DateOnly Date, DateOnly? BirthDate, decimal WeightKg);
 public sealed record AnalyticsInputs(IReadOnlyList<InventoryInput> Inventory, IReadOnlyList<StockMovement> Movements, IReadOnlyList<MilkInput> Milk,
     IReadOnlyList<WeightInput> Weights, IReadOnlyList<PregnancyCheck> Checks, IReadOnlyList<Calving> Calvings);

@@ -39,7 +39,7 @@ public sealed class OperationsReader(AppDbContext db) : IOperationsReader
         var inventory = await db.FarmInventory.AsNoTracking().Where(i => ids.Contains(i.FarmId)).Select(i => new InventoryInput(i.Id, i.FarmId, i.ProductId, i.Farm.Name, i.Product.Name, i.Product.InventoryCategory.Name, i.Product.Unit, i.Stock, i.MinStock, i.MaxStock, i.Product.CostPrice, i.Product.Price)).ToListAsync(ct);
         var movements = await db.StockMovements.AsNoTracking().Where(m => ids.Contains(m.FarmId)).ToListAsync(ct);
         var milk = await db.AnimalProduction.AsNoTracking().Where(p => ids.Contains(p.FarmId) && p.Animal.FarmId == p.FarmId && p.Date >= q.From && p.Date <= q.To && p.ProductType == AnimalProductType.Milk)
-            .Select(p => new MilkInput(p.Date, p.Farm.Name + " · " + (p.Animal.Lot == null ? "Sin lote actual" : p.Animal.Lot.Name), p.Quantity, p.Unit)).ToListAsync(ct);
+            .Select(p => new MilkInput(p.Date, p.Farm.Name + " · " + (p.Animal.Lot == null ? "Sin lote actual" : p.Animal.Lot.Name), p.Quantity, p.Unit, p.FarmId, p.Animal.LotId)).ToListAsync(ct);
         var weights = await db.WeightRecords.AsNoTracking().Where(w => ids.Contains(w.FarmId) && w.Animal.FarmId == w.FarmId && w.Animal.Species.Code == "BO" && w.Date >= q.From && w.Date <= q.To)
             .Select(w => new WeightInput(w.AnimalId, w.Id, w.CreatedAt, w.Date, w.Animal.BirthDate, w.WeightKg)).ToListAsync(ct);
         var checks = await db.ReproductiveEvents.OfType<PregnancyCheck>().AsNoTracking().Where(c => ids.Contains(c.FarmId) && c.Dam.FarmId == c.FarmId && c.Date >= q.From && c.Date <= q.To).ToListAsync(ct);
