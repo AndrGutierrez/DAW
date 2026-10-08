@@ -1,0 +1,81 @@
+{
+  "checkedAt": "2026-10-08T19:54:08.415Z",
+  "sources": [
+    {
+      "source": "Fase 1\\01_Material_Lectura_Teoria_Fase1.docx",
+      "sha256": "ffdf646fa7bdd057d3d40d66828f811ad30a670faec7a3fa41aec20f37df1182"
+    },
+    {
+      "source": "Fase 1\\02_Guia_Laboratorio_LiveCoding_Fase1.docx",
+      "sha256": "ab6d395bfdff36dce942b45ede19f7e1667f6edb533dcfbdc2f69ccd459442a3"
+    },
+    {
+      "source": "Fase 1\\03_Tarea_Asignacion_Fase1_y_Rubrica.docx",
+      "sha256": "aa8653e9b847e7557a942a767533c4d9be4285feecabb1cad0c7fc34678d1462"
+    },
+    {
+      "source": "Fase 1\\DAW-0423807T Fase 1 v.2.pdf",
+      "sha256": "d78a0eee614b91677d03bae8683a0a3d64613968f336b3acecea270177b9c418"
+    },
+    {
+      "source": "Fase 1\\Material_Complementario_Fase1.docx",
+      "sha256": "d07b2b1b961373f4ffc87b9c4089d2c63b3622a1b32ff597dbc2dd128b115432"
+    },
+    {
+      "source": "Fase 2\\01_Material_Lectura_Teoria_Fase2.docx",
+      "sha256": "2514e66ac13342e5cba370630fd785eaaf6d05ccce27a4ee16a90408ab51092d"
+    },
+    {
+      "source": "Fase 2\\03_Tarea_Asignacion_Fase2_y_Rubrica.docx",
+      "sha256": "f6de1a8eb0c46f366e726242f825611f9e6fa59f950853ad735376f2d980a4a9"
+    },
+    {
+      "source": "Fase 2\\DAW-0423807T Fase 2.pdf",
+      "sha256": "37dad2668c1f28e6e72829eba45555b6cea6dc082e20bffe68277fdc02ea00b2"
+    },
+    {
+      "source": "Fase 3\\03_Tarea_Asignacion_Fase3_y_Rubrica.docx",
+      "sha256": "67546cebc9d0ba1a0b367de3ee03989b34797ef3b8a5b694a43fc296fd7c6ba9"
+    },
+    {
+      "source": "Fase 3\\DAW-0423807T Fase 3.pdf",
+      "sha256": "df5fd5a96a341fc179d1788c6b20b373f242c57582f643c7a266688439aaeba6"
+    },
+    {
+      "source": "Fase 4\\01_Material_Lectura_Teoria_Fase4.docx",
+      "sha256": "e478762fb6775f2015fd372f4df4182a1409660d6cd7eeefcd32ead99f064397"
+    },
+    {
+      "source": "Fase 4\\02_Guia_Laboratorio_LiveCoding_Fase4.docx",
+      "sha256": "f53149522730f97e8e14e09f8699d18c363f7a6bb2d16816ba922be725b0ef80"
+    },
+    {
+      "source": "Fase 4\\03_Tarea_Asignacion_Fase4_y_Rubrica.docx",
+      "sha256": "3c6d21574f75d27ea6c243bad9e68e50fa6a7c8a2a8ddeb29bc958fa513ffa88"
+    },
+    {
+      "source": "Fase 4\\DAW-0423807T Fase 4.pdf",
+      "sha256": "abd97201094fc10ca110a7dcbc934d0e1fa88556450061c3fba862a8f34d7e8e"
+    },
+    {
+      "source": "Fase 4\\Instrucciones y Evaluación 09 Octubre .docx",
+      "sha256": "73c03318f4bffc9bc8cec4d093348822acaa40f43935e8330d7f58aad2b68532"
+    },
+    {
+      "source": "Programa Analítico y Metodología .docx",
+      "sha256": "555c77d80e46f075adf31eaacffb3921681a8e1e99bd87c14006f010b96d4f7f"
+    },
+    {
+      "source": "Sistema de Evaluación y Rubricas.docx",
+      "sha256": "644e2c2ac238388442f356035c7a394fbbc66c7f989a23335cce04a2f4a4044b"
+    }
+  ],
+  "professorPage": {
+    "url": "https://gramirezsunet.github.io/desarrolloAplicacionesWeb/REAF-F4/",
+    "sha256": "88cc00711fc647aeb44ddf5c655375dc63908f83606167e79d43529908aff56c"
+  },
+  "quiz": {
+    "source": "Quiz Fase 4.pdf",
+    "sha256": "83bdd6e86e8c106e9479e5397344e150b18fd6cb7d61a86bb6f0071a7b2612f6"
+  }
+}

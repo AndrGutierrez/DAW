@@ -1,5 +1,8 @@
 # Preparación de la evaluación del 9 de octubre de 2026
 
+> Actualización posterior: consultar la [auditoría integral](fase4-auditoria-integral.md) y la [evidencia de UI/testing/rendimiento](evidence/phase4-ui-quality/README.md). Incorporan Classroom y el quiz, 107 pruebas frontend, distribución de pesos y los conteos/coberturas actuales. Los resultados de este documento se conservan como evidencia de la revisión anterior.
+
+
 ## Fuente vigente
 
 Se leyó completo el documento del profesor **Instrucciones y Evaluación 09 Octubre .docx**, incluyendo su tabla de evaluación. Ubicación local: Documentos/Universidad/Desarrollo de Aplicaciones Web/Fase 4. No se copia el archivo del profesor al repositorio.

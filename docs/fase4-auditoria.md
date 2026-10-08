@@ -1,5 +1,8 @@
 # Auditoría de entrega de Fase 4
 
+> Actualización posterior: consultar la [auditoría integral](fase4-auditoria-integral.md) y la [evidencia de UI/testing/rendimiento](evidence/phase4-ui-quality/README.md). Incorporan Classroom y el quiz, 107 pruebas frontend, distribución de pesos y los conteos/coberturas actuales. Los resultados de este documento se conservan como evidencia de la revisión anterior.
+
+
 Fecha de revisión: 8 de octubre de 2026. Este documento contrasta la implementación con las fuentes; no asigna una calificación ni declara cerrada la entrega.
 
 ## Fuentes y prioridad

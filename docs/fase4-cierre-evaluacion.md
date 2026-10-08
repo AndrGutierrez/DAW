@@ -1,5 +1,8 @@
 # Cierre técnico de la evaluación de Fase 4
 
+> Actualización posterior: consultar la [auditoría integral](fase4-auditoria-integral.md) y la [evidencia de UI/testing/rendimiento](evidence/phase4-ui-quality/README.md). Incorporan Classroom y el quiz, 107 pruebas frontend, distribución de pesos y los conteos/coberturas actuales. Los resultados de este documento se conservan como evidencia de la revisión anterior.
+
+
 Revisión del 8 de octubre de 2026. Fuentes: [REAF-F4](https://gramirezsunet.github.io/desarrolloAplicacionesWeb/REAF-F4/), su checklist transversal y Grupo 3, y el documento **Instrucciones y Evaluación 09 Octubre .docx**. El instrumento vigente tiene cuatro criterios de 10 puntos; la [guía de defensa](fase4-evaluacion-09-octubre.md) los relaciona con la implementación. Esta revisión no asigna una nota ni sustituye la sustentación.
 
 ## Indicadores reproductivos defendibles

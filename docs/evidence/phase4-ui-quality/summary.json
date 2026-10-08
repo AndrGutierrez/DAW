@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-08",
+  "unitTests": {
+    "passed": 236,
+    "skipped": 0,
+    "failed": 0
+  },
+  "integrationTests": {
+    "passed": 156,
+    "skipped": 0,
+    "failed": 0
+  },
+  "vitest": {
+    "passed": 107,
+    "failed": 0
+  },
+  "playwright": {
+    "passed": 127,
+    "skipped": 1,
+    "failed": 0
+  },
+  "accessibility": {
+    "checks": 44,
+    "detectedViolations": 0
+  },
+  "frontendCoverage": {
+    "lines": {
+      "total": 1192,
+      "covered": 435,
+      "skipped": 0,
+      "pct": 36.49
+    },
+    "statements": {
+      "total": 2201,
+      "covered": 628,
+      "skipped": 0,
+      "pct": 28.53
+    },
+    "functions": {
+      "total": 672,
+      "covered": 164,
+      "skipped": 0,
+      "pct": 24.4
+    },
+    "branches": {
+      "total": 2475,
+      "covered": 540,
+      "skipped": 0,
+      "pct": 21.81
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "applicationCoverage": {
+    "unit": {
+      "lines": 68.05,
+      "branches": 67.32
+    },
+    "integration": {
+      "lines": 88.5,
+      "branches": 57.8
+    }
+  },
+  "localPerformance": {
+    "desktop": {
+      "vitals": [
+        {
+          "name": "TTFB",
+          "value": 2.099999997764826,
+          "rating": "good",
+          "unit": "ms"
+        },
+        {
+          "name": "FCP",
+          "value": 32,
+          "rating": "good",
+          "unit": "ms"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "unit": ""
+        },
+        {
+          "name": "LCP",
+          "value": 96,
+          "rating": "good",
+          "unit": "ms"
+        },
+        {
+          "name": "INP",
+          "value": 16,
+          "rating": "good",
+          "unit": "ms"
+        }
+      ],
+      "httpP75": 17.4,
+      "dataP75": 17.8
+    },
+    "mobile": {
+      "vitals": [
+        {
+          "name": "TTFB",
+          "value": 2.199999999254942,
+          "rating": "good",
+          "unit": "ms"
+        },
+        {
+          "name": "FCP",
+          "value": 56,
+          "rating": "good",
+          "unit": "ms"
+        },
+        {
+          "name": "CLS",
+          "value": 0,
+          "rating": "good",
+          "unit": ""
+        },
+        {
+          "name": "LCP",
+          "value": 108,
+          "rating": "good",
+          "unit": "ms"
+        },
+        {
+          "name": "INP",
+          "value": 16,
+          "rating": "good",
+          "unit": "ms"
+        }
+      ],
+      "httpP75": 17,
+      "dataP75": 18.6
+    }
+  },
+  "scope": "Local production build, isolated PostgreSQL; not a field population percentile",
+  "implementationRevision": "a57f8c6758951e54da3a605eaad103fd0805ed20"
+}

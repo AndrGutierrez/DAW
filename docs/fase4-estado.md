@@ -1,5 +1,8 @@
 # Estado de implementación de Fase 4
 
+> Actualización posterior: consultar la [auditoría integral](fase4-auditoria-integral.md) y la [evidencia de UI/testing/rendimiento](evidence/phase4-ui-quality/README.md). Incorporan Classroom y el quiz, 107 pruebas frontend, distribución de pesos y los conteos/coberturas actuales. Los resultados de este documento se conservan como evidencia de la revisión anterior.
+
+
 La rama codex/phase4-cattle-spa incorpora SPA, sesión persistente, gestión del animal, sanidad/reproducción/producción, pesaje, potreros y traslados, inventario, dashboard, reportes y **gestión administrativa de usuarios**. La revisión del 8 de octubre completa objetivos GDP, avisos generales, plano espacial/permanencia, primer arranque automático, cohortes reproductivas, actualización entre sesiones y referencia USD/Bs fechada.
 
 El [instrumento nuevo para el 9 de octubre](fase4-evaluacion-09-octubre.md) declara **40 puntos en cuatro criterios de 10**. La rúbrica anterior de 80 puntos se conserva como referencia histórica, sin sustituir la evaluación publicada por el profesor.

@@ -12,13 +12,13 @@ La raíz del sitio y el login directo llevan al administrador con permisos al da
 
 El dashboard prioriza leche registrada, bovinos con pesaje comparable, preñez en hembras evaluadas y existencias críticas. Cada tarjeta declara su alcance y permite continuar una operación. El filtro de finca/período se conserva al abrir el reporte de producción; inventario y valoración muestran el saldo actual.
 
-![Dashboard ganadero: resumen, filtros y seguimiento](docs/screenshots/dashboard-phase4-evaluation-light.png)
+![Dashboard ganadero: resumen, filtros y seguimiento](docs/screenshots/dashboard-phase4-quality-light.png)
 
 El acceso incluye mostrar/ocultar contraseña, validación por campo y avisos que explican qué hacer. La fuente Source Sans 3 se sirve localmente; tema y colores comparten tokens semánticos.
 
 ![Acceso a la finca en tema claro](docs/screenshots/login-light.png)
 
-[Dashboard en tema oscuro](docs/screenshots/dashboard-dark.png) y [recorrido de dashboard móvil](docs/screenshots/dashboard-mobile.png): mismas operaciones y datos, con tarjetas en columna y navegación adaptada. Son capturas del entorno de demostración, no cifras de una finca real.
+[Dashboard en tema oscuro](docs/screenshots/dashboard-phase4-quality-dark.png) y [recorrido de dashboard móvil](docs/screenshots/dashboard-phase4-quality-mobile.png): mismas operaciones y datos, con tarjetas en columna y navegación adaptada. Son capturas del entorno de demostración, no cifras de una finca real.
 
 ## Iniciar con Docker Desktop
 
@@ -122,7 +122,9 @@ La [guía de evaluación vigente](docs/fase4-evaluacion-09-octubre.md) relaciona
 
 Usuarios permite crear/editar cuentas, asignar roles/fincas/permisos adicionales, desactivar y restablecer contraseñas con revocación inmediata de sesiones. Seguimiento guarda objetivos de GDP por finca o animal y presenta avisos calculados. Potreros incluye un plano esquemático configurable con señales de capacidad y permanencia. Las [decisiones de usuarios](docs/fase4-usuarios.md), [crecimiento](docs/fase4-animales.md) y [potreros](docs/fase4-potreros.md) explican sus límites.
 
-El [cierre de evaluación](docs/fase4-cierre-evaluacion.md) documenta la preñez/fertilidad observadas, actualización por SSE y valoración USD/Bs con referencia fechada de ingreso manual. 235 UnitTests, 156 Core.Tests y 65 Vitest aprobadas; 16/16 recorridos actuales sobre PostgreSQL y 30 solicitudes/44 assertions Newman.
+El [cierre de evaluación](docs/fase4-cierre-evaluacion.md) documenta la preñez/fertilidad observadas, actualización por SSE y valoración USD/Bs con referencia fechada de ingreso manual. La [auditoría integral](docs/fase4-auditoria-integral.md) incorpora Classroom, los documentos de la materia y el quiz: 236 UnitTests, 156 Core.Tests, 107 Vitest y 127 recorridos Playwright aprobados (una omisión exclusiva móvil), con [cobertura y accesibilidad medidas](docs/evidence/phase4-ui-quality/README.md). Los reportes Newman anteriores mantienen su fecha y alcance.
+
+Mi cuenta → **Ver rendimiento de la aplicación** permite a Admin revisar LCP, INP, CLS, FCP, TTFB y tiempos HTTP/de carga de datos sin guardar credenciales. El dashboard incluye distribución real de pesos por edad; los formularios validan límites y geometría antes del envío. La paleta usa superficies neutras y colores semánticos en ambos temas.
 
 La colección [Fase 4](postman/Phase4.postman_collection.json) verifica cuentas, revocación, objetivos, plano y sesión del navegador con cookie/CSRF. Usar el entorno de demostración, configurar secretos localmente y no exportarlos al repositorio.
 
