@@ -16,8 +16,8 @@ La teoría menciona JWT en localStorage; el checklist web permite memoria o cook
 | --- | --- | --- |
 | SPA React/Vite/Tailwind, 20 puntos | src/frontend desacoplado; rutas y componentes React/TypeScript, carga diferida y peticiones JSON. Tailwind compila y compone los controles de la curva diaria con grid-cols-1/md:grid-cols-2 y overflow-x-auto; el sistema visual también usa CSS y tokens compartidos | El estilo no se construye exclusivamente con utilidades. La prueba de pesaje sin navegación pertenece a la regresión completa anterior |
 | Context API/sesión/tema, 20 puntos | AuthContext y ThemeContext; renovación de sesión, permisos, temas y preferencia local persistida. JWT Bearer enviado por un único cliente | Los datos del usuario se obtienen de la sesión validada en la API; no se decodifica el JWT para confiar en sus permisos en React. La persistencia se apoya en refresh cookie; la paleta sustituye Azul UNET |
-| Dashboard KPI, 15 puntos | Costo y valor de referencia, mínimos/máximos, rotación con historial trazable, gráficos/tablas, leche diaria por lote, peso por edad y diagnósticos | USD es una convención de referencia, no moneda histórica persistida. No hay conversión BCV. La actualización visible es por consultas cada 60 segundos |
-| xUnit/Moq, 15 puntos | 153 pruebas aisladas en tests/UnitTests con referencia a Core.Application. ProductCatalogServiceTests ejerce CrudService<Product, ProductRequest>, ProductDefinition y ProductRequestValidator contra IManagementRepository simulado | Son los equivalentes del ProductService/IProductRepository del ejemplo, sin clases artificiales creadas solo para imitar nombres. Reporte Passed y cobertura real adjuntos; no se afirma 100 % |
+| Dashboard KPI, 15 puntos | Costo y valor de referencia, mínimos/máximos, rotación con historial trazable, gráficos/tablas, leche diaria por lote, peso por edad y diagnósticos | USD es una convención de referencia, no moneda histórica persistida. Conversión USD/Bs con referencia fechada de ingreso manual desde BCV. SSE entre sesiones y respaldo de 60 segundos; broker de una instancia API |
+| xUnit/Moq, 15 puntos | 235 pruebas aisladas en tests/UnitTests con referencia a Core.Application. ProductCatalogServiceTests ejerce CrudService<Product, ProductRequest>, ProductDefinition y ProductRequestValidator contra IManagementRepository simulado | Son los equivalentes del ProductService/IProductRepository del ejemplo, sin clases artificiales creadas solo para imitar nombres. Reporte Passed y cobertura real adjuntos; no se afirma 100 % |
 | Integración/RBAC/errores, 10 puntos | API .NET 10, PostgreSQL 15 y Nginx; guards y permisos tanto en UI como API; RFC 7807, validaciones, conservación de valores y reintentos idempotentes | Core.Tests usa pipeline HTTP y EF InMemory; las pruebas Playwright dirigidas consumen la API y PostgreSQL físicos. Son evidencias distintas |
 
 ## Checklist transversal
@@ -31,7 +31,7 @@ La teoría menciona JWT en localStorage; el checklist web permite memoria o cook
 | Búsqueda/paginación | Animales, candidatos, productos, existencias e historiales se paginan en el servidor. Catálogos pequeños y tablas analíticas agregadas tienen un tratamiento distinto |
 | Responsividad | Ubicación comprobada a 390/1365 px y curva diaria en proyectos desktop/mobile; sin desbordamiento horizontal. No es una certificación de todos los navegadores |
 | Cargas | Skeletons/estados y carga diferida de gráficos, búsqueda y exportadores |
-| Moneda/decimales | USD de referencia con dos decimales; cantidades con su precisión. No se implementa cambio oficial ni se inventa tasa |
+| Moneda/decimales | USD/Bs con dos decimales; referencia fechada BCV registrada manualmente con seis decimales, fuente y fecha visibles. Sin tasa configurada Bs queda deshabilitado; no se afirma verificación automática |
 | Docker | Compose levanta PostgreSQL/API/Nginx. initialize aplica --seed antes de iniciar API; docker compose up --build -d --wait se comprobó con un volumen vacío aislado |
 | Defensa E2E | Evidencia seleccionada y recorrido propuesto abajo. Falta ensayo presencial y, si se exige video, su grabación |
 
@@ -43,15 +43,15 @@ La teoría menciona JWT en localStorage; el checklist web permite memoria o cook
 - Potreros: tarjetas interactivas, capacidad, densidad, residentes y días desde entrada conocida. El panel lateral resuelve detalle y traslado. El plano configura posiciones/tamaños por finca, con relleno por capacidad y borde según permanencia máxima. No representa GPS ni prescribe una política agronómica.
 - Pesaje en manga: cola consecutiva, foco y confirmación sin recargas; reintentos conservan el identificador.
 - Analítica lechera: ahora entrega y dibuja una serie diaria por finca/lote actual. Las identidades evitan mezclar grupos con nombres iguales. Solo suma litros, informa exclusiones y muestra huecos en días sin registro. No reconstruye una asignación histórica del ordeño.
-- Peso/reproducción: medios de peso y conteos por rango de edad al pesaje; positivos/diagnósticos concluyentes, con denominador visible. No se presenta esa proporción como una tasa de concepción por servicio.
+- Peso/reproducción: medios de peso y conteos por rango de edad al pesaje; preñez en hembras evaluadas y fertilidad de servicios evaluados, con numeradores, denominadores y pendientes visibles. Son cohortes bovinas observadas, no indicadores inferidos de todo el rebaño; ver [métodos](fase4-cierre-evaluacion.md).
 
 ## Trabajo restante prioritario
 
-1. Publicar la rama revisada en el repositorio oficial y comprobar su instalación/HTTPS desde otro equipo si corresponde a la entrega.
+1. Revisar el [PR #8](https://github.com/AndrGutierrez/DAW/pull/8), publicado como borrador en el repositorio oficial; comprobar instalación/HTTPS desde otro equipo si corresponde a la entrega. main conserva su estado anterior hasta integrar la revisión.
 2. Ensayar el [recorrido vigente de cuatro criterios](fase4-evaluacion-09-octubre.md), preparar la sustentación y completar el formulario presencial. Las tareas externas no se presentan como realizadas.
 3. Como mejora posterior, reforzar con Moq las rutas que hoy dependen de pruebas de integración y medir rendimiento de grandes rebaños/exportaciones.
 
-Se completaron la política persistente de GDP, los avisos por finca, el plano/umbral de permanencia, la gestión de usuarios, el arranque vacío y la actualización de Postman. Los [reportes actuales](evidence/phase4-final/README.md) distinguen ejecución, cobertura y PostgreSQL.
+Se completaron la política persistente de GDP, los avisos por finca, el plano/umbral de permanencia, la gestión de usuarios, el arranque vacío y la actualización de Postman. Los [reportes actuales](evidence/phase4-evaluation/README.md) distinguen ejecución, cobertura y PostgreSQL.
 
 La corrección de eventos desde la UI, el traslado masivo de lotes, los lotes farmacológicos/caducidad y alertas en segundo plano son ampliaciones del negocio. No aparecen como requisitos literales adicionales de la rúbrica práctica de esta fase. Deben planificarse sin confundirlos con sus cinco criterios.
 

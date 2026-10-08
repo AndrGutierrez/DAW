@@ -1,6 +1,6 @@
 # Sanidad, reproducción y producción del animal
 
-Este incremento conecta las entidades sanitarias y reproductivas existentes con la ficha React, y aplica el retiro farmacológico en Core.Application. Conserva el modelo de 43 tablas; no elimina historia ni crea otra base paralela.
+Este incremento conecta las entidades sanitarias y reproductivas existentes con la ficha React, y aplica el retiro farmacológico en Core.Application. Conserva el modelo ganadero; no elimina historia ni crea otra base paralela.
 
 ## Recorrido y utilidad
 

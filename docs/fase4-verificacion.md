@@ -172,3 +172,15 @@ Se leyó el instrumento nuevo del profesor para el 9 de octubre: 40 puntos, cuat
 - Limpieza: pesos/animales/potreros nuevos se eliminaron por API y objetivos restaurados; cuentas temporales, incluidas las dos de corridas interrumpidas, se conservaron desactivadas.
 
 [Reportes completos comprimidos y resumen sin credenciales](evidence/phase4-final/README.md), [guía de evaluación](fase4-evaluacion-09-octubre.md) y [gestión de usuarios](fase4-usuarios.md). La publicación remota y la defensa no se presentan como realizadas.
+
+## Cierre posterior: requisitos web e instrumento vigente
+
+Revisión del 8 de octubre de 2026: cohortes reproductivas bovinas, stream SSE autorizado, referencia USD/Bs fechada de ingreso manual y aislamiento Moq ampliado.
+
+- .NET: **235 UnitTests y 156 Core.Tests Passed**. Cobertura de Core.Application aislada: 68,56 % líneas / 67,88 % ramas; integración: 88,69 % / 58,76 %.
+- Cliente: **65 Vitest Passed**, TypeScript y Docker/Vite correctos. ExcelJS permanece bajo demanda con aviso de tamaño de chunk.
+- Navegador: **16/16 Passed en una corrida**, portada/analytics/evaluation en escritorio y móvil sobre PostgreSQL aislado. Una producción de Employee actualiza otra sesión Admin por SSE sin recargar.
+- Newman: **30 solicitudes, 44 assertions, cero fallos**. Resumen sin credenciales; referencias sintéticas solo en el entorno desechable.
+- PostgreSQL: siete migraciones desde volumen nuevo, 44 tablas/72 FK; EF sin cambios de modelo pendientes. Actualización aditiva de la demostración existente, sin reiniciar su volumen.
+
+Los [reportes de este incremento](evidence/phase4-evaluation/README.md) conservan los alcances separados. Los [métodos y límites](fase4-cierre-evaluacion.md) explican cohortes observadas, broker de una instancia y tasa manual. La presentación/formulario siguen siendo actos del equipo.

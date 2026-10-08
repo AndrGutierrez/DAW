@@ -10,9 +10,9 @@ Los productos obtenidos se distinguen de los **insumos comprados**: alimentos, m
 
 La raíz del sitio y el login directo llevan al administrador con permisos al dashboard; Employee entra a Animales. Los enlaces privados conservan la pantalla/pestaña solicitada. La [guía de uso](docs/product-and-technical-guide.md) explica el recorrido y los contratos; el [contraste con el ejemplo del profesor](docs/fase4-referencia-profesor.md) justifica la adaptación al dominio ganadero.
 
-El dashboard prioriza leche registrada, bovinos con pesaje comparable, diagnósticos positivos/concluyentes y existencias críticas. Cada tarjeta declara su alcance y permite continuar una operación. El filtro de finca/período se conserva al abrir el reporte de producción; inventario y valoración muestran el saldo actual.
+El dashboard prioriza leche registrada, bovinos con pesaje comparable, preñez en hembras evaluadas y existencias críticas. Cada tarjeta declara su alcance y permite continuar una operación. El filtro de finca/período se conserva al abrir el reporte de producción; inventario y valoración muestran el saldo actual.
 
-![Dashboard ganadero: resumen, filtros y seguimiento](docs/screenshots/dashboard-light.png)
+![Dashboard ganadero: resumen, filtros y seguimiento](docs/screenshots/dashboard-phase4-evaluation-light.png)
 
 El acceso incluye mostrar/ocultar contraseña, validación por campo y avisos que explican qué hacer. La fuente Source Sans 3 se sirve localmente; tema y colores comparten tokens semánticos.
 
@@ -78,6 +78,8 @@ Importar [colección Postman](postman/Cattle-Management.full.postman_collection.
 | CrudService<Product, ProductRequest> + ProductDefinition | [ProductCatalogServiceTests](tests/UnitTests/ProductCatalogServiceTests.cs) | Precios decimales, SKU normalizado, categoría inexistente/inactiva, conflictos y ausencia de escritura; Moq estricto |
 | AnalyticsService | [AnalyticsServiceTests](tests/UnitTests/AnalyticsServiceTests.cs) | Valoración y umbrales, rotación trazable, exclusión de unidades incompatibles, identidad finca/lote, último peso y denominador reproductivo |
 | Cuidados y crecimiento animal | [AnimalCareServiceTests](tests/UnitTests/AnimalCareServiceTests.cs), [WithdrawalPolicyTests](tests/UnitTests/WithdrawalPolicyTests.cs), [AnimalGrowthServiceTests](tests/UnitTests/AnimalGrowthServiceTests.cs) | Integridad de eventos, retiro farmacológico y orden/fórmula de GDP |
+| Cohortes y referencia de cambio | [ReproductionAnalyticsTests](tests/UnitTests/ReproductionAnalyticsTests.cs), [ExchangeRateServiceTests](tests/UnitTests/ExchangeRateServiceTests.cs) | Numeradores/denominadores observados, incertidumbre, fechas efectivas, correcciones e idempotencia |
+| Reglas del animal aisladas | [AnimalCatalogServiceTests](tests/UnitTests/AnimalCatalogServiceTests.cs), [AnimalProductionServiceTests](tests/UnitTests/AnimalProductionServiceTests.cs), [AnimalReproductionServiceTests](tests/UnitTests/AnimalReproductionServiceTests.cs) | Identidad, genealogía/ciclos, coherencia de eventos, retiro, sacrificio e idempotencia; Moq estricto |
 | Sesión y autorización HTTP | [BrowserSessionIntegrationTests](tests/Core.Tests/BrowserSessionIntegrationTests.cs), [FarmAccessSecurityTests](tests/Core.Tests/FarmAccessSecurityTests.cs) | Cookies, protección de sesión y aislamiento de fincas en el pipeline de prueba |
 | Portada y seguimiento en la SPA | [home.spec.ts](src/frontend/e2e/home.spec.ts), [analytics.spec.ts](src/frontend/e2e/analytics.spec.ts) | Inicio por rol, recuperación de sesión/destino, KPI contrastados con API/PostgreSQL y filtros conservados hasta el reporte |
 
@@ -116,8 +118,12 @@ La SPA permite recuperar la sesión al recargar, consultar y editar animales, ca
 
 ## Cierre técnico para la evaluación del 9 de octubre
 
-La [guía de evaluación vigente](docs/fase4-evaluacion-09-octubre.md) relaciona los cuatro criterios de 10 puntos con el código, la demostración y las pruebas. [Estado actual](docs/fase4-estado.md) y [evidencia seleccionada](docs/evidence/phase4-final/README.md).
+La [guía de evaluación vigente](docs/fase4-evaluacion-09-octubre.md) relaciona los cuatro criterios de 10 puntos con el código, la demostración y las pruebas. [Estado actual](docs/fase4-estado.md) y [evidencia seleccionada](docs/evidence/phase4-evaluation/README.md).
 
 Usuarios permite crear/editar cuentas, asignar roles/fincas/permisos adicionales, desactivar y restablecer contraseñas con revocación inmediata de sesiones. Seguimiento guarda objetivos de GDP por finca o animal y presenta avisos calculados. Potreros incluye un plano esquemático configurable con señales de capacidad y permanencia. Las [decisiones de usuarios](docs/fase4-usuarios.md), [crecimiento](docs/fase4-animales.md) y [potreros](docs/fase4-potreros.md) explican sus límites.
 
+El [cierre de evaluación](docs/fase4-cierre-evaluacion.md) documenta la preñez/fertilidad observadas, actualización por SSE y valoración USD/Bs con referencia fechada de ingreso manual. 235 UnitTests, 156 Core.Tests y 65 Vitest aprobadas; 16/16 recorridos actuales sobre PostgreSQL y 30 solicitudes/44 assertions Newman.
+
 La colección [Fase 4](postman/Phase4.postman_collection.json) verifica cuentas, revocación, objetivos, plano y sesión del navegador con cookie/CSRF. Usar el entorno de demostración, configurar secretos localmente y no exportarlos al repositorio.
+
+Rama publicada para revisión en el [PR #8](https://github.com/AndrGutierrez/DAW/pull/8), en borrador. main conserva su estado anterior hasta integrar la revisión.

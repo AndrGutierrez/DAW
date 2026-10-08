@@ -1,0 +1,34 @@
+{
+  "verifiedAt": "2026-10-08T17:23:54.521Z",
+  "isolatedProject": "daw-phase4-empty",
+  "isolatedPort": 18089,
+  "emptyVolumeAtStart": true,
+  "migrations": 7,
+  "seedCompleted": true,
+  "servicesHealthy": true,
+  "schema": {
+    "tables": 44,
+    "applicationTables": 43,
+    "foreignKeys": 72
+  },
+  "browser": {
+    "passed": 16,
+    "total": 16,
+    "projects": [
+      "desktop",
+      "mobile"
+    ]
+  },
+  "syntheticRatesBeforeCleanup": 4,
+  "demo": {
+    "port": 18086,
+    "migrations": 7,
+    "tables": 44,
+    "exchangeRates": 0,
+    "volumePreserved": true
+  },
+  "cleanup": "Only isolated project containers and project-labelled volumes; demo preserved",
+  "cleanupVerified": true,
+  "remainingIsolatedContainers": 0,
+  "remainingIsolatedVolumes": 0
+}

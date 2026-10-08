@@ -100,3 +100,7 @@ El pipeline utiliza `ExceptionMiddleware`, filtro de validación asíncrono y re
 Las pruebas .NET verifican reglas, API y autorización con EF InMemory; PostgreSQL se comprueba mediante migraciones reales, colección HTTP, SQL de restricciones y pruebas concurrentes. El registro de resultados y la comparación académica están en [Fase 2 y Fase 3](fases-2-y-3.md). No se identifica un modelo futuro mapeado con un módulo operativo terminado.
 
 La [guía de negocio](guia-de-negocio.md) conserva la visión amplia, que también incluye módulos futuros como raciones, finanzas y tareas. Sanidad y reproducción ya tienen flujos operativos descritos en [Fase 4: cuidado animal](fase4-sanidad.md). Los once recursos y la producción se describen en [modelo y CRUD](modelo-produccion-y-crud.md). El [contraste con el ejemplo del profesor](fase4-referencia-profesor.md) y la [auditoría de entrega](fase4-auditoria.md) distinguen lo implementado de los pendientes.
+
+## Cierre de evaluación del 8 de octubre de 2026
+
+El dashboard expone cohortes de preñez/fertilidad bovina con denominadores y pendientes; recibe invalidaciones SSE autorizadas entre sesiones y conserva respaldo periódico. La valoración puede alternar USD/Bs usando una cotización BCV fechada registrada manualmente, con origen explícito e historial persistido. Sin tasa no se inventa una conversión. Ver [métodos, contratos y límites](fase4-cierre-evaluacion.md), [matriz del instrumento vigente](fase4-evaluacion-09-octubre.md) y [evidencia reproducible](evidence/phase4-evaluation/README.md).

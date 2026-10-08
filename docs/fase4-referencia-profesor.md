@@ -15,14 +15,14 @@ El [README de referencia](https://github.com/gramirezsunet/desarrolloAplicacione
 | Entrada por rol | Admin con todos los permisos de indicadores entra al dashboard; Employee y Admin sin esos permisos entran a Animales. Una URL privada solicitada conserva su destino, query y fragmento después del login | auth/navigation.ts, App.tsx, LoginPage.tsx; navigation.test.ts y e2e/home.spec.ts |
 | KPI con acciones | Primero producción y seguimiento bovino; después valoración y rotación de insumos. Accesos a fichas, pesaje, reportes y existencias | DashboardPage.tsx; e2e/home.spec.ts contrasta las tarjetas con la respuesta real de la API |
 | Gráfico visible | Leche por día como vista inicial; selector disponible para curva por lote, peso por edad y valoración | AnalyticsCharts.tsx; e2e/analytics.spec.ts |
-| Filtro y trazabilidad | Finca/período en API; Consultar producción conserva los filtros en Reportes. Actualización cada 60 segundos cuando la pestaña está visible | PeriodFilter, ReportsPage.tsx; e2e/analytics.spec.ts y operations.spec.ts |
+| Filtro y trazabilidad | Finca/período en API; Consultar producción conserva los filtros en Reportes. SSE entre sesiones y consulta de respaldo cada 60 segundos mientras está visible | PeriodFilter, ReportsPage.tsx; e2e/analytics.spec.ts y operations.spec.ts |
 | Documentación demostrable | Galería de nuestra SPA, guía de uso vigente y correspondencia de pruebas con reglas | README, product-and-technical-guide.md y evidencia enlazada |
 
 La portada resume datos ya agregados por Application, sin consultar todas las fichas en el navegador:
 
 - **Leche registrada:** suma de litros de los días del período. Sin registros no equivale a producción cero; cantidades con otras unidades se excluyen y se informan.
 - **Bovinos con pesaje comparable:** suma de conteos de los grupos de edad; cada bovino aporta su último pesaje en el período, con nacimiento válido. No representa el total de animales ni todos los pesajes.
-- **Diagnósticos positivos:** positivos / (positivos + negativos). Inciertos fuera del denominador; sin concluyentes no se inventa un porcentaje. No es tasa de concepción ni prevalencia de preñez del rebaño.
+- **Preñez en hembras evaluadas:** último diagnóstico concluyente por bovina; positivo sin parto/aborto posterior / hembras evaluadas. La sección reproductiva agrega fertilidad de servicios evaluados y pendientes. Los conteos brutos quedan en detalle; las [fórmulas y límites](fase4-cierre-evaluacion.md) evitan extrapolar a todo el rebaño.
 - **Existencias críticas:** filas finca/insumo cuyo saldo actual es menor o igual al mínimo. Es estado actual y puede diferir del período seleccionado.
 
 ## Diferencias necesarias
@@ -42,3 +42,5 @@ Se reejecutaron TypeScript, build Docker/Vite, 55 pruebas Vitest y las pruebas P
 ## Actualización posterior del mismo día
 
 La revisión de usuarios y cierre técnico completa las brechas enumeradas en el apartado histórico anterior: objetivos GDP persistentes, avisos por finca, plano y umbral de permanencia, arranque desde base vacía y Postman. El instrumento nuevo del 9 de octubre declara 40 puntos; ver [guía vigente](fase4-evaluacion-09-octubre.md) y [evidencia actual](evidence/phase4-final/README.md). Los resultados de phase4-home se conservan como evidencia de aquel incremento, sin sustituir los actuales.
+
+El cierre posterior añade cohortes de preñez/fertilidad, eventos SSE entre sesiones, referencia USD/Bs fechada y mayor aislamiento Moq. Ver [métodos y límites actuales](fase4-cierre-evaluacion.md) y [ejecución nueva](evidence/phase4-evaluation/README.md). Los reportes anteriores conservan su fecha y alcance.
