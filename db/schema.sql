@@ -2,7 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict TXxNHVU1H5nb9vzjLixgGx59m2b2W2mFLktSy24yV7Uy57aJ0KXP6QV3KwEjmUd
 
 -- Dumped from database version 15.19
 -- Dumped by pg_dump version 15.19
@@ -208,6 +207,19 @@ CREATE TABLE public."Diseases" (
     "Description" character varying(1000),
     "IsNotifiable" boolean NOT NULL,
     "SpeciesId" uuid,
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: ExchangeRates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ExchangeRates" (
+    "Id" uuid NOT NULL,
+    "EffectiveDate" date NOT NULL,
+    "BolivarsPerDollar" numeric(18,6) NOT NULL,
+    "RecordedByUserId" uuid,
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 
@@ -871,6 +883,14 @@ ALTER TABLE ONLY public."Diseases"
 
 
 --
+-- Name: ExchangeRates PK_ExchangeRates; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ExchangeRates"
+    ADD CONSTRAINT "PK_ExchangeRates" PRIMARY KEY ("Id");
+
+
+--
 -- Name: FarmInventory PK_FarmInventory; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1307,6 +1327,13 @@ CREATE UNIQUE INDEX "IX_Breeds_SpeciesId_Name" ON public."Breeds" USING btree ("
 --
 
 CREATE INDEX "IX_Diseases_SpeciesId" ON public."Diseases" USING btree ("SpeciesId");
+
+
+--
+-- Name: IX_ExchangeRates_EffectiveDate_CreatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ExchangeRates_EffectiveDate_CreatedAt" ON public."ExchangeRates" USING btree ("EffectiveDate", "CreatedAt");
 
 
 --
@@ -2336,6 +2363,3 @@ ALTER TABLE ONLY public."WeightRecords"
 --
 -- PostgreSQL database dump complete
 --
-
-\unrestrict TXxNHVU1H5nb9vzjLixgGx59m2b2W2mFLktSy24yV7Uy57aJ0KXP6QV3KwEjmUd
-

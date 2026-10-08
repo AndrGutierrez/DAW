@@ -16,7 +16,7 @@ public sealed class AnimalReproductionService(IManagementRepository repository, 
         Expression<Func<ReproductiveEvent, bool>> scope = x => x.DamId == animal.Id && x.FarmId == animal.FarmId;
         var total = await repository.CountAsync(scope, ct);
         var records = await repository.PageAsync(scope, x => x.Date, (page.Page - 1) * page.PageSize, page.PageSize, ct);
-        var significant = await repository.PageAsync<ReproductiveEvent, DateOnly>(x => x.DamId == animal.Id &&
+        var significant = await repository.PageAsync<ReproductiveEvent, DateOnly>(x => x.DamId == animal.Id && x.FarmId == animal.FarmId &&
             (x is PregnancyCheck || x is Calving || x is Abortion), x => x.Date, 0, 1, ct);
         var latest = significant.FirstOrDefault();
         var state = animal.Sex != Sex.Female ? "NotApplicable" : latest switch

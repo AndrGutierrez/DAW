@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Phase 4 · Usuarios, seguimiento y plano",
+    "name": "Phase 4 · Evaluación, usuarios y seguimiento",
     "description": "Ejecutar en orden sobre datos de demostración. Usa el entorno Daw; restaura el objetivo GDP anterior. La cuenta temporal se conserva inactiva con auditoría. No ejecutar sobre una finca real.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -794,6 +794,120 @@
           "type": "noauth"
         }
       }
+    },
+    {
+      "name": "Dashboard con cohortes reproductivas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/analytics/overview?from={{evaluationDate}}&to={{evaluationDate}}&farmId={{demoFarmId}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.variables.set('evaluationDate',new Date().toISOString().slice(0,10));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "pm.test('Cohorts expose known and pending denominators',()=>{const r=pm.response.json().reproduction;pm.expect(r.evaluatedServices+r.pendingServices).to.eql(r.servedFemales);for(const value of [r.pregnancyPercent,r.fertilityPercent])if(value!==null)pm.expect(value).to.be.within(0,100);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Referencia USD VES fechada",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/exchange-rates/usd-ves"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Configured quote or no fabricated rate',()=>pm.expect([200,204]).to.include(pm.response.code));",
+              "pm.test('Recorded quote declares manual entry and effective date',()=>{if(pm.response.code===200){const q=pm.response.json();pm.expect(q.entryMethod).to.eql('manual');pm.expect(q.bolivarsPerDollar).to.be.above(0);pm.expect(q.effectiveDate<=new Date().toISOString().slice(0,10)).to.eql(true);}});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Referencia inválida no se persiste",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/exchange-rates/usd-ves",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"submissionId\":\"{{$guid}}\",\"effectiveDate\":\"{{evaluationDate}}\",\"bolivarsPerDollar\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.variables.set('evaluationDate',new Date().toISOString().slice(0,10));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400',()=>pm.response.to.have.status(400));",
+              "pm.test('RFC 7807 validation problem',()=>{pm.expect(pm.response.headers.get('Content-Type')).to.include('application/problem+json');pm.expect(pm.response.json().errors).to.have.property('BolivarsPerDollar');});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Canal en vivo rechaza acceso anónimo",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/analytics/changes",
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 401',()=>pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
     }
   ]
 }

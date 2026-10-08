@@ -44,7 +44,9 @@ public sealed class OperationsReader(AppDbContext db) : IOperationsReader
             .Select(w => new WeightInput(w.AnimalId, w.Id, w.CreatedAt, w.Date, w.Animal.BirthDate, w.WeightKg)).ToListAsync(ct);
         var checks = await db.ReproductiveEvents.OfType<PregnancyCheck>().AsNoTracking().Where(c => ids.Contains(c.FarmId) && c.Dam.FarmId == c.FarmId && c.Date >= q.From && c.Date <= q.To).ToListAsync(ct);
         var calvings = await db.ReproductiveEvents.OfType<Calving>().AsNoTracking().Where(c => ids.Contains(c.FarmId) && c.Dam.FarmId == c.FarmId && c.Date >= q.From && c.Date <= q.To).ToListAsync(ct);
-        return new(inventory, movements, milk, weights, checks, calvings);
+        var reproduction = await db.ReproductiveEvents.AsNoTracking().Where(e => ids.Contains(e.FarmId) &&
+            e.Dam.FarmId == e.FarmId && e.Dam.Species.Code == "BO" && e.Dam.Sex == Sex.Female && e.Date >= q.From && e.Date <= q.To).ToListAsync(ct);
+        return new(inventory, movements, milk, weights, checks, calvings, reproduction);
     }
     public async Task<ReportResult> ReportAsync(ReportQuery q, bool clinical, IReadOnlyCollection<Guid> farms, CancellationToken ct)
     {

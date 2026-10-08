@@ -66,6 +66,7 @@ public static class DependencyInjection
         services.AddScoped<PaddockService>();
         services.AddScoped<InventoryService>();
         services.AddScoped<AnalyticsService>();
+        services.AddScoped<ExchangeRateService>();
         services.AddScoped<ReportService>();
         services.AddScoped<IOperationsReader, OperationsReader>();
         services.AddScoped<IPaddockReader, PaddockReader>();

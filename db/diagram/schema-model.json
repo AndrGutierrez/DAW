@@ -1,7 +1,7 @@
 {
   "source": "db/schema.sql",
-  "sourceSha256": "35cec330e37dde1d8610b00418bf5d39b39e74b03a6ee15872219dae66c6fea4",
-  "tableCount": 43,
+  "sourceSha256": "453c4e48faf2fb7477ee70213af7b400993ea23e9c90bc57e08b02b011de27bb",
+  "tableCount": 44,
   "foreignKeyCount": 72,
   "modules": [
     {
@@ -56,6 +56,7 @@
       "tables": [
         "Tasks",
         "Transactions",
+        "ExchangeRates",
         "Alerts",
         "AlertRules",
         "Attachments",
@@ -888,6 +889,46 @@
         },
         {
           "name": "SpeciesId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "CreatedAt",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        }
+      ],
+      "checks": [],
+      "primaryKey": [
+        "Id"
+      ],
+      "uniqueIndexes": []
+    },
+    {
+      "name": "ExchangeRates",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "uuid",
+          "nullable": false,
+          "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "EffectiveDate",
+          "type": "date",
+          "nullable": false,
+          "definition": "date NOT NULL"
+        },
+        {
+          "name": "BolivarsPerDollar",
+          "type": "numeric(18,6)",
+          "nullable": false,
+          "definition": "numeric(18,6) NOT NULL"
+        },
+        {
+          "name": "RecordedByUserId",
           "type": "uuid",
           "nullable": true,
           "definition": "uuid"

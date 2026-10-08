@@ -21,7 +21,7 @@ public sealed record AnalyticsResult(DateTime GeneratedAt, DateOnly From, DateOn
     int Critical, int Excess, IReadOnlyList<Valuation> Categories, IReadOnlyList<StockMetric> Stock,
     IReadOnlyList<SeriesPoint> MilkByDay, IReadOnlyList<SeriesPoint> MilkByCurrentLot, int ExcludedMilk,
     IReadOnlyList<SeriesPoint> WeightByAge, int ExcludedWeights, int PositiveChecks, int NegativeChecks, int UncertainChecks,
-    decimal? PositiveCheckPercent, int Calvings, int LiveBirths, int Stillbirths, IReadOnlyList<DailyLotSeries> MilkByDayAndCurrentLot);
+    decimal? PositiveCheckPercent, int Calvings, int LiveBirths, int Stillbirths, IReadOnlyList<DailyLotSeries> MilkByDayAndCurrentLot, ReproductionMetrics Reproduction);
 public interface IOperationsReader
 {
     Task<CarePage<InventoryRow>> InventoryAsync(InventoryQuery query, IReadOnlyCollection<Guid> farms, CancellationToken ct);
@@ -33,7 +33,7 @@ public sealed record InventoryInput(Guid Id, Guid FarmId, Guid ProductId, string
 public sealed record MilkInput(DateOnly Date, string CurrentLot, decimal Quantity, MeasurementUnit Unit, Guid FarmId = default, Guid? CurrentLotId = null);
 public sealed record WeightInput(Guid AnimalId, Guid Id, DateTime CreatedAt, DateOnly Date, DateOnly? BirthDate, decimal WeightKg);
 public sealed record AnalyticsInputs(IReadOnlyList<InventoryInput> Inventory, IReadOnlyList<StockMovement> Movements, IReadOnlyList<MilkInput> Milk,
-    IReadOnlyList<WeightInput> Weights, IReadOnlyList<PregnancyCheck> Checks, IReadOnlyList<Calving> Calvings);
+    IReadOnlyList<WeightInput> Weights, IReadOnlyList<PregnancyCheck> Checks, IReadOnlyList<Calving> Calvings, IReadOnlyList<ReproductiveEvent>? ReproductiveEvents = null);
 public sealed class InventoryQueryValidator : AbstractValidator<InventoryQuery>
 {
     public InventoryQueryValidator() { RuleFor(q => q.Page).InclusiveBetween(1, 100000); RuleFor(q => q.PageSize).InclusiveBetween(1, 100); RuleFor(q => q.Search).MaximumLength(100); RuleFor(q => q.State).Must(s => s == null || s == "Low" || s == "High" || s == "Normal"); }

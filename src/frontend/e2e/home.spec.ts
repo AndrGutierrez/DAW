@@ -28,7 +28,7 @@ test('admin direct login opens live cattle indicators', async ({ page }) => {
   const cattle = data.weightByAge.reduce((sum: number, group: { count: number }) => sum + group.count, 0);
   await expect(page.getByRole('article', { name: 'Leche registrada', exact: true }).locator('strong')).toHaveText(data.milkByDay.length ? number(milk, 3) + ' L' : 'Sin registros');
   await expect(page.getByRole('article', { name: 'Bovinos con pesaje comparable', exact: true }).locator('strong')).toHaveText(number(cattle, 0));
-  await expect(page.getByRole('article', { name: 'Diagnósticos positivos', exact: true }).locator('strong')).toHaveText(data.positiveCheckPercent === null ? 'Sin diagnósticos' : number(data.positiveCheckPercent, 2) + '%');
+  await expect(page.getByRole('article', { name: 'Preñez en hembras evaluadas', exact: true }).locator('strong')).toHaveText(data.reproduction.pregnancyPercent === null ? 'Sin evaluación concluyente' : number(data.reproduction.pregnancyPercent, 2) + '%');
   await expect(page.getByRole('article', { name: 'Existencias críticas', exact: true }).locator('strong')).toHaveText(number(data.critical, 0));
   await expect(page.getByLabel('Gráfico', { exact: true })).toHaveValue('milk');
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);

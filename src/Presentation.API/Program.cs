@@ -70,6 +70,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<Presentation.API.Realtime.AnalyticsChanges>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -165,6 +166,7 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = "swagger";
 });
 
+app.UseMiddleware<Presentation.API.Realtime.AnalyticsChangeMiddleware>();
 app.UseAntiforgery();
 app.MapControllers();
 app.MapStaticAssets();

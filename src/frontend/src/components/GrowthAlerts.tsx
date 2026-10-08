@@ -11,7 +11,7 @@ type Alerts = { items: GrowthAlert[]; total: number; page: number; pageSize: num
 export function GrowthAlerts({ farmId = '', revision = 0 }: { farmId?: string; revision?: number }) {
   const { can } = useAuth(); const allowed = can('animals.list') && can('weights.list');
   const [page, setPage] = useState(1);
-  const alerts = useResource<Alerts>('/api/alerts/growth?page=' + page + '&pageSize=10' + (farmId ? '&farmId=' + farmId : ''), allowed);
+  const alerts = useResource<Alerts>('/api/alerts/growth?page=' + page + '&pageSize=10' + (farmId ? '&farmId=' + farmId : ''), allowed, true);
   useEffect(() => { setPage(1); alerts.reload(); }, [farmId, revision, alerts.reload]);
   useEffect(() => { if (!allowed) return; const timer = window.setInterval(() => { if (document.visibilityState === 'visible') alerts.reload(); }, 60000); return () => window.clearInterval(timer); }, [allowed, alerts.reload]);
   if (!allowed) return null;

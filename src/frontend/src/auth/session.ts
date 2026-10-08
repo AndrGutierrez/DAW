@@ -51,11 +51,12 @@ export class SessionClient {
     this.listeners.forEach(listener => listener());
   }
 
-  private async read<T>(response: Response, responseType: "json" | "blob" = "json"): Promise<T> {
+  private async read<T>(response: Response, responseType: "json" | "blob" | "stream" = "json"): Promise<T> {
     if (!response.ok) {
       const problem = await response.json().catch(() => ({ title: 'Error de comunicación' })) as Problem;
       throw new ApiError(response.status, problem);
     }
+    if (responseType === "stream") return response as T;
     if (response.status === 204) return undefined as T;
     return (responseType === "blob" ? response.blob() : response.json()) as Promise<T>;
   }
@@ -139,7 +140,7 @@ export class SessionClient {
     this.publish({ status: 'anonymous', session: null, error: null, reason });
   };
 
-  request = async <T>(path: string, init: RequestInit = {}, retry = true, responseType: "json" | "blob" = "json"): Promise<T> => {
+  request = async <T>(path: string, init: RequestInit = {}, retry = true, responseType: "json" | "blob" | "stream" = "json"): Promise<T> => {
     if (!path.startsWith('/api/') || path.startsWith('/api/auth/session/'))
       throw new Error('Authenticated requests must target the same-origin resource API.');
     let session = this.state.session;

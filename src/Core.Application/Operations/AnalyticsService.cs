@@ -36,7 +36,7 @@ public sealed class AnalyticsService(IOperationsReader reader, IFarmAccess farms
             .OrderBy(g => g.Key).Select(g => new SeriesPoint(g.Key, decimal.Round(g.Average(w => w.WeightKg), 2), g.Count())).ToList();
         var positive = input.Checks.Count(c => c.Result == PregnancyResult.Positive); var negative = input.Checks.Count(c => c.Result == PregnancyResult.Negative); var uncertain = input.Checks.Count(c => c.Result == PregnancyResult.Uncertain);
         return new(DateTime.UtcNow, q.From, q.To, valuations.Sum(v => v.Cost), valuations.Sum(v => v.ReferenceValue), stocks.Count(i => i.Stock <= i.Min), stocks.Count(i => i.Stock >= i.Max), valuations, stocks, byDay, byLot, input.Milk.Count - milk.Count, weight, latest.Count - valid.Count,
-            positive, negative, uncertain, positive + negative == 0 ? null : decimal.Round(100m * positive / (positive + negative), 2), input.Calvings.Count, input.Calvings.Sum(c => c.OffspringCount - c.StillbornCount), input.Calvings.Sum(c => c.StillbornCount), dailyLots);
+            positive, negative, uncertain, positive + negative == 0 ? null : decimal.Round(100m * positive / (positive + negative), 2), input.Calvings.Count, input.Calvings.Sum(c => c.OffspringCount - c.StillbornCount), input.Calvings.Sum(c => c.StillbornCount), dailyLots, ReproductionAnalytics.Calculate(q, input.ReproductiveEvents ?? input.Checks.Cast<ReproductiveEvent>().Concat(input.Calvings).ToArray()));
     }
     private static decimal Delta(StockMovement m) => m.Type == StockMovementType.In ? m.Quantity : m.Type == StockMovementType.Out ? -m.Quantity : 0;
 }
