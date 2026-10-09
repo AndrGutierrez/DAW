@@ -19,7 +19,7 @@ test.beforeEach(async ({ request }, info) => {
   const inventory = await request.post('/api/inventory', { headers, data: { farmId, productId, stock: 20.1234, minStock: 5, maxStock: 100, location: 'Test storage' } }); expect(inventory.status()).toBe(201); inventoryId = (await inventory.json()).id;
 });
 test.afterEach(async () => {
-  // Traced movements are intentionally retained by the API. The local test run removes only manifest-owned fixtures through guarded SQL.
+  // Traced movements remain in the disposable database. This manifest supports diagnostics; cleanup removes only the isolated Compose project.
   const dir = join(tmpdir(), 'daw-phase4-operations'); await mkdir(dir, { recursive: true }); await writeFile(join(dir, prefix + '.json'), JSON.stringify({ prefix, categoryId, productId, inventoryId, animalId }));
 });
 test('inventory withdrawal preserves precision and uncertain retries cannot duplicate consumption', async ({ page, request }) => {

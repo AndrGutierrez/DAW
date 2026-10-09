@@ -1,7 +1,7 @@
 {
   "date": "2026-10-08",
   "unitTests": 237,
-  "integrationTests": 188,
+  "integrationTests": 189,
   "frontendTests": 123,
   "browser": {
     "firstRun": {
@@ -14,7 +14,11 @@
       "failed": 0
     },
     "distinctCasesWithSuccessfulFinalResult": 139,
-    "note": "Mobile archive waits for finite animations before contrast measurement; desktop Users initially failed with Chromium ERR_NO_BUFFER_SPACE. Both affected scenarios pass on recheck."
+    "note": "Mobile archive waits for finite animations before contrast measurement; desktop Users initially failed with Chromium ERR_NO_BUFFER_SPACE. Both affected scenarios pass on recheck.",
+    "inventoryRecheck": {
+      "passed": 14,
+      "failed": 0
+    }
   },
   "accessibility": {
     "screenThemeViewportCombinations": 52,
@@ -37,5 +41,10 @@
     "HTTP localhost is not remote HTTPS evidence.",
     "BCV Today is a third party replica; not an official BCV API.",
     "Coverage and local vitals do not certify full branch coverage or population performance."
-  ]
+  ],
+  "fullPostman": {
+    "requests": 133,
+    "assertions": 228,
+    "failed": 0
+  }
 }

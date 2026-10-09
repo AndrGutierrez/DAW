@@ -76,7 +76,7 @@ MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/src" -w /src \
 
 Las pruebas .NET de HTTP usan una base EF InMemory aislada: verifican reglas, contratos y autorización; por sí solas no demuestran que PostgreSQL aplique índices o claves foráneas. Para esa evidencia se ejecutan la colección y `db/verification.sql` sobre PostgreSQL real.
 
-Importar colección y entorno de `postman/`. Completar `adminPassword` y `employeePassword` con los valores configurados en `.env`. Las variables de tokens y UUID se cargan automáticamente. La colección crea registros con nombres únicos y ejecuta altas, lecturas, actualizaciones, restricciones y bajas; el sacrificio de demostración deja su historial irreversible.
+Importar colección y entorno de `postman/`. Completar `adminPassword` y `employeePassword` con los valores configurados en `.env`. Las variables de tokens y UUID se cargan automáticamente. La colección crea registros con nombres únicos y ejecuta altas, lecturas, actualizaciones, restricciones, archivado y restauración; el sacrificio de demostración deja su historial irreversible. Usar una instancia PostgreSQL desechable separada: sus fixtures e historial se conservan hasta retirar exclusivamente ese proyecto de pruebas.
 
 Con Newman, proporcionar un entorno local que contenga las contraseñas y mantenerlo fuera del repositorio:
 

@@ -198,7 +198,6 @@ public sealed class ProductDefinition(IManagementRepository r) : ResourceDefinit
 
 public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefinition<FarmInventory, InventoryRequest>(r)
 {
-    private Task<bool> RepositoryHasHistory(FarmInventory e, CancellationToken ct) => Repository.ExistsAsync<StockMovement>(m => m.FarmId == e.FarmId && m.ProductId == e.ProductId && m.ReferenceType == "OpeningBalance", ct);
     public override Task BeforeDeleteAsync(FarmInventory e, CancellationToken ct)
     {
         Check(e.Stock == 0, "Inventory with a non-zero balance cannot be archived. Record the stock correction first.");
@@ -223,8 +222,8 @@ public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefin
         await Require<Farm>(q.FarmId, ct);
         Check((await Require<Product>(q.ProductId, ct)).IsActive, "The product is inactive.");
         Check(e.ProductId == Guid.Empty || e.ProductId == q.ProductId, "An inventory record cannot change product.");
-        if (e.ProductId != Guid.Empty && e.Stock != q.Stock && await RepositoryHasHistory(e, ct))
-            throw new ConflictException("Use a stock movement to change a traced balance.");
+        if (e.ProductId != Guid.Empty && e.Stock != q.Stock)
+            throw new ConflictException("Use a stock movement to change an existing balance.");
         await Unique<FarmInventory>(x => x.Id != e.Id && x.FarmId == q.FarmId && x.ProductId == q.ProductId, ct);
     }
 }

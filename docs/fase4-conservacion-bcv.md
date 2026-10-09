@@ -15,7 +15,7 @@ La papelera administrativa en /archive permite buscar, filtrar por tipo, paginar
 | Fotografía | Se archivan metadatos y se conserva el archivo privado. No es accesible mientras la foto o su animal están archivados; restaurar recupera el acceso |
 | Pesaje o rendimiento | Se conserva la fila y queda excluida del cálculo correspondiente. Restaurar vuelve a incorporarla si cumple las reglas |
 | Sacrificio | Anular su rendimiento no cambia el estado Fallecido ni permite otro sacrificio o un peso vivo posterior |
-| Existencias | Un saldo distinto de cero bloquea el archivo: se exige primero un movimiento justificado para corregir el saldo |
+| Existencias | Un saldo distinto de cero bloquea el archivo. Todo cambio de saldo, incluso desde cero, requiere un movimiento justificado; PUT permite editar límites/ubicación sin alterar el saldo |
 | Catálogos y fincas | Se bloquea el archivo si quedan dependencias operativas activas. Se deben resolver o archivar antes; no se usa cascada para ocultarlas |
 | Usuarios, fincas y permisos asignados | Las cuentas se desactivan; las asignaciones retiradas se conservan y se recuperan al reasignar, sin duplicar claves |
 | AuditLogs | Historial de solo consulta. Sus registros no entran en la papelera ni admiten DELETE |

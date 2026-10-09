@@ -5,10 +5,12 @@ Revisión del 8 de octubre de 2026. [Resumen estructurado](validation-summary.js
 | Verificación | Resultado y alcance |
 | --- | --- |
 | UnitTests | 237 aprobadas; aislamiento xUnit/Moq de Application |
-| Core.Tests | 188 aprobadas; incluye archivado/restauración, permisos, seed, genealogía y proveedor BCV/fallos; EF InMemory no sustituye PostgreSQL |
+| Core.Tests | 189 aprobadas; incluye archivado/restauración, permisos, seed, genealogía y proveedor BCV/fallos; EF InMemory no sustituye PostgreSQL |
 | Vitest | 123 aprobadas; interacción, confirmación cancelada, restauración rechazada y conservación de valoración ante fallo |
+| Postman completo / PostgreSQL | 133 solicitudes / 228 aserciones, cero fallos; incluye rechazo de saldo absoluto cero y archivado/restauración. [Resumen sin credenciales](full-postman-summary.json) |
 | Build | TypeScript/Vite y Docker de API/SPA aprobados |
 | PostgreSQL / Playwright | Primera regresión: 137 aprobadas, dos fallos y una omisión exclusiva móvil. Repetición focalizada: ocho aprobadas, incluyendo los dos casos afectados. Resultado final de 139 casos distintos aprobado; no se presenta como una única corrida limpia |
+| Inventario / Playwright | 14 aprobadas en escritorio/móvil después de exigir movimientos para cualquier cambio de saldo, incluido saldo inicial cero |
 | Accesibilidad | 52 combinaciones esenciales de pantalla/tema/viewport sin infracciones axe detectadas; dos detalles de papelera adicionales aprobados. No constituye certificación WCAG completa |
 | Migraciones | Nueve aplicadas en base vacía y demo existente; cero cambios de modelo pendientes |
 | Esquema | 44 tablas / 72 FK; SQL y DER regenerados desde PostgreSQL |

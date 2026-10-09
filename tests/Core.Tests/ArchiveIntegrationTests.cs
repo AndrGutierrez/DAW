@@ -81,6 +81,17 @@ public sealed partial class ManagementIntegrationTests
         using var scope = factory.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<AppDbContext>(); Assert.Equal(AnimalStatus.Dead, (await db.Animals.SingleAsync(a => a.Id == animal)).Status);
     }
     [Fact]
+    public async Task EmptyInventoryRequiresAMovementToChangeItsBalance()
+    {
+        using var factory = Factory(); await Seed(factory); using var client = factory.CreateClient(); await Login(client, "admin"); var (farm, _) = await DemoIds(factory);
+        using var scope = factory.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<AppDbContext>(); var category = await db.InventoryCategories.FirstAsync();
+        var product = await Create(client, "products", new ProductRequest("ARC-ZERO", "Zero balance", category.Id, 1, 1, MeasurementUnit.Unit));
+        var request = new InventoryRequest(farm, product, 0, 1, 10, "Warehouse"); var inventory = await Create(client, "inventory", request);
+        Assert.Equal(HttpStatusCode.Conflict, (await client.PutAsJsonAsync("/api/inventory/" + inventory, request with { Stock = 1 })).StatusCode);
+        Assert.Equal(0m, (await db.FarmInventory.SingleAsync(i => i.Id == inventory)).Stock);
+        Assert.Equal(HttpStatusCode.NoContent, (await client.DeleteAsync("/api/inventory/" + inventory)).StatusCode);
+    }
+    [Fact]
     public async Task DirectEfRemovalRetainsTheRowAndAuditHistoryRejectsDeletion()
     {
         using var factory = Factory(); await Seed(factory); using var scope = factory.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();

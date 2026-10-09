@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Core.Application.Management;
+using Core.Application.Operations;
 using Core.Application.Security;
 using Core.Domain.Livestock;
 using Infrastructure.Persistence;
@@ -139,7 +140,10 @@ public sealed partial class ManagementIntegrationTests
         var inventory = await db.FarmInventory.AsNoTracking().SingleAsync(x => x.FarmId == farm && x.ProductId == product.Id);
         var adjustment = new InventoryRequest(farm, product.Id, inventory.Stock + 1, inventory.MinStock, inventory.MaxStock, inventory.Location);
         using var inventoryUpdate = await client.PutAsJsonAsync($"/api/inventory/{inventory.Id}", adjustment);
-        Assert.Equal(HttpStatusCode.OK, inventoryUpdate.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, inventoryUpdate.StatusCode);
+        var movement = new StockRequest(Guid.NewGuid(), StockMovementType.In, 1, inventory.Stock, "Employee supply receipt");
+        using var inventoryMovement = await client.PostAsJsonAsync($"/api/inventory/{inventory.Id}/movements", movement);
+        Assert.Equal(HttpStatusCode.Created, inventoryMovement.StatusCode);
         Assert.Equal(adjustment.Stock, (await db.FarmInventory.AsNoTracking().SingleAsync(x => x.Id == inventory.Id)).Stock);
     }
 

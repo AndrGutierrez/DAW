@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-08",
+  "collection": "Gestión ganadera · CRUD, persistencia, producción y seguridad",
+  "environment": "Disposable PostgreSQL at localhost:18089; automatic BCV disabled",
+  "stats": {
+    "iterations": {
+      "total": 1,
+      "pending": 0,
+      "failed": 0
+    },
+    "items": {
+      "total": 133,
+      "pending": 0,
+      "failed": 0
+    },
+    "scripts": {
+      "total": 269,
+      "pending": 0,
+      "failed": 0
+    },
+    "prerequests": {
+      "total": 133,
+      "pending": 0,
+      "failed": 0
+    },
+    "requests": {
+      "total": 133,
+      "pending": 0,
+      "failed": 0
+    },
+    "tests": {
+      "total": 133,
+      "pending": 0,
+      "failed": 0
+    },
+    "assertions": {
+      "total": 228,
+      "pending": 0,
+      "failed": 0
+    },
+    "testScripts": {
+      "total": 133,
+      "pending": 0,
+      "failed": 0
+    },
+    "prerequestScripts": {
+      "total": 136,
+      "pending": 0,
+      "failed": 0
+    }
+  },
+  "timings": {
+    "responseAverage": 11.548872180451129,
+    "responseMin": 3,
+    "responseMax": 65,
+    "responseSd": 11.680242404924542,
+    "dnsAverage": 0,
+    "dnsMin": 0,
+    "dnsMax": 0,
+    "dnsSd": 0,
+    "firstByteAverage": 0,
+    "firstByteMin": 0,
+    "firstByteMax": 0,
+    "firstByteSd": 0,
+    "started": 1791510669734,
+    "completed": 1791510682166
+  },
+  "failures": [],
+  "scope": [
+    "Archive and restore animal while retaining history",
+    "Annul slaughter yield without reactivating the animal",
+    "Archive fixtures in dependency order",
+    "Reject absolute stock edit from zero and preserve original balance",
+    "Admin/Employee permissions",
+    "HTTP JWT and browser HttpOnly-cookie renewal"
+  ]
+}
