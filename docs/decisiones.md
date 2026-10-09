@@ -1,5 +1,8 @@
 # Registro de decisiones
 
+> Actualización vigente: [conservación de registros y consulta automática BCV](fase4-conservacion-bcv.md). Sustituye los apartados anteriores de borrado físico y cotización exclusivamente manual. Los conteos de pruebas aquí consignados conservan la fecha y el alcance de esa revisión.
+
+
 ## Actualización: producción unificada y gestión persistente
 
 **Decisión:** una sola tabla `AnimalProduction` para los productos obtenidos de animales; `OperationId` identifica una operación con varios resultados. Los insumos se catalogan en `Products` y sus existencias por finca en `FarmInventory`. El CRUD persistente reemplaza el catálogo en memoria y conserva las rutas recuperadas con contratos explícitos.

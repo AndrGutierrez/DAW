@@ -53,6 +53,24 @@ public sealed class AnimalWeightReaderTests
         Assert.Empty(latestByAnimal);
     }
 
+    [Fact]
+    public async Task SameDayAndTimestampTieUsesSameIdentifierInBothReaders()
+    {
+        await using var db = CreateContext();
+        var animalId = await SeedAsync(db);
+        var animal = await db.Animals.FindAsync(animalId);
+        var first = new WeightRecord(Guid.Parse("00000000-0000-0000-0000-000000000001")) { AnimalId = animalId, FarmId = animal!.FarmId, Date = new DateOnly(2026, 4, 1), WeightKg = 550 };
+        var second = new WeightRecord(Guid.Parse("00000000-0000-0000-0000-000000000002")) { AnimalId = animalId, FarmId = animal.FarmId, Date = first.Date, WeightKg = 555 };
+        db.AddRange(first, second);
+        var timestamp = DateTime.UtcNow;
+        db.Entry(first).Property(r => r.CreatedAt).CurrentValue = timestamp;
+        db.Entry(second).Property(r => r.CreatedAt).CurrentValue = timestamp;
+        await db.SaveChangesAsync();
+        var reader = new AnimalWeightReader(db);
+        Assert.Equal(555m, (await reader.GetLatestAsync(animalId))!.WeightKg);
+        Assert.Equal(555m, (await reader.GetLatestForAsync([animalId]))[animalId].WeightKg);
+    }
+
     private static async Task<Guid> SeedAsync(AppDbContext db)
     {
         var farm = new Farm { Name = "Finca Test", Code = "T" };

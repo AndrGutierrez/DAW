@@ -1,0 +1,165 @@
+{
+  "scope": "Current document, local browser samples; not a population percentile",
+  "vitals": [
+    {
+      "name": "TTFB",
+      "value": 2.4000000059604645,
+      "rating": "good",
+      "unit": "ms"
+    },
+    {
+      "name": "FCP",
+      "value": 28,
+      "rating": "good",
+      "unit": "ms"
+    },
+    {
+      "name": "CLS",
+      "value": 0,
+      "rating": "good",
+      "unit": ""
+    },
+    {
+      "name": "LCP",
+      "value": 92,
+      "rating": "good",
+      "unit": "ms"
+    },
+    {
+      "name": "INP",
+      "value": 24,
+      "rating": "good",
+      "unit": "ms"
+    }
+  ],
+  "timings": [
+    {
+      "service": "Sesión",
+      "kind": "http",
+      "duration": 3.6,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Sesión",
+      "kind": "http",
+      "duration": 8.3,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Cambio de referencia",
+      "kind": "http",
+      "duration": 7.7,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Cambio de referencia",
+      "kind": "http",
+      "duration": 7.8,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Fincas",
+      "kind": "http",
+      "duration": 8.3,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Cambio de referencia",
+      "kind": "data",
+      "duration": 8.6,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Cambio de referencia",
+      "kind": "data",
+      "duration": 8.6,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Fincas",
+      "kind": "data",
+      "duration": 9.4,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Indicadores",
+      "kind": "http",
+      "duration": 17.8,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Indicadores",
+      "kind": "data",
+      "duration": 18.1,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "http",
+      "duration": 5,
+      "status": null,
+      "outcome": "cancelled"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "data",
+      "duration": 5,
+      "status": null,
+      "outcome": "cancelled"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "http",
+      "duration": 18.8,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "data",
+      "duration": 43.1,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "http",
+      "duration": 11.9,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "data",
+      "duration": 12.3,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Indicadores",
+      "kind": "http",
+      "duration": 22.3,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Indicadores",
+      "kind": "data",
+      "duration": 22.6,
+      "status": null,
+      "outcome": "success"
+    }
+  ],
+  "supported": true,
+  "startedAt": "2026-10-09T01:36:04.124Z"
+}

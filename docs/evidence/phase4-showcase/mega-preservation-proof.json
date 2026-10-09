@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "tablesChecked": 42,
+  "originalRows": 6451,
+  "originalRowsRetained": 6451,
+  "newTotalRows": 17430,
+  "excludedTables": [
+    "RefreshTokens",
+    "ExchangeRates"
+  ],
+  "reason": "Session activity and independent BCV synchronization"
+}

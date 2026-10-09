@@ -1,4 +1,5 @@
 using Core.Application.Livestock;
+using System.Text.Json;
 using Core.Application.Security;
 using Core.Application.Storage;
 using Core.Domain.Livestock;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Livestock;
 
-public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage, IFarmAccess farmAccess) : IAnimalPhotoService
+public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage, IFarmAccess farmAccess, ICurrentUser? actor = null) : IAnimalPhotoService
 {
     public async Task<AnimalPhotoResult> UploadAsync(
         Guid animalId,
@@ -53,6 +54,7 @@ public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage, IF
         photo.Url = $"/api/animals/{animal.Id}/photos/{photo.Id}/content";
 
         db.AnimalPhotos.Add(photo);
+        RecordAudit(photo, "Added", null, Snapshot(photo), actor?.UserId ?? userId);
         animal.UpdatedAt = DateTime.UtcNow;
 
         try
@@ -81,12 +83,42 @@ public sealed class AnimalPhotoService(AppDbContext db, IFileStorage storage, IF
                 cancellationToken)
             ?? throw new KeyNotFoundException("The requested photo was not found.");
 
-        db.AnimalPhotos.Remove(photo);
+        var before = Snapshot(photo);
+        photo.MarkDeleted(actor?.UserId);
+        RecordAudit(photo, "Archived", before, Snapshot(photo), actor?.UserId);
+
         animal.UpdatedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync(cancellationToken);
-        await storage.DeleteAsync($"animals/{animal.Id}", photo.FileName, cancellationToken);
+
     }
+
+    public async Task RestoreAsync(Guid animalId, Guid photoId, CancellationToken ct = default)
+    {
+        var farms = await farmAccess.GetAccessibleFarmIdsAsync(ct);
+        var animal = await db.Animals.FirstOrDefaultAsync(a => a.Id == animalId && farms.Contains(a.FarmId), ct)
+            ?? throw new Core.Application.Management.ConflictException("Restore the animal before its photograph.");
+        var photo = await db.AnimalPhotos.IgnoreQueryFilters().SingleOrDefaultAsync(p => p.Id == photoId && p.AnimalId == animalId, ct)
+            ?? throw new KeyNotFoundException("The archived photograph was not found.");
+        if (!photo.IsDeleted) return;
+        var before = Snapshot(photo); photo.Restore();
+        RecordAudit(photo, "Restored", before, Snapshot(photo), actor?.UserId);
+        animal.UpdatedAt = DateTime.UtcNow; await db.SaveChangesAsync(ct);
+    }
+
+    private static string Snapshot(AnimalPhoto photo) => JsonSerializer.Serialize(new
+    {
+        photo.Id, photo.FarmId, photo.AnimalId, photo.Url, photo.FileName, photo.ContentType,
+        photo.SizeBytes, photo.UploadedAt, photo.UploadedByUserId, photo.IsDeleted, photo.DeletedAt, photo.DeletedByUserId
+    });
+
+    private void RecordAudit(AnimalPhoto photo, string action, string? before, string? after, Guid? userId) =>
+        db.AuditLogs.Add(new AuditLog
+        {
+            EntityName = nameof(AnimalPhoto), EntityId = photo.Id.ToString(), Action = action,
+            FarmId = photo.FarmId, UserId = userId, IpAddress = actor?.IpAddress,
+            OldValues = before, NewValues = after
+        });
 
     public async Task<AnimalPhotoContent> OpenReadAsync(Guid animalId, Guid photoId,
         CancellationToken cancellationToken = default)

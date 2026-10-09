@@ -19,7 +19,9 @@ public sealed record AnimalListItem(
     int PhotoCount,
     DateTime UpdatedAt,
     Guid FarmId,
-    Guid SpeciesId);
+    Guid SpeciesId,
+    Guid? LotId = null,
+    Guid? PaddockId = null);
 
 public sealed record AnimalDetail(
     Guid Id,
@@ -54,9 +56,15 @@ public sealed record AnimalDetail(
     Guid? DamId,
     Guid? SireId);
 
+public sealed record AnimalLineage(Guid Id, string InternalTag, string? Name, Guid? DamId, Guid? SireId, bool IsArchived);
+
 public interface IAnimalQueryService
 {
+    Task<AnimalPageResult> PageAsync(AnimalPageRequest request, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<AnimalListItem>> ListAsync(CancellationToken cancellationToken = default);
+
+    Task<AnimalLineage> GetLineageAsync(Guid id, CancellationToken ct = default);
 
     Task<AnimalDetail> GetAsync(Guid id, CancellationToken cancellationToken = default);
 

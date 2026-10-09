@@ -11,6 +11,8 @@ public sealed class AnimalWeightReader(AppDbContext db) : IAnimalWeightReader
             .AsNoTracking()
             .Where(record => record.AnimalId == animalId)
             .OrderByDescending(record => record.Date)
+            .ThenByDescending(record => record.CreatedAt)
+            .ThenByDescending(record => record.Id)
             .Select(record => new LatestWeight(record.WeightKg, record.BodyConditionScore, record.Date))
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -31,7 +33,9 @@ public sealed class AnimalWeightReader(AppDbContext db) : IAnimalWeightReader
                 record.AnimalId,
                 record.WeightKg,
                 record.BodyConditionScore,
-                record.Date
+                record.Date,
+                record.CreatedAt,
+                record.Id
             })
             .ToListAsync(cancellationToken);
 
@@ -41,7 +45,7 @@ public sealed class AnimalWeightReader(AppDbContext db) : IAnimalWeightReader
                 group => group.Key,
                 group =>
                 {
-                    var latest = group.MaxBy(record => record.Date)!;
+                    var latest = group.OrderByDescending(record => record.Date).ThenByDescending(record => record.CreatedAt).ThenByDescending(record => record.Id).First();
                     return new LatestWeight(latest.WeightKg, latest.BodyConditionScore, latest.Date);
                 });
     }

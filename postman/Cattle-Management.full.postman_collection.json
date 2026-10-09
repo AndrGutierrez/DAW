@@ -2,7 +2,7 @@
   "info": {
     "name": "Gestión ganadera · CRUD, persistencia, producción y seguridad",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Pruebas de Fase 2 y Fase 3 sobre API local con PostgreSQL. Crear/actualizar/eliminar recursos requiere una base de desarrollo. Sacrificio conserva historia. Configurar contraseñas en entorno local; nunca versionar tokens."
+    "description": "Pruebas de API y eliminación lógica sobre PostgreSQL desechable. Archivo/restauración conserva historia; anular rendimiento no revierte sacrificio. Configurar credenciales localmente y no versionar tokens."
   },
   "auth": {
     "type": "bearer",
@@ -980,7 +980,7 @@
             "url": "{{baseUrl}}/api/inventory",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"farmId\": \"{{farmsId}}\",\n  \"productId\": \"{{productsId}}\",\n  \"stock\": 40,\n  \"minStock\": 5,\n  \"maxStock\": 100,\n  \"location\": \"Almacén de pruebas\"\n}",
+              "raw": "{\n  \"farmId\": \"{{farmsId}}\",\n  \"productId\": \"{{productsId}}\",\n  \"stock\": 0,\n  \"minStock\": 5,\n  \"maxStock\": 100,\n  \"location\": \"Almacén de pruebas\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1035,7 +1035,7 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
-                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"inventoryId\")));const d=JSON.parse(pm.environment.get(\"inventoryData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.stock!==undefined)d.stock+=1;if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"inventoryData\",JSON.stringify(d));"
+                  "pm.test(\"ID consistente\",()=>pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"inventoryId\")));const d=JSON.parse(pm.environment.get(\"inventoryData\"));if(d.name!==undefined)d.name+=\" actualizado\";if(d.location!==undefined)d.location+=\" actualizado\";if(d.quantity!==undefined)d.quantity+=1;if(d.weightKg!==undefined)d.weightKg+=1;pm.environment.set(\"inventoryData\",JSON.stringify(d));"
                 ]
               }
             }
@@ -1070,6 +1070,78 @@
                 "exec": [
                   "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
                   "pm.test(\"Cambio persistido\",()=>{const r=pm.response.json();const q=JSON.parse(pm.environment.get(\"inventoryData\"));pm.expect(r.data).to.deep.eql(q);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Saldo inicial cero requiere movimiento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/inventory/{{inventoryId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{{inventoryBypass}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const q=JSON.parse(pm.environment.get('inventoryData'));q.stock=1;pm.environment.set('inventoryBypass',JSON.stringify(q));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 409\", () => pm.response.to.have.status(409));",
+                  "pm.test('Conflicto explica el movimiento requerido',()=>{const p=pm.response.json();pm.expect(p.status).to.eql(409);pm.expect(p.detail).to.include('stock movement');});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Intento absoluto no cambia saldo cero",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/inventory/{{inventoryId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test('Saldo original conservado',()=>pm.expect(pm.response.json().data.stock).to.eql(0));"
                 ]
               }
             }
@@ -1637,7 +1709,7 @@
           ]
         },
         {
-          "name": "Categoría con insumos no se elimina",
+          "name": "Categoría con insumos activos no se archiva",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1657,7 +1729,7 @@
           ]
         },
         {
-          "name": "Animal con producción no se elimina",
+          "name": "Animal con producción se archiva conservando historia",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1669,8 +1741,80 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Estado HTTP 409\", () => pm.response.to.have.status(409));",
-                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(409); });"
+                  "pm.test(\"Archivado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Animal archivado no aparece en detalle operativo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/animals/{{animalsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Papelera conserva la ficha archivada",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/archive/animals/{{animalsId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Fila conservada\", () => pm.expect(JSON.parse(pm.response.json().values).IsDeleted).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Restaurar ficha conservando sus referencias",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/archive/animals/{{animalsId}}/restore"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 204\", () => pm.response.to.have.status(204));"
                 ]
               }
             }
@@ -2133,7 +2277,7 @@
           ]
         },
         {
-          "name": "Sacrificio irreversible",
+          "name": "Anular rendimiento de sacrificio sin reactivar animal",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2145,8 +2289,32 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Estado HTTP 409\", () => pm.response.to.have.status(409));",
-                  "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(409); });"
+                  "pm.test(\"Rendimiento archivado HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Animal permanece fallecido tras anular rendimiento",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/animals/{{yieldAnimalId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Sacrificio irreversible\", () => pm.expect(pm.response.json().status).to.eql(\"Dead\"));"
                 ]
               }
             }
@@ -2158,7 +2326,7 @@
       "name": "05 · Bajas en orden de dependencias",
       "item": [
         {
-          "name": "Eliminar production",
+          "name": "Archivar production",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2197,7 +2365,7 @@
           ]
         },
         {
-          "name": "Eliminar weights",
+          "name": "Archivar weights",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2236,7 +2404,7 @@
           ]
         },
         {
-          "name": "Eliminar animals",
+          "name": "Archivar animals",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2275,7 +2443,7 @@
           ]
         },
         {
-          "name": "Eliminar inventory",
+          "name": "Archivar inventory",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2314,7 +2482,7 @@
           ]
         },
         {
-          "name": "Eliminar products",
+          "name": "Archivar products",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2353,7 +2521,7 @@
           ]
         },
         {
-          "name": "Eliminar categories",
+          "name": "Archivar categories",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2392,7 +2560,7 @@
           ]
         },
         {
-          "name": "Eliminar lots",
+          "name": "Archivar lots",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2431,7 +2599,7 @@
           ]
         },
         {
-          "name": "Eliminar paddocks",
+          "name": "Archivar paddocks",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2470,7 +2638,7 @@
           ]
         },
         {
-          "name": "Eliminar breeds",
+          "name": "Archivar breeds",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2509,7 +2677,7 @@
           ]
         },
         {
-          "name": "Eliminar species",
+          "name": "Archivar species",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2548,7 +2716,7 @@
           ]
         },
         {
-          "name": "Eliminar farms",
+          "name": "Archivar farms",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -2660,6 +2828,905 @@
                 "exec": [
                   "pm.test(\"Estado HTTP 401\", () => pm.response.to.have.status(401));",
                   "pm.test(\"Problem Details completo\", () => { pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\"); const p=pm.response.json(); [\"type\",\"title\",\"status\",\"detail\",\"instance\"].forEach(k=>pm.expect(p).to.have.property(k)); pm.expect(p.status).to.eql(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 · Fase 4: usuarios, seguimiento, plano y dashboard",
+      "item": [
+        {
+          "name": "Login administrador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.environment.set('adminToken', pm.response.json().accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Finca de demostración",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.environment.set('demoFarmId', pm.response.json().find(f => f.data.code === 'DEMO').id);",
+                  "pm.environment.set('managedName', 'p4-http-' + pm.variables.replaceIn('{{$randomUUID}}').slice(0, 8));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/farms"
+          }
+        },
+        {
+          "name": "Crear operador con finca",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "const u=pm.response.json(); pm.environment.set('managedId',u.id); pm.environment.set('managedVersion',u.version); pm.test('Password is never returned',()=>pm.expect(u).not.to.have.property('passwordHash'));",
+                  "pm.test('Farm assignment persisted',()=>pm.expect(u.farmIds).to.eql([pm.environment.get('demoFarmId')]));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{managedName}}\",\n  \"email\": \"{{managedName}}@example.test\",\n  \"fullName\": \"Phase 4 HTTP fixture\",\n  \"role\": \"Employee\",\n  \"farmIds\": [\n    \"{{demoFarmId}}\"\n  ],\n  \"directPermissions\": [],\n  \"isActive\": true,\n  \"initialPassword\": \"Fixture123!Only\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Login operador administrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.environment.set('managedToken',pm.response.json().accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{managedName}}\",\n  \"password\": \"Fixture123!Only\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Operador no administra usuarios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managedToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Restablecer contraseña",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/users/{{managedId}}/password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newPassword\": \"Changed123!Fixture\",\n  \"expectedVersion\": \"{{managedVersion}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Token anterior invalidado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managedToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Contraseña anterior rechazada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{managedName}}\",\n  \"password\": \"Fixture123!Only\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Login con contraseña nueva",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.environment.set('managedToken',pm.response.json().accessToken); pm.environment.set('managedRefresh',pm.response.json().refreshToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{managedName}}\",\n  \"password\": \"Changed123!Fixture\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Leer versión vigente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "const u=pm.response.json().items.find(u=>u.id===pm.environment.get('managedId'));pm.environment.set('managedVersion',u.version);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/admin/users?search={{managedName}}"
+          }
+        },
+        {
+          "name": "Desactivar cuenta sin borrar historial",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Inactive user persists',()=>pm.expect(pm.response.json().isActive).to.eql(false));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/admin/users/{{managedId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{managedName}}\",\n  \"email\": \"{{managedName}}@example.test\",\n  \"fullName\": \"Phase 4 HTTP fixture\",\n  \"role\": \"Employee\",\n  \"farmIds\": [\n    \"{{demoFarmId}}\"\n  ],\n  \"directPermissions\": [],\n  \"isActive\": false,\n  \"expectedVersion\": \"{{managedVersion}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Acceso de cuenta desactivada bloqueado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/animals",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managedToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Refresh de cuenta desactivada bloqueado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/refresh",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{managedRefresh}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Guardar objetivo previo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.environment.set('previousGrowthGoal',JSON.stringify(pm.response.json().dailyGainKg));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/farms/{{demoFarmId}}/growth-policy"
+          }
+        },
+        {
+          "name": "Persistir objetivo GDP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Configured farm goal',()=>pm.expect(pm.response.json()).to.include({dailyGainKg:.8,source:'farm'}));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/farms/{{demoFarmId}}/growth-policy",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dailyGainKg\": 0.8\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Consultar avisos calculados",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Paged growth alerts',()=>pm.expect(pm.response.json()).to.have.keys('items','total','page','pageSize','activeBovines','insufficientMeasurements'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/alerts/growth?farmId={{demoFarmId}}"
+          }
+        },
+        {
+          "name": "Objetivo inválido produce RFC 7807",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Problem content type',()=>pm.expect(pm.response.headers.get('Content-Type')).to.include('application/problem+json'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/farms/{{demoFarmId}}/growth-policy",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dailyGainKg\": -1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Restaurar objetivo previo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/farms/{{demoFarmId}}/growth-policy",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"dailyGainKg\": {{previousGrowthGoal}} }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Consultar plano espacial completo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Coordinates refer to stored paddocks',()=>pm.response.json().forEach(p=>{pm.expect(p.data.mapX).to.be.a('number');pm.expect(p.data.mapX+p.data.mapWidth).to.be.at.most(100);}));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/paddocks/map?farmId={{demoFarmId}}"
+          }
+        },
+        {
+          "name": "Login navegador sin CSRF rechazado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/session/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Obtener CSRF de navegador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.environment.set('browserCSRF',pm.response.json().requestToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/session/csrf",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Login navegador con cookie HttpOnly",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Refresh is absent from JSON',()=>pm.expect(pm.response.json()).not.to.have.property('refreshToken'));",
+                  "pm.test('Cookie is HttpOnly and Strict',()=>{const h=pm.response.headers.all().filter(h=>h.key.toLowerCase()==='set-cookie').map(h=>h.value.toLowerCase()).join(' ');pm.expect(h).to.include('daw.refresh=');pm.expect(h).to.include('httponly');pm.expect(h).to.include('samesite=strict');pm.expect(h).to.include('path=/api/auth/session');});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-CSRF-TOKEN",
+                "value": "{{browserCSRF}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/session/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Renovar sesión por cookie",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Access token restored',()=>pm.expect(pm.response.json().accessToken).to.be.a('string').and.not.empty);",
+                  "pm.test('Refresh stays private',()=>pm.expect(pm.response.json()).not.to.have.property('refreshToken'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-TOKEN",
+                "value": "{{browserCSRF}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/session/refresh",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Cerrar sesión por cookie",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-TOKEN",
+                "value": "{{browserCSRF}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/session/logout",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Sesión cerrada no se restaura",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-CSRF-TOKEN",
+                "value": "{{browserCSRF}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/session/refresh",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Renovación sin CSRF rechazada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/session/refresh",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Dashboard con cohortes reproductivas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/analytics/overview?from={{evaluationDate}}&to={{evaluationDate}}&farmId={{demoFarmId}}"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.variables.set('evaluationDate',new Date().toISOString().slice(0,10));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "pm.test('Cohorts expose known and pending denominators',()=>{const r=pm.response.json().reproduction;pm.expect(r.evaluatedServices+r.pendingServices).to.eql(r.servedFemales);for(const value of [r.pregnancyPercent,r.fertilityPercent])if(value!==null)pm.expect(value).to.be.within(0,100);});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Referencia USD VES fechada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/exchange-rates/usd-ves"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Configured quote or no fabricated rate',()=>pm.expect([200,204]).to.include(pm.response.code));",
+                  "pm.test('Recorded quote declares origin and effective date',()=>{if(pm.response.code===200){const q=pm.response.json();pm.expect(['manual','automatic']).to.include(q.entryMethod);pm.expect(q.bolivarsPerDollar).to.be.above(0);pm.expect(q.effectiveDate<=new Date().toISOString().slice(0,10)).to.eql(true);}});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Referencia inválida no se persiste",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/exchange-rates/usd-ves",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"submissionId\":\"{{$guid}}\",\"effectiveDate\":\"{{evaluationDate}}\",\"bolivarsPerDollar\":0}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.variables.set('evaluationDate',new Date().toISOString().slice(0,10));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));",
+                  "pm.test('RFC 7807 validation problem',()=>{pm.expect(pm.response.headers.get('Content-Type')).to.include('application/problem+json');pm.expect(pm.response.json().errors).to.have.property('BolivarsPerDollar');});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Canal en vivo rechaza acceso anónimo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/analytics/changes",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));"
                 ]
               }
             }

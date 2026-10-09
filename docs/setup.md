@@ -19,11 +19,7 @@ Las contraseñas requieren mayúscula, minúscula, número, símbolo y al menos 
 ## 2. Docker Compose
 
 ```bash
-docker compose config -q
-docker compose build blazorapp
-docker compose up -d db
-docker compose run --rm blazorapp --seed
-docker compose up -d blazorapp nginx
+docker compose up --build -d --wait
 ```
 
 `--seed` ejecuta `MigrateAsync`, crea permisos y roles, verifica la cuenta Admin y carga datos. Repetirlo no duplica los registros de demostración ni reemplaza sus existencias editadas. La contraseña de Admin se sincroniza mediante el mecanismo de restablecimiento de Identity; se valida antes de cambiarla. La cuenta Employee se crea sólo si se configura su contraseña y recibe una membresía a DEMO.
@@ -80,7 +76,7 @@ MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/src" -w /src \
 
 Las pruebas .NET de HTTP usan una base EF InMemory aislada: verifican reglas, contratos y autorización; por sí solas no demuestran que PostgreSQL aplique índices o claves foráneas. Para esa evidencia se ejecutan la colección y `db/verification.sql` sobre PostgreSQL real.
 
-Importar colección y entorno de `postman/`. Completar `adminPassword` y `employeePassword` con los valores configurados en `.env`. Las variables de tokens y UUID se cargan automáticamente. La colección crea registros con nombres únicos y ejecuta altas, lecturas, actualizaciones, restricciones y bajas; el sacrificio de demostración deja su historial irreversible.
+Importar colección y entorno de `postman/`. Completar `adminPassword` y `employeePassword` con los valores configurados en `.env`. Las variables de tokens y UUID se cargan automáticamente. La colección crea registros con nombres únicos y ejecuta altas, lecturas, actualizaciones, restricciones, archivado y restauración; el sacrificio de demostración deja su historial irreversible. Usar una instancia PostgreSQL desechable separada: sus fixtures e historial se conservan hasta retirar exclusivamente ese proyecto de pruebas.
 
 Con Newman, proporcionar un entorno local que contenga las contraseñas y mantenerlo fuera del repositorio:
 
@@ -123,3 +119,13 @@ El workflow existente utiliza PostgreSQL 17 en su entorno temporal; Compose y la
 - API 409: identificador duplicado, dependencia pendiente, regla de negocio o conflicto concurrente; corregir o recargar antes de repetir.
 - Error de clave JWT: configurar un secreto real; el placeholder se rechaza al arrancar.
 - Puerto ocupado: cambiar `NGINX_HTTP_PORT` y `baseUrl`. Una pestaña abierta no demuestra que se esté ejecutando la imagen recién construida.
+
+## Inicialización automática y comprobada de Fase 4
+
+Desde una base vacía basta docker compose up --build -d --wait, una vez configurado .env. El servicio initialize comparte imagen/configuración con blazorapp, aplica migraciones mediante --seed y debe terminar correctamente antes de iniciar la API. Si falla la migración o el seed, Compose no inicia esa dependencia. Consultar docker compose logs initialize para el diagnóstico.
+
+No ejecutar varios initialize simultáneos contra la misma base. Actualizar una instalación existente conserva sus datos; las condiciones de migración descritas arriba siguen aplicando. El arranque HTTP directo continúa sin migrar automáticamente.
+
+El seed nuevo configura dos posiciones esquemáticas ilustrativas en los potreros DEMO; no cambia posiciones en bases existentes ni define objetivos GDP universales. Una cuenta Employee ya configurada conserva sus roles y membresías.
+
+Importar también [colección específica Fase 4](../postman/Phase4.postman_collection.json). Comprueba usuarios y revocación, objetivos y plano; restaura el objetivo previo y conserva inactiva la cuenta de prueba. La colección completa incorpora esos casos como carpeta 07. Las comprobaciones de geometría/avisos con datos nuevos se complementan con e2e/monitoring.spec.ts.

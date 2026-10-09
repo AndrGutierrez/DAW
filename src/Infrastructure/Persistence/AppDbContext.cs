@@ -1,4 +1,7 @@
 using Core.Domain.Common;
+using Core.Application.Security;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Core.Domain.Livestock;
 using Infrastructure.Persistence.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -7,9 +10,42 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
 
-public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
-    : IdentityDbContext<ApplicationUser, Role, Guid>(options)
+public sealed class AppDbContext : IdentityDbContext<ApplicationUser, Role, Guid>
 {
+    private readonly ICurrentUser? actor;
+    public AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUser? actor = null) : base(options)
+    {
+        this.actor = actor;
+        ChangeTracker.CascadeDeleteTiming = CascadeTiming.Never;
+        ChangeTracker.DeleteOrphansTiming = CascadeTiming.Never;
+    }
+    public static readonly Type[] RetainedLinks = [typeof(RolePermission), typeof(UserPermission), typeof(IdentityUserRole<Guid>), typeof(Permission)];
+    private void RetainDeletedRecords()
+    {
+        ChangeTracker.DetectChanges();
+        foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Deleted).ToList())
+        {
+            if (entry.Entity is AuditLog) throw new InvalidOperationException("Audit history cannot be deleted.");
+            if (entry.Entity is BaseEntity record)
+            {
+                entry.State = EntityState.Modified; record.MarkDeleted(actor?.UserId);
+            }
+            else if (RetainedLinks.Contains(entry.Metadata.ClrType))
+            {
+                entry.State = EntityState.Modified;
+                entry.Property("IsDeleted").CurrentValue = true;
+                entry.Property("DeletedAt").CurrentValue = DateTime.UtcNow;
+                entry.Property("DeletedByUserId").CurrentValue = actor?.UserId;
+            }
+            else throw new InvalidOperationException("Persistent records must be retained instead of physically deleted.");
+        }
+    }
+    public void RestoreLink(object link)
+    {
+        var entry = Entry(link);
+        if (link is BaseEntity record) record.Restore();
+        else { entry.Property("IsDeleted").CurrentValue = false; entry.Property("DeletedAt").CurrentValue = null; entry.Property("DeletedByUserId").CurrentValue = null; }
+    }
     public DbSet<Farm> Farms => Set<Farm>();
     public DbSet<UserFarm> UserFarms => Set<UserFarm>();
     public DbSet<Paddock> Paddocks => Set<Paddock>();
@@ -41,6 +77,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<Attachment> Attachments => Set<Attachment>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
 
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
@@ -53,16 +90,22 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
         base.ConfigureConventions(configurationBuilder);
     }
 
-    public override int SaveChanges()
+    public override int SaveChanges() => SaveChanges(true);
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
+        RetainDeletedRecords();
         TouchUpdatedAnimals();
-        return base.SaveChanges();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) => SaveChangesAsync(true, cancellationToken);
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
+        RetainDeletedRecords();
         TouchUpdatedAnimals();
-        return base.SaveChangesAsync(cancellationToken);
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
     private void TouchUpdatedAnimals()
@@ -90,6 +133,15 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
+        foreach (var type in RetainedLinks)
+        {
+            var builder = modelBuilder.Entity(type);
+            builder.Property<bool>("IsDeleted").HasDefaultValue(false);
+            builder.Property<DateTime?>("DeletedAt"); builder.Property<Guid?>("DeletedByUserId");
+            var parameter = Expression.Parameter(type, "record");
+            var deleted = Expression.Call(typeof(EF), nameof(EF.Property), [typeof(bool)], parameter, Expression.Constant("IsDeleted"));
+            builder.HasQueryFilter(Expression.Lambda(Expression.Not(deleted), parameter));
+        }
         foreach (var entityType in modelBuilder.Model.GetEntityTypes()
             .Where(candidate => candidate.BaseType is null
                 && typeof(BaseEntity).IsAssignableFrom(candidate.ClrType)))
@@ -98,6 +150,16 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
                 .Property(nameof(BaseEntity.CreatedAt))
                 .IsRequired()
                 .HasDefaultValueSql("now()");
+            var builder = modelBuilder.Entity(entityType.ClrType);
+            if (entityType.ClrType == typeof(AuditLog))
+            {
+                builder.Ignore(nameof(BaseEntity.IsDeleted)); builder.Ignore(nameof(BaseEntity.DeletedAt)); builder.Ignore(nameof(BaseEntity.DeletedByUserId));
+                continue;
+            }
+            builder.Property(nameof(BaseEntity.IsDeleted)).HasDefaultValue(false);
+            builder.HasIndex(nameof(BaseEntity.IsDeleted), nameof(BaseEntity.DeletedAt));
+            var parameter = Expression.Parameter(entityType.ClrType, "record");
+            builder.HasQueryFilter(Expression.Lambda(Expression.Not(Expression.Property(parameter, nameof(BaseEntity.IsDeleted))), parameter));
         }
     }
 }

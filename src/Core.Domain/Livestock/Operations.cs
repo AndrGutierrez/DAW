@@ -4,6 +4,9 @@ namespace Core.Domain.Livestock;
 
 public sealed class AnimalMovement : BaseEntity
 {
+    public AnimalMovement() { }
+    public AnimalMovement(Guid id) : base(id) { }
+
     public Guid FarmId { get; set; }
 
     public Guid AnimalId { get; set; }

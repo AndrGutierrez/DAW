@@ -69,7 +69,7 @@ const modules = [
   { name: 'Territorio y animales', color: '#17634d', light: '#edf7f1', tables: ['Farms', 'Paddocks', 'Lots', 'Species', 'Breeds', 'Animals', 'AnimalMovements', 'AnimalPhotos', 'HealthStatusChanges', 'WeightRecords', 'AnimalProduction'] },
   { name: 'Insumos y alimentación', color: '#246b9e', light: '#edf5fc', tables: ['InventoryCategories', 'Products', 'FarmInventory', 'Suppliers', 'ProductBatches', 'StockMovements', 'Rations', 'RationIngredients', 'FeedingRecords'] },
   { name: 'Salud y reproducción', color: '#9b5832', light: '#fff5eb', tables: ['Diseases', 'HealthEvents', 'SemenBatches', 'ReproductiveEvents'] },
-  { name: 'Operación y trazabilidad', color: '#7e638f', light: '#f7f0fb', tables: ['Tasks', 'Transactions', 'Alerts', 'AlertRules', 'Attachments', 'AuditLogs'] },
+  { name: 'Operación y trazabilidad', color: '#7e638f', light: '#f7f0fb', tables: ['Tasks', 'Transactions', 'ExchangeRates', 'Alerts', 'AlertRules', 'Attachments', 'AuditLogs'] },
   { name: 'Identidad y acceso', color: '#4155a2', light: '#f0f2fe', tables: ['Users', 'Roles', 'Permissions', 'UserRoles', 'UserPermissions', 'RolePermissions', 'UserFarms', 'UserClaims', 'RoleClaims', 'UserLogins', 'UserTokens', 'RefreshTokens'] },
   { name: 'Historial técnico', color: '#687788', light: '#f1f4f7', tables: ['__EFMigrationsHistory'] }
 ];

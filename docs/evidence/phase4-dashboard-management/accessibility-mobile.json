@@ -1,0 +1,172 @@
+[
+  {
+    "route": "/login",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/login",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/dashboard",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/animals",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/weighing",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/paddocks",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/inventory",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/reports",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/monitoring",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/users",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/account",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/diagnostics",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/auditlogs",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/archive",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/management",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/management?tab=species",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/management?tab=breeds",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/management?tab=lots",
+    "theme": "dark",
+    "violations": []
+  },
+  {
+    "route": "/dashboard",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/animals",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/weighing",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/paddocks",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/inventory",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/reports",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/monitoring",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/users",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/account",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/diagnostics",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/auditlogs",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/archive",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/management",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/management?tab=species",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/management?tab=breeds",
+    "theme": "light",
+    "violations": []
+  },
+  {
+    "route": "/management?tab=lots",
+    "theme": "light",
+    "violations": []
+  }
+]

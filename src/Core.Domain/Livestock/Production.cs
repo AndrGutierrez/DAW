@@ -8,6 +8,9 @@ public enum ProductionMethod { Milking, Shearing, Slaughter, Collection }
 // One row describes one product obtained from one animal in one operation.
 public sealed class AnimalProduction : BaseEntity
 {
+    public AnimalProduction() { }
+    public AnimalProduction(Guid id) : base(id) { }
+
     public Guid FarmId { get; set; }
     public Farm Farm { get; set; } = null!;
     public Guid AnimalId { get; set; }

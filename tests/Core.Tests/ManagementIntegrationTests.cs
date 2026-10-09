@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Core.Application.Management;
+using Core.Application.Operations;
 using Core.Application.Security;
 using Core.Domain.Livestock;
 using Infrastructure.Persistence;
@@ -16,10 +17,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Core.Tests;
 
-public sealed class ManagementIntegrationTests
+public sealed partial class ManagementIntegrationTests
 {
     [Fact]
-    public async Task EveryManagedResourceSupportsCreateReadUpdateDelete()
+    public async Task UnreferencedManagedResourcesSupportCreateReadUpdateDelete()
     {
         using var factory = Factory();
         await Seed(factory);
@@ -32,8 +33,8 @@ public sealed class ManagementIntegrationTests
         var lot = await Create(client, "lots", new { farmId = farm, speciesId = species, name = "CRUD Lot", purpose = "Wool", paddockId = paddock });
         var category = await Create(client, "categories", new { name = "CRUD Category" });
         var product = await Create(client, "products", new { sku = "CRUD-001", name = "Feed", categoryId = category, price = 20.25, costPrice = 10.50, unit = "Bag" });
-        var inventory = await Create(client, "inventory", new { farmId = farm, productId = product, stock = 20, minStock = 2, maxStock = 100, location = "Warehouse" });
-        var animal = await Create(client, "animals", new { farmId = farm, speciesId = species, breedId = breed, lotId = lot, paddockId = paddock, internalTag = "crud-001", sex = "Female", purpose = "Wool" });
+        var inventory = await Create(client, "inventory", new { farmId = farm, productId = product, stock = 0, minStock = 2, maxStock = 100, location = "Warehouse" });
+        var animal = await Create(client, "animals", new { farmId = farm, speciesId = species, breedId = breed, internalTag = "crud-001", sex = "Female", purpose = "Wool" });
         var date = DateOnly.FromDateTime(DateTime.UtcNow);
         var weight = await Create(client, "weights", new { farmId = farm, animalId = animal, date, weightKg = 45.25 });
         var production = await Create(client, "production", new { farmId = farm, animalId = animal, date, productType = "Other", method = "Collection", quantity = 1, unit = "Unit", operationId = Guid.NewGuid() });
@@ -63,8 +64,6 @@ public sealed class ManagementIntegrationTests
                     farmId = farm,
                     speciesId = species,
                     breedId = breed,
-                    lotId = lot,
-                    paddockId = paddock,
                     internalTag = "CRUD-001",
                     sex = "Female",
                     purpose = "Wool",
@@ -141,7 +140,10 @@ public sealed class ManagementIntegrationTests
         var inventory = await db.FarmInventory.AsNoTracking().SingleAsync(x => x.FarmId == farm && x.ProductId == product.Id);
         var adjustment = new InventoryRequest(farm, product.Id, inventory.Stock + 1, inventory.MinStock, inventory.MaxStock, inventory.Location);
         using var inventoryUpdate = await client.PutAsJsonAsync($"/api/inventory/{inventory.Id}", adjustment);
-        Assert.Equal(HttpStatusCode.OK, inventoryUpdate.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, inventoryUpdate.StatusCode);
+        var movement = new StockRequest(Guid.NewGuid(), StockMovementType.In, 1, inventory.Stock, "Employee supply receipt");
+        using var inventoryMovement = await client.PostAsJsonAsync($"/api/inventory/{inventory.Id}/movements", movement);
+        Assert.Equal(HttpStatusCode.Created, inventoryMovement.StatusCode);
         Assert.Equal(adjustment.Stock, (await db.FarmInventory.AsNoTracking().SingleAsync(x => x.Id == inventory.Id)).Stock);
     }
 

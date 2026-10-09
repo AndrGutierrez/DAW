@@ -40,6 +40,7 @@ public sealed class InventoryCategoryConfiguration : IEntityTypeConfiguration<In
                 Name = "Alimentación animal",
                 Description = "Insumos de la operación ganadera",
                 IsActive = true,
+                IsDeleted = false,
                 CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new
@@ -48,6 +49,7 @@ public sealed class InventoryCategoryConfiguration : IEntityTypeConfiguration<In
                 Name = "Sanidad animal",
                 Description = "Insumos de la operación ganadera",
                 IsActive = true,
+                IsDeleted = false,
                 CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             });
     }

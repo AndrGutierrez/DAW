@@ -14,5 +14,7 @@ public sealed class CurrentUser(IHttpContextAccessor accessor) : ICurrentUser
         }
     }
 
+    public string? IpAddress => accessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
     public bool IsAuthenticated => accessor.HttpContext?.User.Identity?.IsAuthenticated ?? false;
 }

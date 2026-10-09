@@ -1,3 +1,5 @@
+using Core.Application.Operations;
+using Infrastructure.Operations;
 using Core.Application.Livestock;
 using Core.Application.Management;
 using Core.Domain.Livestock;
@@ -48,12 +50,42 @@ public static class DependencyInjection
         services.AddScoped<IPermissionChecker, PermissionChecker>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAccessAdministration, AccessAdministration>();
+        services.AddScoped<IUserManagementStore, UserManagementStore>();
+        services.AddScoped<UserManagementService>();
         services.AddScoped<IAnimalPhotoService, AnimalPhotoService>();
         services.AddScoped<IAnimalQueryService, AnimalQueryService>();
         services.AddScoped<IAnimalWeightReader, AnimalWeightReader>();
         services.AddScoped<IFarmAccess, FarmAccess>();
         services.AddScoped<IManagementRepository, ManagementRepository>();
+        services.AddScoped<Core.Application.Auditing.IAuditReader, AuditReader>();
+        services.AddScoped<IArchiveStore, ArchiveStore>();
         services.AddScoped<AnimalHealthService>();
+        services.AddScoped<WithdrawalPolicy>();
+        services.AddScoped<AnimalProductionService>();
+        services.AddScoped<AnimalCareService>();
+        services.AddScoped<AnimalLocationPolicy>();
+        services.AddScoped<AnimalMovementService>();
+        services.AddScoped<PaddockService>();
+        services.AddScoped<InventoryService>();
+        services.AddScoped<AnalyticsService>();
+        services.AddScoped<ExchangeRateService>();
+        services.Configure<BcvSyncOptions>(configuration.GetSection("BcvSync"));
+        services.AddHttpClient<IBcvRateProvider, BcvRateProvider>(client =>
+        {
+            client.BaseAddress = new Uri("https://bcv.today/"); client.Timeout = TimeSpan.FromSeconds(8);
+            client.MaxResponseContentBufferSize = 65536;
+            client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true };
+        });
+        services.AddSingleton<IBcvSynchronizer, BcvSynchronizer>();
+        services.AddHostedService<BcvRefreshService>();
+        services.AddScoped<ReportService>();
+        services.AddScoped<IOperationsReader, OperationsReader>();
+        services.AddScoped<IPaddockReader, PaddockReader>();
+        services.AddScoped<AnimalReproductionService>();
+        services.AddScoped<AnimalGrowthService>();
+        services.AddScoped<GrowthMonitoringService>();
+        services.AddScoped<IGrowthMonitoringReader, GrowthMonitoringReader>();
+        services.AddScoped<AnimalWeighingService>();
         AddResource<Farm, FarmRequest, FarmDefinition>(services);
         AddResource<Species, SpeciesRequest, SpeciesDefinition>(services);
         AddResource<Breed, BreedRequest, BreedDefinition>(services);
@@ -75,6 +107,14 @@ public static class DependencyInjection
     {
         services.AddScoped<IResourceDefinition<TEntity, TRequest>, TDefinition>();
         services.AddScoped<ICrudService<TRequest>, CrudService<TEntity, TRequest>>();
+    }
+
+    public static async Task<ShowcaseSeedResult> SeedShowcaseAsync(this IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+        return await ShowcaseSeeder.SeedAsync(scope.ServiceProvider);
     }
 
     public static async Task SeedDatabaseAsync(this IServiceProvider services)

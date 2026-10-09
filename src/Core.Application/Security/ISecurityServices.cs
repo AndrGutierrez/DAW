@@ -8,6 +8,10 @@ public interface IAuthService
 
     Task<AuthResponse> RefreshAsync(RefreshRequest request, CancellationToken cancellationToken = default);
 
+    Task RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
+
+    Task LogoutAsync(string refreshToken, CancellationToken cancellationToken = default);
+
     Task<UserResult> GetUserAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
@@ -16,6 +20,9 @@ public interface ICurrentUser
     Guid? UserId { get; }
 
     bool IsAuthenticated { get; }
+
+    // Transport peer address; forwarded headers are only accepted from configured trusted proxies.
+    string? IpAddress => null;
 }
 
 public interface IPermissionChecker
@@ -30,7 +37,8 @@ public interface ITokenService
         string username,
         IEnumerable<string> roles,
         bool isSuperuser,
-        string? email = null);
+        string? email = null,
+        string? securityStamp = null);
 
     string CreateRefreshToken();
 }

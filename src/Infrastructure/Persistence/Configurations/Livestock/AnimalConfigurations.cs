@@ -19,6 +19,7 @@ public sealed class AnimalConfiguration : IEntityTypeConfiguration<Animal>
         builder.Property(animal => animal.Markings).HasMaxLength(200);
         builder.Property(animal => animal.UpdatedAt).IsRequired().HasDefaultValueSql("now()");
         builder.Property(animal => animal.Notes).HasMaxLength(2000);
+        builder.Property(animal => animal.TargetDailyGainKg).HasPrecision(8, 4);
 
         builder.Property(animal => animal.Sex).HasConversion<int>().IsRequired();
         builder.Property(animal => animal.Status).HasConversion<int>().IsRequired();

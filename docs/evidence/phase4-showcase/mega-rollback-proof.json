@@ -1,0 +1,10 @@
+{
+  "expectedFailure": true,
+  "exitCode": 139,
+  "counts": {
+    "megaFarms": 0,
+    "demoUsers": 0,
+    "megaAnimals": 0,
+    "manifests": 0
+  }
+}

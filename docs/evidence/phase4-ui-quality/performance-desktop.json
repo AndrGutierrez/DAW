@@ -1,0 +1,123 @@
+{
+  "scope": "Current document, local browser samples; not a population percentile",
+  "vitals": [
+    {
+      "name": "TTFB",
+      "value": 2.099999997764826,
+      "rating": "good",
+      "unit": "ms"
+    },
+    {
+      "name": "FCP",
+      "value": 32,
+      "rating": "good",
+      "unit": "ms"
+    },
+    {
+      "name": "CLS",
+      "value": 0,
+      "rating": "good",
+      "unit": ""
+    },
+    {
+      "name": "LCP",
+      "value": 96,
+      "rating": "good",
+      "unit": "ms"
+    },
+    {
+      "name": "INP",
+      "value": 16,
+      "rating": "good",
+      "unit": "ms"
+    }
+  ],
+  "timings": [
+    {
+      "service": "Sesión",
+      "kind": "http",
+      "duration": 2.8,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Sesión",
+      "kind": "http",
+      "duration": 8.5,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Cambio de referencia",
+      "kind": "http",
+      "duration": 8.2,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Fincas",
+      "kind": "http",
+      "duration": 8,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Cambio de referencia",
+      "kind": "data",
+      "duration": 8.7,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Fincas",
+      "kind": "data",
+      "duration": 8.6,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Indicadores",
+      "kind": "http",
+      "duration": 17.4,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Indicadores",
+      "kind": "data",
+      "duration": 17.8,
+      "status": null,
+      "outcome": "success"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "http",
+      "duration": 5,
+      "status": null,
+      "outcome": "cancelled"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "data",
+      "duration": 5.2,
+      "status": null,
+      "outcome": "cancelled"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "http",
+      "duration": 19,
+      "status": 200,
+      "outcome": "success"
+    },
+    {
+      "service": "Seguimiento",
+      "kind": "data",
+      "duration": 47.9,
+      "status": null,
+      "outcome": "success"
+    }
+  ],
+  "supported": true,
+  "startedAt": "2026-10-08T20:13:18.766Z"
+}

@@ -32,13 +32,15 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
         string username,
         IEnumerable<string> roles,
         bool isSuperuser,
-        string? email = null)
+        string? email = null,
+        string? securityStamp = null)
     {
         var expiresAt = DateTime.UtcNow.AddMinutes(_options.AccessTokenMinutes);
 
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
             new(JwtRegisteredClaimNames.UniqueName, username),
             new(ClaimTypes.NameIdentifier, userId.ToString()),
             new(ClaimTypes.Name, username)
@@ -54,6 +56,7 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options) : ITokenServic
             claims.Add(new Claim("superuser", "true"));
         }
 
+        if (securityStamp != null) claims.Add(new Claim("security_stamp", securityStamp));
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));

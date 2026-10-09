@@ -1,0 +1,401 @@
+{
+  "generatedAt": "2026-10-08T17:21:30.311Z",
+  "environment": "Isolated PostgreSQL; synthetic fixtures",
+  "stats": {
+    "iterations": {
+      "total": 1,
+      "failed": 0
+    },
+    "items": {
+      "total": 30,
+      "failed": 0
+    },
+    "scripts": {
+      "total": 32,
+      "failed": 0
+    },
+    "prerequests": {
+      "total": 30,
+      "failed": 0
+    },
+    "requests": {
+      "total": 30,
+      "failed": 0
+    },
+    "tests": {
+      "total": 30,
+      "failed": 0
+    },
+    "assertions": {
+      "total": 44,
+      "failed": 0
+    },
+    "testScripts": {
+      "total": 30,
+      "failed": 0
+    },
+    "prerequestScripts": {
+      "total": 2,
+      "failed": 0
+    }
+  },
+  "failures": [],
+  "executions": [
+    {
+      "name": "Login administrador",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Finca de demostración",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Crear operador con finca",
+      "status": 201,
+      "assertions": [
+        {
+          "name": "HTTP 201",
+          "passed": true
+        },
+        {
+          "name": "Password is never returned",
+          "passed": true
+        },
+        {
+          "name": "Farm assignment persisted",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login operador administrado",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Operador no administra usuarios",
+      "status": 403,
+      "assertions": [
+        {
+          "name": "HTTP 403",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Restablecer contraseña",
+      "status": 204,
+      "assertions": [
+        {
+          "name": "HTTP 204",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Token anterior invalidado",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Contraseña anterior rechazada",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login con contraseña nueva",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Leer versión vigente",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Desactivar cuenta sin borrar historial",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Inactive user persists",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Acceso de cuenta desactivada bloqueado",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Refresh de cuenta desactivada bloqueado",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Guardar objetivo previo",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Persistir objetivo GDP",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Configured farm goal",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Consultar avisos calculados",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Paged growth alerts",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Objetivo inválido produce RFC 7807",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "Problem content type",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Restaurar objetivo previo",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Consultar plano espacial completo",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Coordinates refer to stored paddocks",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login navegador sin CSRF rechazado",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Obtener CSRF de navegador",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Login navegador con cookie HttpOnly",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Refresh is absent from JSON",
+          "passed": true
+        },
+        {
+          "name": "Cookie is HttpOnly and Strict",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Renovar sesión por cookie",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Access token restored",
+          "passed": true
+        },
+        {
+          "name": "Refresh stays private",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Cerrar sesión por cookie",
+      "status": 204,
+      "assertions": [
+        {
+          "name": "HTTP 204",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Sesión cerrada no se restaura",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Renovación sin CSRF rechazada",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Dashboard con cohortes reproductivas",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "HTTP 200",
+          "passed": true
+        },
+        {
+          "name": "Cohorts expose known and pending denominators",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Referencia USD VES fechada",
+      "status": 200,
+      "assertions": [
+        {
+          "name": "Configured quote or no fabricated rate",
+          "passed": true
+        },
+        {
+          "name": "Recorded quote declares manual entry and effective date",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Referencia inválida no se persiste",
+      "status": 400,
+      "assertions": [
+        {
+          "name": "HTTP 400",
+          "passed": true
+        },
+        {
+          "name": "RFC 7807 validation problem",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "Canal en vivo rechaza acceso anónimo",
+      "status": 401,
+      "assertions": [
+        {
+          "name": "HTTP 401",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

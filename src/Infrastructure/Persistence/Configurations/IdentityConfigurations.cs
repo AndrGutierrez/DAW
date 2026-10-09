@@ -104,6 +104,7 @@ public sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<Refresh
 
         builder.Property(token => token.CreatedAt).IsRequired();
         builder.Property(token => token.ExpiresAt).IsRequired();
+        builder.Property(token => token.RevokedAt).IsConcurrencyToken();
 
         builder.HasOne(token => token.User)
             .WithMany()

@@ -49,6 +49,24 @@ server {
     server_name _;
 
     set $upstream "${UPSTREAM}";
+    root /usr/share/nginx/html;
+    client_max_body_size 6m;
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "same-origin" always;
+
+    location /assets/ {
+        try_files $uri =404;
+    }
+
+    location / {
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "same-origin" always;
+        try_files $uri $uri/ /index.html;
+        expires -1;
+    }
+
 
     # Offline database diagram viewer, served from the versioned ./db/diagram directory.
     location = /erd {
@@ -62,7 +80,7 @@ server {
         add_header Cache-Control "no-cache, no-store, must-revalidate";
     }
 
-    location / {
+    location ~ ^/(api|swagger)(/|$) {
         proxy_pass http://$upstream;
         proxy_http_version 1.1;
 

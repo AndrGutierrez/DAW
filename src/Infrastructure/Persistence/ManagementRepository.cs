@@ -47,6 +47,10 @@ public sealed class ManagementRepository(AppDbContext db, ICurrentUser user) : I
         return await query.OrderBy(e => e.CreatedAt).ThenBy(e => e.Id).ToListAsync(ct);
     }
 
+    public Task<int> CountAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken ct = default) where T : BaseEntity => db.Set<T>().AsNoTracking().CountAsync(predicate, ct);
+    public async Task<IReadOnlyList<T>> PageAsync<T, TOrder>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrder>> order, int skip, int take, CancellationToken ct = default) where T : BaseEntity =>
+        await db.Set<T>().AsNoTracking().Where(predicate).OrderByDescending(order).ThenByDescending(x => x.CreatedAt).ThenByDescending(x => x.Id).Skip(skip).Take(take).ToListAsync(ct);
+
     public Task<T?> GetAsync<T>(Guid id, bool tracking = false, CancellationToken ct = default)
         where T : BaseEntity => (tracking ? db.Set<T>() : db.Set<T>().AsNoTracking()).FirstOrDefaultAsync(x => x.Id == id, ct);
     public Task<bool> ExistsAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken ct = default)
@@ -54,7 +58,11 @@ public sealed class ManagementRepository(AppDbContext db, ICurrentUser user) : I
     public void Add<T>(T entity)
         where T : BaseEntity => db.Add(entity);
     public void Remove<T>(T entity)
-        where T : BaseEntity => db.Remove(entity);
+        where T : BaseEntity => entity.MarkDeleted(user.UserId);
+    public Task<T?> GetIncludingDeletedAsync<T>(Guid id, bool tracking = false, CancellationToken ct = default) where T : BaseEntity =>
+        (tracking ? db.Set<T>().IgnoreQueryFilters() : db.Set<T>().IgnoreQueryFilters().AsNoTracking()).FirstOrDefaultAsync(x => x.Id == id, ct);
+    public async Task<IReadOnlyList<T>> ListIncludingDeletedAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken ct = default) where T : BaseEntity =>
+        await db.Set<T>().IgnoreQueryFilters().AsNoTracking().Where(predicate).ToListAsync(ct);
     public async Task SaveAsync(CancellationToken ct = default)
     {
         db.ChangeTracker.DetectChanges();
@@ -63,7 +71,7 @@ public sealed class ManagementRepository(AppDbContext db, ICurrentUser user) : I
         {
             var old = entry.State == EntityState.Added ? null : entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.OriginalValue);
             var current = entry.State == EntityState.Deleted ? null : entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.CurrentValue);
-            db.AuditLogs.Add(new AuditLog { UserId = user.UserId, FarmId = entry.Metadata.FindProperty("FarmId") != null ? (Guid?)entry.Property("FarmId").CurrentValue : null, Action = entry.State.ToString(), EntityName = entry.Metadata.ClrType.Name, EntityId = entry.Entity.Id.ToString(), OldValues = old == null ? null : JsonSerializer.Serialize(old), NewValues = current == null ? null : JsonSerializer.Serialize(current) });
+            db.AuditLogs.Add(new AuditLog { UserId = user.UserId, IpAddress = user.IpAddress, FarmId = entry.Entity is Farm farm ? farm.Id : entry.Metadata.FindProperty("FarmId") != null ? (Guid?)entry.Property("FarmId").CurrentValue : null, Action = entry.State == EntityState.Modified && entry.Property(nameof(BaseEntity.IsDeleted)).IsModified ? (entry.Entity.IsDeleted ? "Archived" : "Restored") : entry.State.ToString(), EntityName = entry.Metadata.ClrType.Name, EntityId = entry.Entity.Id.ToString(), OldValues = old == null ? null : JsonSerializer.Serialize(old), NewValues = current == null ? null : JsonSerializer.Serialize(current) });
         }
 
         try

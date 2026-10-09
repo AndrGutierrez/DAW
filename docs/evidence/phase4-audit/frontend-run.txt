@@ -1,0 +1,12 @@
+
+ RUN  v5.0.3 C:/Users/santi/.codex/worktrees/phase4-cattle-spa/DAW/src/frontend
+
+ ✓ src/api/paddocks.test.ts (13 tests) 8ms
+ ✓ src/api/weighing.test.ts (15 tests) 9ms
+ ✓ src/auth/session.test.ts (15 tests) 107ms
+
+ Test Files  3 passed (3)
+      Tests  43 passed (43)
+   Start at  01:55:07
+   Duration  411ms (transform 49%, tests 29%, import 17%, worker 5%)
+

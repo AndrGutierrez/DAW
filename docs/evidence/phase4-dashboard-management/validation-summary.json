@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-08",
+  "frontendTests": {
+    "passed": 131,
+    "failed": 0
+  },
+  "frontendCoverage": {
+    "lines": {
+      "total": 1359,
+      "covered": 606,
+      "skipped": 0,
+      "pct": 44.59
+    },
+    "statements": {
+      "total": 2507,
+      "covered": 908,
+      "skipped": 0,
+      "pct": 36.21
+    },
+    "functions": {
+      "total": 770,
+      "covered": 248,
+      "skipped": 0,
+      "pct": 32.2
+    },
+    "branches": {
+      "total": 2917,
+      "covered": 896,
+      "skipped": 0,
+      "pct": 30.71
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "browser": {
+    "initial": {
+      "passed": 18,
+      "failed": 3,
+      "skipped": 1
+    },
+    "targetedRecheck": {
+      "passed": 6,
+      "failed": 0
+    },
+    "finalVisualRegression": {
+      "passed": 6,
+      "failed": 0
+    },
+    "distinctCasesWithSuccessfulFinalResult": 21,
+    "note": "Initial failures were an ambiguous text selector (both viewports) and navigation before a DELETE response (desktop). Rechecks preserve the same scenarios and assert confirmed HTTP 204 before navigation."
+  },
+  "accessibility": {
+    "screenThemeViewportCombinations": 68,
+    "detectedViolations": 0,
+    "targetedModalChecks": "Filter, farm and lot dialogs checked without detected violations."
+  },
+  "catalogManagement": {
+    "farm": "Create and contact persistence",
+    "species": "Create and gestation persistence",
+    "breed": "Create, relationship display and origin update",
+    "lot": "Create and farm/species/paddock reference",
+    "paddock": "Create; reject archive while a lot references it",
+    "archive": "Five confirmed DELETE 204 operations with retained archive entries",
+    "employee": "No navigation link and direct route denied"
+  },
+  "build": "TypeScript/Vite in Docker passed",
+  "database": "Disposable PostgreSQL; demonstration retains its volume",
+  "limits": [
+    "Catalog searches and pagination use existing list endpoints locally.",
+    "Axe checks do not certify full WCAG compliance.",
+    "Coverage and prior evidence are reported separately; this is not one clean full-suite browser run."
+  ]
+}

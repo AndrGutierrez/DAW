@@ -1,0 +1,36 @@
+  Determining projects to restore...
+  Restored /src/src/Core.Application/Core.Application.csproj (in 7.77 sec).
+  Restored /src/src/Infrastructure/Infrastructure.csproj (in 9.06 sec).
+  Restored /src/tests/UnitTests/UnitTests.csproj (in 9.3 sec).
+  Restored /src/src/Presentation.API/Presentation.API.csproj (in 10.69 sec).
+  Restored /src/tests/Core.Tests/Core.Tests.csproj (in 10.73 sec).
+  1 of 6 projects are up-to-date for restore.
+  Core.Domain -> /src/src/Core.Domain/bin/Release/net10.0/Core.Domain.dll
+  Core.Application -> /src/src/Core.Application/bin/Release/net10.0/Core.Application.dll
+  UnitTests -> /src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll
+Test run for /src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll (.NETCoreApp,Version=v10.0)
+  Infrastructure -> /src/src/Infrastructure/bin/Release/net10.0/Infrastructure.dll
+A total of 1 test files matched the specified pattern.
+Results File: /src/artifacts/phase4-audit/final-tests/_2e49f1bd61c7_2026-10-08_05_55_24_net10.0.trx
+
+Passed!  - Failed:     0, Passed:   122, Skipped:     0, Total:   122, Duration: 400 ms - UnitTests.dll (net10.0)
+
+  Determining projects to restore...
+  Restored /src/src/Core.Application/Core.Application.csproj (in 7.3 sec).
+  Restored /src/src/Infrastructure/Infrastructure.csproj (in 9.25 sec).
+  Restored /src/src/Presentation.API/Presentation.API.csproj (in 12.18 sec).
+  Restored /src/tests/Core.Tests/Core.Tests.csproj (in 13.01 sec).
+  1 of 5 projects are up-to-date for restore.
+  Core.Domain -> /src/src/Core.Domain/bin/Release/net10.0/Core.Domain.dll
+  Core.Application -> /src/src/Core.Application/bin/Release/net10.0/Core.Application.dll
+  Infrastructure -> /src/src/Infrastructure/bin/Release/net10.0/Infrastructure.dll
+  Presentation.API -> /src/src/Presentation.API/bin/Release/net10.0/Presentation.API.dll
+  Core.Tests -> /src/tests/Core.Tests/bin/Release/net10.0/Core.Tests.dll
+Test run for /src/tests/Core.Tests/bin/Release/net10.0/Core.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: /src/artifacts/phase4-audit/core-tests-verified/core-tests.trx
+
+Passed!  - Failed:     0, Passed:   141, Skipped:     0, Total:   141, Duration: 27 s - Core.Tests.dll (net10.0)
+
+Attachments:
+  /src/artifacts/phase4-audit/core-tests-verified/e4a3b652-5302-4c2f-a2cd-47063f33ebf7/coverage.cobertura.xml

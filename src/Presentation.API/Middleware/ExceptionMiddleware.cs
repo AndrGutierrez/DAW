@@ -31,6 +31,7 @@ public sealed class ExceptionMiddleware(
                 UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
                 ForbiddenException => StatusCodes.Status403Forbidden,
                 ConflictException => StatusCodes.Status409Conflict,
+                Core.Application.Operations.ExchangeRateUnavailableException => StatusCodes.Status503ServiceUnavailable,
                 ValidationException => StatusCodes.Status400BadRequest,
                 InvalidOperationException or ArgumentException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError

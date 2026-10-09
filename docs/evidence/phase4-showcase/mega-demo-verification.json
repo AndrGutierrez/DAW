@@ -1,0 +1,94 @@
+{
+  "environment": "preserved demo",
+  "date": "2026-10-08",
+  "accounts": [
+    {
+      "username": "demo.admin",
+      "role": "Admin",
+      "login": true,
+      "animals": 191,
+      "farms": 4,
+      "canManageUsers": true
+    },
+    {
+      "username": "demo.administrador",
+      "role": "Administrador",
+      "login": true,
+      "animals": 191,
+      "farms": 4,
+      "canManageUsers": true
+    },
+    {
+      "username": "demo.capataz",
+      "role": "Capataz",
+      "login": true,
+      "animals": 120,
+      "farms": 2,
+      "canManageUsers": false
+    },
+    {
+      "username": "demo.operador",
+      "role": "Employee",
+      "login": true,
+      "animals": 60,
+      "farms": 1,
+      "canManageUsers": false
+    },
+    {
+      "username": "demo.operario",
+      "role": "Operario",
+      "login": true,
+      "animals": 60,
+      "farms": 1,
+      "canManageUsers": false
+    },
+    {
+      "username": "demo.lectura",
+      "role": "SoloLectura",
+      "login": true,
+      "animals": 180,
+      "farms": 3,
+      "canManageUsers": false
+    },
+    {
+      "username": "demo.veterinario",
+      "role": "Veterinario",
+      "login": true,
+      "animals": 180,
+      "farms": 3,
+      "canManageUsers": false
+    }
+  ],
+  "analytics": [
+    {
+      "farm": "Finca Valle Verde",
+      "milkLiters": 5547.76,
+      "critical": 2,
+      "pregnancyPercent": 66.67,
+      "fertilityPercent": 66.67,
+      "pendingServices": 7,
+      "calvings": 2,
+      "stockRotationAvailable": 12
+    },
+    {
+      "farm": "Hacienda Los Llanos",
+      "milkLiters": 6261.76,
+      "critical": 2,
+      "pregnancyPercent": 66.67,
+      "fertilityPercent": 66.67,
+      "pendingServices": 7,
+      "calvings": 2,
+      "stockRotationAvailable": 12
+    },
+    {
+      "farm": "Finca La Sierra",
+      "milkLiters": 6975.76,
+      "critical": 2,
+      "pregnancyPercent": 66.67,
+      "fertilityPercent": 66.67,
+      "pendingServices": 7,
+      "calvings": 2,
+      "stockRotationAvailable": 12
+    }
+  ]
+}

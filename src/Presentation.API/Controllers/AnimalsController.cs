@@ -8,8 +8,19 @@ namespace Presentation.API.Controllers;
 
 [ApiController]
 [Route("api/animals")]
-public sealed class AnimalsController(IAnimalQueryService animals, ICrudService<AnimalRequest> writes, AnimalHealthService health) : ControllerBase
+public sealed class AnimalsController(IAnimalQueryService animals, ICrudService<AnimalRequest> writes, AnimalHealthService health, AnimalGrowthService growth, AnimalWeighingService weighing) : ControllerBase
 {
+    [HttpGet("{id:guid}/growth"), HasPermission("animals.get"), HasPermission("weights.list")]
+    public async Task<ActionResult<AnimalGrowthResult>> Growth(Guid id, [FromQuery] GrowthPageRequest request, CancellationToken ct) =>
+        Ok(await growth.GetAsync(id, request, ct));
+
+    [HttpPost("{id:guid}/weights"), HasPermission("animals.get"), HasPermission("weights.create")]
+    public async Task<ActionResult<AnimalWeighingResult>> Weigh(Guid id, AnimalWeighingRequest request, CancellationToken ct)
+    {
+        var result = await weighing.RecordAsync(id, request, ct);
+        return StatusCode(result.Replayed ? 200 : 201, result);
+    }
+
     [HttpPost, HasPermission("animals.create")]
     public async Task<IActionResult> Create(AnimalRequest request, CancellationToken ct)
     {
@@ -47,6 +58,10 @@ public sealed class AnimalsController(IAnimalQueryService animals, ICrudService<
     public async Task<ActionResult<IReadOnlyList<AnimalListItem>>> List(CancellationToken cancellationToken) =>
         Ok(await animals.ListAsync(cancellationToken));
 
+    [HttpGet("page"), HasPermission("animals.list")]
+    public async Task<ActionResult<AnimalPageResult>> Page([FromQuery] AnimalPageRequest request, CancellationToken ct) =>
+        Ok(await animals.PageAsync(request, ct));
+
     [HttpGet("stale")]
     [HasPermission("animals.list")]
     public async Task<ActionResult<IReadOnlyList<AnimalListItem>>> ListStale(
@@ -60,6 +75,9 @@ public sealed class AnimalsController(IAnimalQueryService animals, ICrudService<
 
         return Ok(await animals.ListStaleAsync(days, cancellationToken));
     }
+
+    [HttpGet("{id:guid}/lineage"), HasPermission("animals.get")]
+    public async Task<IActionResult> Lineage(Guid id, CancellationToken ct) => Ok(await animals.GetLineageAsync(id, ct));
 
     [HttpGet("{id:guid}")]
     [HasPermission("animals.get")]

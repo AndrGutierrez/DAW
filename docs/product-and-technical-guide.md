@@ -2,11 +2,25 @@
 
 ## 1. Qué resuelve el sistema
 
-La operación ganadera necesita identificar sus animales, conocer su ubicación y condición, registrar cuánto producen y controlar los insumos disponibles. Esta versión ofrece esos flujos mediante una API persistente con permisos de acceso por finca y operación.
+La operación ganadera necesita identificar sus animales, conocer su ubicación y condición, registrar cuánto producen y controlar los insumos disponibles. La SPA React ofrece esos flujos mediante una API .NET persistente, con permisos de acceso por finca y operación.
 
-**Disponibles:** CRUD de once recursos, historial de cambios de salud, pesajes, fotos privadas, producción animal unificada, categorías e insumos con precios, existencias por finca, autenticación JWT y autorización por roles y permisos. Swagger permite ejecutar los contratos. La página Blazor es una presentación de la API; los formularios de gestión completos pertenecen a un incremento posterior.
+**Disponibles:** ficha animal por pestañas, edición, fotos comprimidas y privadas, curva de peso/GDP, pesaje consecutivo, sanidad y retiro farmacológico, reproducción y genealogía, producción, potreros con detalle lateral/traslados, catálogo de insumos, movimientos de inventario, dashboard, reportes XLSX/PDF, gestión de usuarios, objetivos de crecimiento y plano configurable de potreros. La API conserva el CRUD de once recursos y agrega contratos operativos especializados. Swagger permite inspeccionarlos; la interfaz de uso diario es React.
+
+El administrador con permisos de indicadores entra al dashboard. Employee y los usuarios sin acceso a ese resumen entran a Animales. Una ruta privada solicitada antes del login tiene prioridad y conserva su query/pestaña; esto también permite compartir enlaces a fichas. El dashboard financiero sigue protegido en la API.
 
 ## 2. Flujo operativo reproducible
+
+### Uso de la SPA
+
+1. Iniciar el entorno y la siembra según [setup](setup.md), abrir la raíz del sitio e iniciar sesión. El tema se puede alternar y la sesión se recupera al recargar.
+2. Como Admin, revisar el dashboard por finca/período: leche registrada, bovinos con pesaje comparable, diagnósticos positivos/concluyentes y existencias críticas. El saldo de inventario representa el estado actual.
+3. Entrar a Animales, buscar un arete y abrir su ficha; usar las pestañas para consultar sanidad, reproducción, producción, genealogía, ubicación, crecimiento y fotos.
+4. Registrar pesos en la ficha o en Pesaje para captura consecutiva. La GDP compara fechas de pesajes; la pérdida de peso activa un aviso. El objetivo se guarda por finca o animal y el seguimiento muestra los últimos intervalos que requieren revisión.
+5. Explorar un potrero en el panel lateral y registrar un traslado con destino y motivo. Capacidad y retiro sanitario se validan en el servidor.
+6. Registrar movimientos de insumos y revisar su historial. Desde el KPI de leche, Consultar producción conserva el período/finca en el reporte; exportar XLSX/PDF desde Reportes.
+7. Cerrar sesión. Como Employee, verificar las operaciones permitidas y la ausencia del dashboard administrativo.
+
+### Comprobación de contratos por Swagger/HTTP
 
 1. Ejecutar las migraciones y la siembra según [setup](setup.md).
 2. Iniciar sesión en `POST /api/auth/login` con `username` —también acepta correo— y `password`.
@@ -85,4 +99,8 @@ El pipeline utiliza `ExceptionMiddleware`, filtro de validación asíncrono y re
 
 Las pruebas .NET verifican reglas, API y autorización con EF InMemory; PostgreSQL se comprueba mediante migraciones reales, colección HTTP, SQL de restricciones y pruebas concurrentes. El registro de resultados y la comparación académica están en [Fase 2 y Fase 3](fases-2-y-3.md). No se identifica un modelo futuro mapeado con un módulo operativo terminado.
 
-El diseño completo previsto —reproducción, eventos clínicos, raciones, finanzas y tareas— está en [guía de negocio](guia-de-negocio.md). Los once recursos y la producción implementada se describen exhaustivamente en [modelo y CRUD](modelo-produccion-y-crud.md).
+La [guía de negocio](guia-de-negocio.md) conserva la visión amplia, que también incluye módulos futuros como raciones, finanzas y tareas. Sanidad y reproducción ya tienen flujos operativos descritos en [Fase 4: cuidado animal](fase4-sanidad.md). Los once recursos y la producción se describen en [modelo y CRUD](modelo-produccion-y-crud.md). El [contraste con el ejemplo del profesor](fase4-referencia-profesor.md) y la [auditoría de entrega](fase4-auditoria.md) distinguen lo implementado de los pendientes.
+
+## Cierre de evaluación del 8 de octubre de 2026
+
+El dashboard expone cohortes de preñez/fertilidad bovina con denominadores y pendientes; recibe invalidaciones SSE autorizadas entre sesiones y conserva respaldo periódico. La valoración puede alternar USD/Bs usando una cotización BCV fechada registrada manualmente, con origen explícito e historial persistido. Sin tasa no se inventa una conversión. Ver [métodos, contratos y límites](fase4-cierre-evaluacion.md), [matriz del instrumento vigente](fase4-evaluacion-09-octubre.md) y [evidencia reproducible](evidence/phase4-evaluation/README.md).

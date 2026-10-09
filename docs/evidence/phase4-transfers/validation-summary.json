@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-08",
+  "frontend": {
+    "passed": 141,
+    "files": 25
+  },
+  "backend": {
+    "unitTests": 241,
+    "coreTests": 190,
+    "failed": 0
+  },
+  "browser": {
+    "initialFailed": 4,
+    "recheckPassed": 4,
+    "recheckFailed": 0,
+    "projects": [
+      "desktop",
+      "mobile"
+    ],
+    "database": "Disposable PostgreSQL"
+  },
+  "accessibility": {
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "viewports": [
+      "desktop",
+      "mobile"
+    ],
+    "combinations": 4,
+    "detectedViolations": 0
+  },
+  "verified": [
+    "Whole search selection beyond 50 and 100 rows in frontend tests",
+    "Whole lot selection beyond the visible browser page",
+    "Unmapped active paddocks available as destinations",
+    "Capacity failure rolls back locations, history and audit in PostgreSQL",
+    "Stale source rolls back earlier members",
+    "Idempotent retry retains one movement per animal",
+    "Lot membership preserved by default"
+  ],
+  "build": "API and SPA Docker passed",
+  "limits": [
+    "500 effective movements per operation",
+    "Axe checks do not certify complete WCAG",
+    "No migration or entity added",
+    "Demonstration data retained; test fixtures isolated"
+  ]
+}

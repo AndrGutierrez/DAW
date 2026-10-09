@@ -1,0 +1,769 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="28890cbd-8b77-4db7-8555-6ddb0cea915a" name="@2e49f1bd61c7 2026-10-08 05:55:24" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-08T05:55:24.1044955+00:00" queuing="2026-10-08T05:55:24.1044955+00:00" start="2026-10-08T05:55:21.0387029+00:00" finish="2026-10-08T05:55:24.7551119+00:00" />
+  <TestSettings name="default" id="075b0f85-cee6-4b9e-9743-d426e99e3bb8">
+    <Deployment runDeploymentRoot="_2e49f1bd61c7_2026-10-08_05_55_24" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="82b1f7ec-e173-4464-bbe8-dde0961880fb" testId="5ee87f3c-127e-5892-c424-24fc1a6a0b4b" testName="UnitTests.AnimalMovementServiceTests.ReplaySucceedsEvenAfterAnotherMovement" computerName="2e49f1bd61c7" duration="00:00:00.0059124" startTime="2026-10-08T05:55:24.1914680+00:00" endTime="2026-10-08T05:55:24.1954456+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82b1f7ec-e173-4464-bbe8-dde0961880fb" />
+    <UnitTestResult executionId="0b5dd492-bff9-43c1-8816-5dfd70abdadf" testId="6e7c0c33-9b2f-7f55-d37b-1cfdbaa86ec7" testName="UnitTests.AnimalLocationPolicyTests.UnconfiguredCapacityDoesNotInventALimit" computerName="2e49f1bd61c7" duration="00:00:00.1211694" startTime="2026-10-08T05:55:24.0476338+00:00" endTime="2026-10-08T05:55:24.1232279+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b5dd492-bff9-43c1-8816-5dfd70abdadf" />
+    <UnitTestResult executionId="b7baac2c-82cd-46fb-8ced-54c453567a11" testId="1da5b37f-3e0d-7f03-220e-f20281bf3d68" testName="UnitTests.AnimalWeighingServiceTests.InactiveAnimalsRejectNewWeighings(status: Lost)" computerName="2e49f1bd61c7" duration="00:00:00.0050411" startTime="2026-10-08T05:55:24.2102263+00:00" endTime="2026-10-08T05:55:24.2152945+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7baac2c-82cd-46fb-8ced-54c453567a11" />
+    <UnitTestResult executionId="8b1a4aac-77eb-4ab0-b1a9-e320069554d1" testId="c0763eba-557a-3947-f5d8-e8cb0f69d920" testName="UnitTests.AnimalCareServiceTests.InvalidWithdrawalIsRejectedBeforeReadingAnimal(days: 3651)" computerName="2e49f1bd61c7" duration="00:00:00.0088384" startTime="2026-10-08T05:55:24.2740064+00:00" endTime="2026-10-08T05:55:24.2824147+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b1a4aac-77eb-4ab0-b1a9-e320069554d1" />
+    <UnitTestResult executionId="1ed49aa6-03ae-4e35-aa8f-49579a3b2781" testId="90923483-76db-28de-8579-0f7672d98bbd" testName="UnitTests.AnimalCareServiceTests.OtherAdministrationCannotBypassProductWithdrawal(kind: Vaccination)" computerName="2e49f1bd61c7" duration="00:00:00.0077350" startTime="2026-10-08T05:55:24.2601107+00:00" endTime="2026-10-08T05:55:24.2675562+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1ed49aa6-03ae-4e35-aa8f-49579a3b2781" />
+    <UnitTestResult executionId="7bed285c-9605-4ec8-bd1e-51f9994638d7" testId="f7114752-2012-951a-004e-abe22e705e8b" testName="UnitTests.AnimalLocationPolicyTests.InactiveAnimalDoesNotConsumeCapacity(status: Dead)" computerName="2e49f1bd61c7" duration="00:00:00.0045899" startTime="2026-10-08T05:55:24.1375038+00:00" endTime="2026-10-08T05:55:24.1442738+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7bed285c-9605-4ec8-bd1e-51f9994638d7" />
+    <UnitTestResult executionId="2a3fbf44-2bc7-4cc8-b49a-cbdb772363fb" testId="de05bab5-1509-9d1c-a8e8-ca2e15409472" testName="UnitTests.AnimalCareServiceTests.TreatmentSnapshotsCatalogAndUsesFinalAdministration" computerName="2e49f1bd61c7" duration="00:00:00.0115808" startTime="2026-10-08T05:55:24.3485028+00:00" endTime="2026-10-08T05:55:24.3597356+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a3fbf44-2bc7-4cc8-b49a-cbdb772363fb" />
+    <UnitTestResult executionId="6596d043-374b-4665-9df9-0b19e16bf983" testId="f055a206-8911-b571-0ae0-171db62f0de0" testName="UnitTests.AnimalMovementServiceTests.MissingFarmAssignmentHidesAnimal" computerName="2e49f1bd61c7" duration="00:00:00.0051723" startTime="2026-10-08T05:55:24.2046545+00:00" endTime="2026-10-08T05:55:24.2090686+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6596d043-374b-4665-9df9-0b19e16bf983" />
+    <UnitTestResult executionId="1b53dbfa-b23c-44f5-bb0a-ef5e65fec838" testId="be5dca88-b146-1f96-5201-82bad7028a80" testName="UnitTests.AnimalGrowthServiceTests.RecordsFromOtherAnimalOrFarmAreExcluded" computerName="2e49f1bd61c7" duration="00:00:00.0039375" startTime="2026-10-08T05:55:24.2123411+00:00" endTime="2026-10-08T05:55:24.2158665+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b53dbfa-b23c-44f5-bb0a-ef5e65fec838" />
+    <UnitTestResult executionId="007a6b16-e770-4166-8d06-9e05a40a2b65" testId="89678866-eba3-be3f-3bee-a05732509d99" testName="UnitTests.AnimalCareServiceTests.InactiveAnimalCannotRegisterClinicalEvents(status: Dead)" computerName="2e49f1bd61c7" duration="00:00:00.0053090" startTime="2026-10-08T05:55:24.3067918+00:00" endTime="2026-10-08T05:55:24.3117925+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="007a6b16-e770-4166-8d06-9e05a40a2b65" />
+    <UnitTestResult executionId="c671f282-6a0b-40ad-b508-4814b7e14b14" testId="8b6aa387-7ba2-c961-9beb-785deecc46ee" testName="UnitTests.ProductCatalogServiceTests.StockedProductCannotChangeUnitOrPartiallyUpdateOtherFields" computerName="2e49f1bd61c7" duration="00:00:00.0055981" startTime="2026-10-08T05:55:24.2432806+00:00" endTime="2026-10-08T05:55:24.2481778+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c671f282-6a0b-40ad-b508-4814b7e14b14" />
+    <UnitTestResult executionId="5aef9d2b-f475-45cb-b989-5aad9bf6dbda" testId="d4b05de8-396c-0ab5-d315-bcdfe75dead7" testName="UnitTests.AnimalHealthServiceTests.StatusChangeRecordsPreviousStateReasonAndAuthor" computerName="2e49f1bd61c7" duration="00:00:00.0059248" startTime="2026-10-08T05:55:24.1903291+00:00" endTime="2026-10-08T05:55:24.1946105+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5aef9d2b-f475-45cb-b989-5aad9bf6dbda" />
+    <UnitTestResult executionId="912fb956-049a-4f90-ab46-30452a0b0cf5" testId="bbb73819-6ec4-5105-c5e9-7f5eba89235b" testName="UnitTests.AnimalGrowthServiceTests.SameDayObservationsStayInHistoryAndLatestDrivesCurve" computerName="2e49f1bd61c7" duration="00:00:00.1702399" startTime="2026-10-08T05:55:24.0451473+00:00" endTime="2026-10-08T05:55:24.1743738+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="912fb956-049a-4f90-ab46-30452a0b0cf5" />
+    <UnitTestResult executionId="d7767d47-6c03-4688-a34a-79b37f4cdc26" testId="60bb26e8-2fa1-0a15-c909-6736916f5193" testName="UnitTests.AnimalHealthServiceTests.InactiveAnimalCannotChangeHealthStatus(status: Lost)" computerName="2e49f1bd61c7" duration="00:00:00.0032442" startTime="2026-10-08T05:55:24.1761675+00:00" endTime="2026-10-08T05:55:24.1769138+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7767d47-6c03-4688-a34a-79b37f4cdc26" />
+    <UnitTestResult executionId="9cd3ebb0-fdc7-4f42-b657-c2fac0432d85" testId="84d08902-273d-21cc-a7dc-aec9a6fa6157" testName="UnitTests.WithdrawalPolicyTests.WithdrawalCoversCourseAndInclusiveFinalDay(day: 1, blocked: True)" computerName="2e49f1bd61c7" duration="00:00:00.0010859" startTime="2026-10-08T05:55:24.1333212+00:00" endTime="2026-10-08T05:55:24.1339361+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9cd3ebb0-fdc7-4f42-b657-c2fac0432d85" />
+    <UnitTestResult executionId="b0c28206-7f09-4d17-996c-d6a71537dc60" testId="c0cb8157-591c-7686-73ba-a1b8cea178f6" testName="UnitTests.AnimalLocationPolicyTests.InactiveAnimalDoesNotConsumeCapacity(status: Sold)" computerName="2e49f1bd61c7" duration="00:00:00.0034594" startTime="2026-10-08T05:55:24.1463138+00:00" endTime="2026-10-08T05:55:24.1486801+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0c28206-7f09-4d17-996c-d6a71537dc60" />
+    <UnitTestResult executionId="af969836-4da9-4112-b696-179087a2f1d9" testId="bcd2aecd-c7ef-2edb-b416-147c32704c46" testName="UnitTests.AnimalPageRequestValidatorTests.DefaultsAreValid" computerName="2e49f1bd61c7" duration="00:00:00.0001965" startTime="2026-10-08T05:55:24.1733353+00:00" endTime="2026-10-08T05:55:24.1734108+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af969836-4da9-4112-b696-179087a2f1d9" />
+    <UnitTestResult executionId="cb1e5d72-7449-41b2-adfe-3e7315c1dbac" testId="deb69767-bde9-9614-41dc-7df3fb251ff3" testName="UnitTests.AnimalGrowthServiceTests.BoundedCurveKeepsThePrecedingIntervalForItsFirstVisiblePoint" computerName="2e49f1bd61c7" duration="00:00:00.0036523" startTime="2026-10-08T05:55:24.2197234+00:00" endTime="2026-10-08T05:55:24.2227820+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cb1e5d72-7449-41b2-adfe-3e7315c1dbac" />
+    <UnitTestResult executionId="ce26c769-4325-4ec6-89e7-d79941b6172c" testId="62ac96b1-0d3d-4327-0561-139d845ab2d4" testName="UnitTests.AnalyticsServiceTests.DiagnosticProportionUsesOnlyConclusiveChecks" computerName="2e49f1bd61c7" duration="00:00:00.0011454" startTime="2026-10-08T05:55:24.0785315+00:00" endTime="2026-10-08T05:55:24.0785548+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ce26c769-4325-4ec6-89e7-d79941b6172c" />
+    <UnitTestResult executionId="b927336b-d230-40fa-96cc-a044bd2a5717" testId="fe7f72c2-e2dc-234e-bc70-6cb721bf0af8" testName="UnitTests.ProductCatalogServiceTests.InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites(price: -1)" computerName="2e49f1bd61c7" duration="00:00:00.0042949" startTime="2026-10-08T05:55:24.2259134+00:00" endTime="2026-10-08T05:55:24.2298034+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b927336b-d230-40fa-96cc-a044bd2a5717" />
+    <UnitTestResult executionId="c726bf13-bebe-49db-aa09-70353e8b09fd" testId="2fc7e3e1-e98f-756f-e157-962ee978f22f" testName="UnitTests.AnimalGrowthServiceTests.UnassignedAnimalIsHiddenBeforeReadingHistory" computerName="2e49f1bd61c7" duration="00:00:00.0044802" startTime="2026-10-08T05:55:24.2043001+00:00" endTime="2026-10-08T05:55:24.2077896+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c726bf13-bebe-49db-aa09-70353e8b09fd" />
+    <UnitTestResult executionId="c49b107f-2442-4033-b94f-46b04e40827d" testId="175dd515-3970-6820-304f-8c0bbc135c34" testName="UnitTests.AnimalHealthServiceTests.UnassignedFarmIsHiddenAndNeverWritten" computerName="2e49f1bd61c7" duration="00:00:00.0071505" startTime="2026-10-08T05:55:24.1774616+00:00" endTime="2026-10-08T05:55:24.1844666+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c49b107f-2442-4033-b94f-46b04e40827d" />
+    <UnitTestResult executionId="42a335df-0d87-4d4d-97ed-6b91b3c2a57b" testId="eaadb64a-129c-352f-3867-52e00e291ea9" testName="UnitTests.AnimalWeighingServiceTests.InactiveAnimalsRejectNewWeighings(status: Transferred)" computerName="2e49f1bd61c7" duration="00:00:00.0045942" startTime="2026-10-08T05:55:24.2054480+00:00" endTime="2026-10-08T05:55:24.2098058+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42a335df-0d87-4d4d-97ed-6b91b3c2a57b" />
+    <UnitTestResult executionId="274ed1e9-6e0f-46f0-88d2-279ed59b137a" testId="a2853e71-fc7f-bf21-aec3-dfe65a981bd3" testName="UnitTests.AnimalGrowthServiceTests.HistoryIsPagedOnServerWhileCurveAndTotalsStayComplete" computerName="2e49f1bd61c7" duration="00:00:00.0060574" startTime="2026-10-08T05:55:24.1895078+00:00" endTime="2026-10-08T05:55:24.1946643+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="274ed1e9-6e0f-46f0-88d2-279ed59b137a" />
+    <UnitTestResult executionId="f157aff6-8b30-487c-862d-3c2b1e6d04a3" testId="cc6258ce-3da4-cbc5-6f43-d0246f956798" testName="UnitTests.AnalyticsServiceTests.MaximumBoundaryIsExcessAndNotCritical" computerName="2e49f1bd61c7" duration="00:00:00.0004286" startTime="2026-10-08T05:55:24.0780105+00:00" endTime="2026-10-08T05:55:24.0780397+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f157aff6-8b30-487c-862d-3c2b1e6d04a3" />
+    <UnitTestResult executionId="799d0c1f-53e7-453d-9afd-d9aacb58e49c" testId="9218af7f-fda3-8805-d7a1-a02e0a565029" testName="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: 1, pageSize: 0)" computerName="2e49f1bd61c7" duration="00:00:00.0810337" startTime="2026-10-08T05:55:24.0946399+00:00" endTime="2026-10-08T05:55:24.1691404+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="799d0c1f-53e7-453d-9afd-d9aacb58e49c" />
+    <UnitTestResult executionId="d83f51b9-4dc5-4dc0-a9e7-75eacf65ce8e" testId="d3e2aa1c-cb26-40b4-18c3-9513e4549698" testName="UnitTests.WithdrawalPolicyTests.ZeroDaysStillRestrictsAdministrationDate" computerName="2e49f1bd61c7" duration="00:00:00.0036585" startTime="2026-10-08T05:55:24.1344436+00:00" endTime="2026-10-08T05:55:24.1376670+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d83f51b9-4dc5-4dc0-a9e7-75eacf65ce8e" />
+    <UnitTestResult executionId="a58a3f6c-950a-4959-bf38-fdb47f05c135" testId="4bd0b529-b21f-c228-ef3a-0d438db0ae5c" testName="UnitTests.AnimalMovementServiceTests.TransferKeepsSourceAuthorAndCurrentDateAndUpdatesAnimal" computerName="2e49f1bd61c7" duration="00:00:00.0209168" startTime="2026-10-08T05:55:24.1623934+00:00" endTime="2026-10-08T05:55:24.1839165+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a58a3f6c-950a-4959-bf38-fdb47f05c135" />
+    <UnitTestResult executionId="ba3c2b41-b994-48c1-a61a-4daad9f0d402" testId="cd07bb35-5ab5-8adf-6586-a0764862b2ed" testName="UnitTests.InventoryServiceTests.AnimalFromAnotherFarmIsRejected" computerName="2e49f1bd61c7" duration="00:00:00.0055560" startTime="2026-10-08T05:55:24.2037918+00:00" endTime="2026-10-08T05:55:24.2084779+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba3c2b41-b994-48c1-a61a-4daad9f0d402" />
+    <UnitTestResult executionId="6dfb64c2-c36b-4839-a34a-321c0afb61a4" testId="0d45e836-99a0-d81c-094d-6a834eef7a08" testName="UnitTests.InventoryServiceTests.ReplayDoesNotApplyQuantityTwiceEvenWithStaleExpectedBalance" computerName="2e49f1bd61c7" duration="00:00:00.0048373" startTime="2026-10-08T05:55:24.2430676+00:00" endTime="2026-10-08T05:55:24.2472209+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6dfb64c2-c36b-4839-a34a-321c0afb61a4" />
+    <UnitTestResult executionId="1aaf29e7-d56b-4354-85e9-79e3e3a25481" testId="85399ab2-be24-e694-58c5-e0b7c18a179c" testName="UnitTests.ProductCatalogServiceTests.MissingCategoryRejectsCreationWithoutWriting" computerName="2e49f1bd61c7" duration="00:00:00.0041288" startTime="2026-10-08T05:55:24.2386526+00:00" endTime="2026-10-08T05:55:24.2427939+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1aaf29e7-d56b-4354-85e9-79e3e3a25481" />
+    <UnitTestResult executionId="8372c028-fcc3-4e54-8442-b5bdd1de9e43" testId="fc49ce42-95f2-e17b-fef4-213a75383bff" testName="UnitTests.AnalyticsServiceTests.ValuationUsesStockTimesEachCatalogPriceAndIncludesThresholdBoundary" computerName="2e49f1bd61c7" duration="00:00:00.0003472" startTime="2026-10-08T05:55:24.0782858+00:00" endTime="2026-10-08T05:55:24.0783109+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8372c028-fcc3-4e54-8442-b5bdd1de9e43" />
+    <UnitTestResult executionId="3a2981a6-147b-4db9-b8b5-7d3d0fd6f3ff" testId="ae21924d-1910-c59c-43d2-7eb5c4a62d6a" testName="UnitTests.InventoryServiceTests.InvalidQuantityDoesNotReadInventory(quantity: 0)" computerName="2e49f1bd61c7" duration="00:00:00.0037511" startTime="2026-10-08T05:55:24.2202332+00:00" endTime="2026-10-08T05:55:24.2244747+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a2981a6-147b-4db9-b8b5-7d3d0fd6f3ff" />
+    <UnitTestResult executionId="1c7898d6-e243-40a5-b096-4d311a4d3fe5" testId="1dd53a1c-4d67-98be-c6a5-8a23df5611e3" testName="UnitTests.InventoryServiceTests.InvalidQuantityDoesNotReadInventory(quantity: -1)" computerName="2e49f1bd61c7" duration="00:00:00.0045217" startTime="2026-10-08T05:55:24.2155479+00:00" endTime="2026-10-08T05:55:24.2197598+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c7898d6-e243-40a5-b096-4d311a4d3fe5" />
+    <UnitTestResult executionId="9c76acaa-5a22-4706-a7ee-e1ab28ce510f" testId="dfb321a5-5728-3333-4ac2-bcc159392afa" testName="UnitTests.AnimalGrowthServiceTests.EmptyHistoryDoesNotInventWeights" computerName="2e49f1bd61c7" duration="00:00:00.0034024" startTime="2026-10-08T05:55:24.2169477+00:00" endTime="2026-10-08T05:55:24.2191100+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c76acaa-5a22-4706-a7ee-e1ab28ce510f" />
+    <UnitTestResult executionId="fe9a9f51-d6dd-4a0c-bb5c-914d61973aa9" testId="16271602-97fb-fe5a-bb43-1671937fc1e5" testName="UnitTests.AnimalGrowthServiceTests.InvalidPageDoesNotReadTheAnimal(page: 0, size: 20)" computerName="2e49f1bd61c7" duration="00:00:00.0026467" startTime="2026-10-08T05:55:24.1860176+00:00" endTime="2026-10-08T05:55:24.1861016+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe9a9f51-d6dd-4a0c-bb5c-914d61973aa9" />
+    <UnitTestResult executionId="fd66161f-5096-4151-bb35-12987cd2ed2d" testId="d4879719-8095-db4c-bab9-a119fd6ef7b8" testName="UnitTests.ProductCatalogServiceTests.InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites(price: 0)" computerName="2e49f1bd61c7" duration="00:00:00.0018228" startTime="2026-10-08T05:55:24.2376131+00:00" endTime="2026-10-08T05:55:24.2381387+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd66161f-5096-4151-bb35-12987cd2ed2d" />
+    <UnitTestResult executionId="d7c3f276-c60e-4135-a6ee-c7d3bbab4b51" testId="90d1ba05-bbd8-f8e2-5fab-224c60108e4d" testName="UnitTests.AnimalCareServiceTests.BackdatedTreatmentCannotContradictProduction(method: Milking)" computerName="2e49f1bd61c7" duration="00:00:00.0056555" startTime="2026-10-08T05:55:24.3427443+00:00" endTime="2026-10-08T05:55:24.3480047+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7c3f276-c60e-4135-a6ee-c7d3bbab4b51" />
+    <UnitTestResult executionId="10d1e609-7711-4039-b988-df1f68082c1c" testId="548f1209-fe9d-1a3a-da7d-1a1fefd94ca8" testName="UnitTests.AnimalWeighingServiceTests.IdentifierCollisionCannotOverwriteAnotherSubmission(differentAuthor: False)" computerName="2e49f1bd61c7" duration="00:00:00.1784399" startTime="2026-10-08T05:55:24.0475841+00:00" endTime="2026-10-08T05:55:24.1831187+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="10d1e609-7711-4039-b988-df1f68082c1c" />
+    <UnitTestResult executionId="628d1a2e-3866-4823-96cb-66150cbad7d1" testId="6f28d0c2-f67a-365b-8492-5d858b2acc74" testName="UnitTests.ProductCatalogServiceTests.ExistingProductIsMappedWithoutTrackingOrWriting" computerName="2e49f1bd61c7" duration="00:00:00.0034588" startTime="2026-10-08T05:55:24.2223212+00:00" endTime="2026-10-08T05:55:24.2253814+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="628d1a2e-3866-4823-96cb-66150cbad7d1" />
+    <UnitTestResult executionId="420acd2e-8084-4eac-bc1c-161cde8b17e3" testId="4e0f0be4-3d4a-5ce1-3d76-194a6a543e92" testName="UnitTests.AnimalCareServiceTests.ProductionOutsideWithdrawalAllowsTreatment" computerName="2e49f1bd61c7" duration="00:00:00.0071312" startTime="2026-10-08T05:55:24.3670503+00:00" endTime="2026-10-08T05:55:24.3739013+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="420acd2e-8084-4eac-bc1c-161cde8b17e3" />
+    <UnitTestResult executionId="f1a2a6db-3037-403d-9eeb-24a67663ea45" testId="589f4e6c-dd16-4e73-6999-b73ac626f406" testName="UnitTests.ProductCatalogServiceTests.CreationPreservesDecimalPricesAndNormalizesCatalogText" computerName="2e49f1bd61c7" duration="00:00:00.0110021" startTime="2026-10-08T05:55:24.2020973+00:00" endTime="2026-10-08T05:55:24.2058487+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1a2a6db-3037-403d-9eeb-24a67663ea45" />
+    <UnitTestResult executionId="89a7a3ca-9e6f-4c07-b1e4-a9c3f1943a49" testId="31a61a16-8865-4c68-785e-4a2fc355eec2" testName="UnitTests.ProductCatalogServiceTests.InactiveCategoryRejectsCreationWithoutWriting" computerName="2e49f1bd61c7" duration="00:00:00.0052237" startTime="2026-10-08T05:55:24.1919682+00:00" endTime="2026-10-08T05:55:24.2017165+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89a7a3ca-9e6f-4c07-b1e4-a9c3f1943a49" />
+    <UnitTestResult executionId="bb81aef6-6bbc-40d6-a929-888a10ff070a" testId="0486e38d-e6d3-104f-ff09-8d174d4b9d2c" testName="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: 0, pageSize: 12)" computerName="2e49f1bd61c7" duration="00:00:00.0000665" startTime="2026-10-08T05:55:24.1727614+00:00" endTime="2026-10-08T05:55:24.1728081+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb81aef6-6bbc-40d6-a929-888a10ff070a" />
+    <UnitTestResult executionId="6187b5d1-e7b0-45b8-8430-8f7b05878889" testId="cc476ca3-fb5e-39f7-1a29-995c00cfe63a" testName="UnitTests.AnimalMovementServiceTests.InvalidBodyDoesNotReadAnimal" computerName="2e49f1bd61c7" duration="00:00:00.0060134" startTime="2026-10-08T05:55:24.1844293+00:00" endTime="2026-10-08T05:55:24.1903832+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6187b5d1-e7b0-45b8-8430-8f7b05878889" />
+    <UnitTestResult executionId="8ddfe2ff-a9ed-42ad-b0d9-6dbc99127248" testId="225ff88e-b28b-2fb2-1708-26bd8f2254bb" testName="UnitTests.WithdrawalPolicyTests.FutureCourseAndOtherAnimalDoNotBlockEarlierProduction" computerName="2e49f1bd61c7" duration="00:00:00.0028903" startTime="2026-10-08T05:55:24.1452889+00:00" endTime="2026-10-08T05:55:24.1469020+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8ddfe2ff-a9ed-42ad-b0d9-6dbc99127248" />
+    <UnitTestResult executionId="02792ba0-8033-43d1-ac28-e370ee530448" testId="6437f3ee-260c-9b68-de30-5b5e7fef4051" testName="UnitTests.ProductCatalogServiceTests.InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites(price: 12.345)" computerName="2e49f1bd61c7" duration="00:00:00.0062825" startTime="2026-10-08T05:55:24.2343124+00:00" endTime="2026-10-08T05:55:24.2362150+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02792ba0-8033-43d1-ac28-e370ee530448" />
+    <UnitTestResult executionId="5c919ce7-a674-4118-a50a-891beb9be347" testId="fb875d9f-820c-f7de-6955-dc9ac57c91c9" testName="UnitTests.AnimalCareServiceTests.ReproductiveReplayPreservesAuthorAndDoesNotDuplicate" computerName="2e49f1bd61c7" duration="00:00:00.2215645" startTime="2026-10-08T05:55:24.0476177+00:00" endTime="2026-10-08T05:55:24.2234607+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c919ce7-a674-4118-a50a-891beb9be347" />
+    <UnitTestResult executionId="78c8461a-e71b-4779-9b28-a19031fb17c2" testId="2460942f-0c46-10a8-b51e-ef5e00dec792" testName="UnitTests.InventoryServiceTests.IncomingStockCannotClaimAnimalConsumption" computerName="2e49f1bd61c7" duration="00:00:00.1776902" startTime="2026-10-08T05:55:24.0476011+00:00" endTime="2026-10-08T05:55:24.1793708+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78c8461a-e71b-4779-9b28-a19031fb17c2" />
+    <UnitTestResult executionId="555ea7dd-d9ff-4d06-a555-da3762a61061" testId="08aeafcd-ef74-9aff-cc90-6368adad490d" testName="UnitTests.AnimalPageRequestValidatorTests.EmptyFarmIsRejected" computerName="2e49f1bd61c7" duration="00:00:00.0038451" startTime="2026-10-08T05:55:24.1780374+00:00" endTime="2026-10-08T05:55:24.1799316+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="555ea7dd-d9ff-4d06-a555-da3762a61061" />
+    <UnitTestResult executionId="a9b69195-e42d-45d6-80fe-4ca06b49be4b" testId="66b7e14b-3680-8bde-6ae8-b74189ae402a" testName="UnitTests.AnimalCareServiceTests.OverrideCannotShortenCatalogWithdrawal(days: 0)" computerName="2e49f1bd61c7" duration="00:00:00.0051681" startTime="2026-10-08T05:55:24.3826843+00:00" endTime="2026-10-08T05:55:24.3869797+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a9b69195-e42d-45d6-80fe-4ca06b49be4b" />
+    <UnitTestResult executionId="a5104c1d-8e63-47cd-a816-7dbbf8149c4a" testId="d623c39b-3e23-fb49-2eda-e656bae0dec2" testName="UnitTests.InventoryServiceTests.InsufficientStockRejectsWithoutMutatingBalance" computerName="2e49f1bd61c7" duration="00:00:00.0036974" startTime="2026-10-08T05:55:24.2249155+00:00" endTime="2026-10-08T05:55:24.2270720+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5104c1d-8e63-47cd-a816-7dbbf8149c4a" />
+    <UnitTestResult executionId="786e870f-464a-49a2-b212-fe96868cd7b8" testId="8c1536dc-99e9-4f4a-9dd8-e26541b81621" testName="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: 100001, pageSize: 12)" computerName="2e49f1bd61c7" duration="00:00:00.0001200" startTime="2026-10-08T05:55:24.1717620+00:00" endTime="2026-10-08T05:55:24.1718135+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="786e870f-464a-49a2-b212-fe96868cd7b8" />
+    <UnitTestResult executionId="5b62ae21-2120-4127-8e07-e8cd74815a53" testId="25513d65-f0cd-5500-f5b5-96ce4d4a7316" testName="UnitTests.AnimalWeighingServiceTests.InvalidWeightNeverPersists(weight: 12.345000000000001)" computerName="2e49f1bd61c7" duration="00:00:00.0046930" startTime="2026-10-08T05:55:24.2373457+00:00" endTime="2026-10-08T05:55:24.2409188+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b62ae21-2120-4127-8e07-e8cd74815a53" />
+    <UnitTestResult executionId="d4701299-f73d-45c8-a7ec-2d54741c081e" testId="b53a03f2-9a93-5015-5441-db90d198786b" testName="UnitTests.InventoryServiceTests.InaccessibleInventoryIsHiddenBeforeSubmissionLookup" computerName="2e49f1bd61c7" duration="00:00:00.0089765" startTime="2026-10-08T05:55:24.1802029+00:00" endTime="2026-10-08T05:55:24.1884373+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4701299-f73d-45c8-a7ec-2d54741c081e" />
+    <UnitTestResult executionId="bd84ca57-be28-4942-b3b5-3097f72ed932" testId="36b3b218-2bc7-2344-166d-70f0240a1af2" testName="UnitTests.WithdrawalPolicyTests.WithdrawalCoversCourseAndInclusiveFinalDay(day: 6, blocked: False)" computerName="2e49f1bd61c7" duration="00:00:00.0017646" startTime="2026-10-08T05:55:24.1318479+00:00" endTime="2026-10-08T05:55:24.1327826+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd84ca57-be28-4942-b3b5-3097f72ed932" />
+    <UnitTestResult executionId="83aa1eac-587b-4e88-8529-d99aba2ad0ed" testId="eaaf3917-9307-5be2-7755-28e04ebef183" testName="UnitTests.AnalyticsServiceTests.MilkDoesNotSumIncompatibleUnits" computerName="2e49f1bd61c7" duration="00:00:00.0003587" startTime="2026-10-08T05:55:24.0854077+00:00" endTime="2026-10-08T05:55:24.0854318+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83aa1eac-587b-4e88-8529-d99aba2ad0ed" />
+    <UnitTestResult executionId="56f69301-bd8b-472a-823d-1d562ae8cc27" testId="5e3e4ab5-7b1c-58a9-6fe2-f15660be8e58" testName="UnitTests.AnimalCareServiceTests.CalvingCannotHaveMoreStillbornThanTotalOffspring" computerName="2e49f1bd61c7" duration="00:00:00.0067308" startTime="2026-10-08T05:55:24.3876510+00:00" endTime="2026-10-08T05:55:24.3938480+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56f69301-bd8b-472a-823d-1d562ae8cc27" />
+    <UnitTestResult executionId="03f4dce0-d0c8-44ea-8d95-b501b24a9650" testId="b4d745d5-83e4-f3b2-ac7a-52b03b52f850" testName="UnitTests.AnimalLocationPolicyTests.CapacityCountsOnlyOtherActiveResidents" computerName="2e49f1bd61c7" duration="00:00:00.0089722" startTime="2026-10-08T05:55:24.1635349+00:00" endTime="2026-10-08T05:55:24.1734477+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="03f4dce0-d0c8-44ea-8d95-b501b24a9650" />
+    <UnitTestResult executionId="6d0b01c9-0732-41a4-8dbc-46bb772a95c9" testId="60d1a5b5-af9c-33b2-a6a0-5953b24298ee" testName="UnitTests.AnimalGrowthServiceTests.DailyGainUsesElapsedDaysAndKeepsNegativeChange" computerName="2e49f1bd61c7" duration="00:00:00.0085273" startTime="2026-10-08T05:55:24.2016748+00:00" endTime="2026-10-08T05:55:24.2038292+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d0b01c9-0732-41a4-8dbc-46bb772a95c9" />
+    <UnitTestResult executionId="2bdfe9a9-5df0-4005-a3d2-6ddda6d76836" testId="0dc0cb29-77e6-bf8d-2c01-f38c56f0e83f" testName="UnitTests.AnimalCareServiceTests.InactiveAnimalCannotRegisterClinicalEvents(status: Sold)" computerName="2e49f1bd61c7" duration="00:00:00.0059543" startTime="2026-10-08T05:55:24.3011980+00:00" endTime="2026-10-08T05:55:24.3062734+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2bdfe9a9-5df0-4005-a3d2-6ddda6d76836" />
+    <UnitTestResult executionId="815d4a41-f297-4823-8ee8-e6a495989224" testId="26718400-3126-a3b5-98c8-400b26ac1678" testName="UnitTests.AnimalMovementServiceTests.NoChangeIsRejected" computerName="2e49f1bd61c7" duration="00:00:00.0091670" startTime="2026-10-08T05:55:24.2016616+00:00" endTime="2026-10-08T05:55:24.2043362+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="815d4a41-f297-4823-8ee8-e6a495989224" />
+    <UnitTestResult executionId="e14225ba-7510-4f4b-b94d-3f6c764a82aa" testId="e100eb6e-1059-001a-9eac-75c31320688e" testName="UnitTests.AnimalHealthServiceTests.InvalidStatusIsRejectedBeforeReadingAnyAnimal" computerName="2e49f1bd61c7" duration="00:00:00.0059270" startTime="2026-10-08T05:55:24.1849983+00:00" endTime="2026-10-08T05:55:24.1897789+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e14225ba-7510-4f4b-b94d-3f6c764a82aa" />
+    <UnitTestResult executionId="81e92bc9-dd99-4683-be51-c6effe265be4" testId="565f4a19-0d24-f1da-f0ff-ff777a73ef49" testName="UnitTests.AnimalCareServiceTests.OtherAdministrationCannotBypassProductWithdrawal(kind: Deworming)" computerName="2e49f1bd61c7" duration="00:00:00.0057855" startTime="2026-10-08T05:55:24.2683952+00:00" endTime="2026-10-08T05:55:24.2734157+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="81e92bc9-dd99-4683-be51-c6effe265be4" />
+    <UnitTestResult executionId="f0a15194-e6c2-4447-82e8-9b2754a1c4a0" testId="d2c952df-f12b-462a-436d-d38b4af92ea6" testName="UnitTests.AnimalHealthServiceTests.UnchangedStatusDoesNotCreateDuplicateHistory" computerName="2e49f1bd61c7" duration="00:00:00.1444221" startTime="2026-10-08T05:55:24.0476661+00:00" endTime="2026-10-08T05:55:24.1463570+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f0a15194-e6c2-4447-82e8-9b2754a1c4a0" />
+    <UnitTestResult executionId="5ad6a5d2-4f39-490b-a071-b43b32a8ca88" testId="4e7b3674-2f0f-c950-daab-c65b20bff220" testName="UnitTests.AnimalMovementServiceTests.InactiveAnimalCannotMove" computerName="2e49f1bd61c7" duration="00:00:00.0042766" startTime="2026-10-08T05:55:24.2143366+00:00" endTime="2026-10-08T05:55:24.2177918+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ad6a5d2-4f39-490b-a071-b43b32a8ca88" />
+    <UnitTestResult executionId="13a6236c-bdd5-4000-866a-9a16e69ee4aa" testId="a8297d59-9900-712c-cba6-dd77b754b543" testName="UnitTests.WithdrawalPolicyTests.WithdrawalCoversCourseAndInclusiveFinalDay(day: 3, blocked: True)" computerName="2e49f1bd61c7" duration="00:00:00.0044220" startTime="2026-10-08T05:55:24.1276222+00:00" endTime="2026-10-08T05:55:24.1310221+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="13a6236c-bdd5-4000-866a-9a16e69ee4aa" />
+    <UnitTestResult executionId="0a4af870-d7b0-41b6-871f-0c405abb9744" testId="6f4c716f-d0f0-3adc-b5fd-cde25fca0e91" testName="UnitTests.InventoryServiceTests.StaleBalanceRejectsWithoutWriting" computerName="2e49f1bd61c7" duration="00:00:00.0047297" startTime="2026-10-08T05:55:24.2381076+00:00" endTime="2026-10-08T05:55:24.2422508+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a4af870-d7b0-41b6-871f-0c405abb9744" />
+    <UnitTestResult executionId="448eab08-1663-490c-be2e-37c68139c018" testId="bde5c80b-7f00-8e2c-a3fc-1c76ab4a2df3" testName="UnitTests.InventoryServiceTests.AnotherAuthorsSubmissionCannotBeReplayed" computerName="2e49f1bd61c7" duration="00:00:00.0102500" startTime="2026-10-08T05:55:24.2278688+00:00" endTime="2026-10-08T05:55:24.2376535+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="448eab08-1663-490c-be2e-37c68139c018" />
+    <UnitTestResult executionId="3836978a-c4ac-47c8-8dff-601f218a7ed1" testId="b1184010-5111-8852-c01e-3739f0c73c50" testName="UnitTests.AnimalCareServiceTests.TreatmentCannotPrecedeBirth" computerName="2e49f1bd61c7" duration="00:00:00.0362738" startTime="2026-10-08T05:55:24.2244442+00:00" endTime="2026-10-08T05:55:24.2595655+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3836978a-c4ac-47c8-8dff-601f218a7ed1" />
+    <UnitTestResult executionId="236076c4-b5e6-4869-affe-2c1d0f1ab7ff" testId="1f76a559-a751-5be9-f205-c46da637376e" testName="UnitTests.AnimalWeighingServiceTests.IdentifierCollisionCannotOverwriteAnotherSubmission(differentAuthor: True)" computerName="2e49f1bd61c7" duration="00:00:00.0081526" startTime="2026-10-08T05:55:24.1835777+00:00" endTime="2026-10-08T05:55:24.1891511+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="236076c4-b5e6-4869-affe-2c1d0f1ab7ff" />
+    <UnitTestResult executionId="102702f1-0c9a-4413-9cd3-ed749d20b7a1" testId="d72ff42c-60ef-c7be-5638-ddaab7a3dfca" testName="UnitTests.AnalyticsServiceTests.RotationRequiresCompletePeriodAndConsistentClosingBalance" computerName="2e49f1bd61c7" duration="00:00:00.0080272" startTime="2026-10-08T05:55:24.0759050+00:00" endTime="2026-10-08T05:55:24.0759938+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="102702f1-0c9a-4413-9cd3-ed749d20b7a1" />
+    <UnitTestResult executionId="d0f30a84-8b8a-4131-a64e-4146ef9b8930" testId="b47431b4-6dec-d947-d70f-f6b7661e24b8" testName="UnitTests.InventoryServiceTests.FirstWithdrawalKeepsExactOpeningBalanceAndAuthorAndWritesAtomically" computerName="2e49f1bd61c7" duration="00:00:00.0140261" startTime="2026-10-08T05:55:24.1894897+00:00" endTime="2026-10-08T05:55:24.2032428+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d0f30a84-8b8a-4131-a64e-4146ef9b8930" />
+    <UnitTestResult executionId="4670ae0e-85f5-4df0-b8b3-1c7e2a2bb952" testId="d7ba6c1a-10a5-f87b-c979-7a7ed874819e" testName="UnitTests.AnimalHealthServiceTests.InactiveAnimalCannotChangeHealthStatus(status: Sold)" computerName="2e49f1bd61c7" duration="00:00:00.0038734" startTime="2026-10-08T05:55:24.1689280+00:00" endTime="2026-10-08T05:55:24.1756645+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4670ae0e-85f5-4df0-b8b3-1c7e2a2bb952" />
+    <UnitTestResult executionId="cd7bc634-569e-4dbd-8cc3-989b3a89daf9" testId="49325886-979a-04fc-4d52-bcbf674ab248" testName="UnitTests.WithdrawalPolicyTests.WithdrawalCoversCourseAndInclusiveFinalDay(day: 5, blocked: True)" computerName="2e49f1bd61c7" duration="00:00:00.1245601" startTime="2026-10-08T05:55:24.0476498+00:00" endTime="2026-10-08T05:55:24.1262750+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd7bc634-569e-4dbd-8cc3-989b3a89daf9" />
+    <UnitTestResult executionId="4da5b9a9-418b-4387-a12b-d6dd3bc5edf9" testId="02400ff9-d0a5-97e4-58d7-63fdcc2244ea" testName="UnitTests.AnimalWeighingServiceTests.InvalidWeightNeverPersists(weight: -1)" computerName="2e49f1bd61c7" duration="00:00:00.0085341" startTime="2026-10-08T05:55:24.2283578+00:00" endTime="2026-10-08T05:55:24.2362685+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4da5b9a9-418b-4387-a12b-d6dd3bc5edf9" />
+    <UnitTestResult executionId="53f24fdc-0e37-444d-85da-a56c62445fed" testId="e73f0580-1710-2272-096e-e0a3dfc99417" testName="UnitTests.WithdrawalPolicyTests.OverlappingCoursesUseLatestRelease" computerName="2e49f1bd61c7" duration="00:00:00.0090816" startTime="2026-10-08T05:55:24.1503171+00:00" endTime="2026-10-08T05:55:24.1582208+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="53f24fdc-0e37-444d-85da-a56c62445fed" />
+    <UnitTestResult executionId="2ee1ff02-b36a-4b26-93af-38a4f5b0f130" testId="fba279ac-e578-7041-79cf-364ae2caf5f6" testName="UnitTests.ProductCatalogServiceTests.UpdateKeepsOwnSkuAndUnitWithoutQueryingStock" computerName="2e49f1bd61c7" duration="00:00:00.0085133" startTime="2026-10-08T05:55:24.2137712+00:00" endTime="2026-10-08T05:55:24.2218318+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2ee1ff02-b36a-4b26-93af-38a4f5b0f130" />
+    <UnitTestResult executionId="5935f79f-d058-4339-a886-f61a2343d2bc" testId="f4aeb04b-978e-c4cd-0652-5b4cdbd7adb5" testName="UnitTests.AnimalCareServiceTests.OverrideCannotShortenCatalogWithdrawal(days: 4)" computerName="2e49f1bd61c7" duration="00:00:00.0073200" startTime="2026-10-08T05:55:24.3747780+00:00" endTime="2026-10-08T05:55:24.3813924+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5935f79f-d058-4339-a886-f61a2343d2bc" />
+    <UnitTestResult executionId="5833efdd-5a5a-447d-a008-4b6a5bc31ae2" testId="68e45e10-971c-f052-7eb1-e9439cff95ee" testName="UnitTests.AnimalMovementServiceTests.ChangedSourceNeverMutatesOrWrites" computerName="2e49f1bd61c7" duration="00:00:00.0043128" startTime="2026-10-08T05:55:24.2095529+00:00" endTime="2026-10-08T05:55:24.2138228+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5833efdd-5a5a-447d-a008-4b6a5bc31ae2" />
+    <UnitTestResult executionId="94aaae81-078c-4d5a-ae8d-92aee03e8c12" testId="bc799aa4-c3b2-a7a9-02a3-b0a13619145c" testName="UnitTests.AnimalCareServiceTests.InvalidWithdrawalIsRejectedBeforeReadingAnimal(days: -1)" computerName="2e49f1bd61c7" duration="00:00:00.0054303" startTime="2026-10-08T05:55:24.2830099+00:00" endTime="2026-10-08T05:55:24.2880184+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94aaae81-078c-4d5a-ae8d-92aee03e8c12" />
+    <UnitTestResult executionId="6052cf56-f748-4c94-adc2-b4f6581ce1d7" testId="448fa730-2360-081b-cbe5-c0e79c9d80e8" testName="UnitTests.AnimalPageRequestValidatorTests.UnknownStatusIsRejected" computerName="2e49f1bd61c7" duration="00:00:00.0036536" startTime="2026-10-08T05:55:24.1742737+00:00" endTime="2026-10-08T05:55:24.1775149+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6052cf56-f748-4c94-adc2-b4f6581ce1d7" />
+    <UnitTestResult executionId="97a3820a-4cea-40b6-81be-6da3c7c7c258" testId="49dc6703-3873-17ac-2fdf-3bcf3f0ec257" testName="UnitTests.AnimalLocationPolicyTests.FullOrOverfilledDestinationRejectsArrival(residents: 3)" computerName="2e49f1bd61c7" duration="00:00:00.0114055" startTime="2026-10-08T05:55:24.1241160+00:00" endTime="2026-10-08T05:55:24.1344775+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97a3820a-4cea-40b6-81be-6da3c7c7c258" />
+    <UnitTestResult executionId="d3dbb0be-2fd7-4fa1-a5ba-bffc5c4c39e5" testId="69b092c9-ce9d-35a7-be37-6cca257a2e78" testName="UnitTests.AnimalLocationPolicyTests.LotMustMatchSpeciesAndFarm" computerName="2e49f1bd61c7" duration="00:00:00.0139340" startTime="2026-10-08T05:55:24.1497255+00:00" endTime="2026-10-08T05:55:24.1627573+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3dbb0be-2fd7-4fa1-a5ba-bffc5c4c39e5" />
+    <UnitTestResult executionId="c1763320-c043-4782-b5d0-79413d16bd56" testId="1856a292-e5b3-739b-7097-bc9c7eb9902f" testName="UnitTests.AnimalGrowthServiceTests.InvalidPageDoesNotReadTheAnimal(page: 1, size: 0)" computerName="2e49f1bd61c7" duration="00:00:00.0033570" startTime="2026-10-08T05:55:24.1830809+00:00" endTime="2026-10-08T05:55:24.1850223+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1763320-c043-4782-b5d0-79413d16bd56" />
+    <UnitTestResult executionId="d385e63c-de24-47d2-a2db-a28f03a9c6a5" testId="2a46984f-8856-e467-5976-3fc3edd4a6c5" testName="UnitTests.AnimalCareServiceTests.BackdatedTreatmentCannotContradictProduction(method: Slaughter)" computerName="2e49f1bd61c7" duration="00:00:00.0077714" startTime="2026-10-08T05:55:24.3347353+00:00" endTime="2026-10-08T05:55:24.3422030+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d385e63c-de24-47d2-a2db-a28f03a9c6a5" />
+    <UnitTestResult executionId="ed641ec9-c39f-492b-8b6e-156f5ddb909b" testId="b02c0adf-b3db-36db-2a2b-cd5b52971796" testName="UnitTests.AnimalCareServiceTests.InvalidCourseEndCannotPersist" computerName="2e49f1bd61c7" duration="00:00:00.0061475" startTime="2026-10-08T05:55:24.3284595+00:00" endTime="2026-10-08T05:55:24.3342850+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed641ec9-c39f-492b-8b6e-156f5ddb909b" />
+    <UnitTestResult executionId="0bcce799-1d67-401d-beb4-a8ad5f49c33a" testId="5187ebc2-13d4-562d-9197-b192886a9dd6" testName="UnitTests.AnimalPageRequestValidatorTests.OversizedSearchIsRejected" computerName="2e49f1bd61c7" duration="00:00:00.0024709" startTime="2026-10-08T05:55:24.1811688+00:00" endTime="2026-10-08T05:55:24.1836124+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bcce799-1d67-401d-beb4-a8ad5f49c33a" />
+    <UnitTestResult executionId="8b3ee791-c19f-4736-82ce-bf50b62af437" testId="ab7ad5da-9ebb-b88a-9e5b-72505e836577" testName="UnitTests.AnimalHealthServiceTests.InactiveAnimalCannotChangeHealthStatus(status: Transferred)" computerName="2e49f1bd61c7" duration="00:00:00.0176506" startTime="2026-10-08T05:55:24.1468676+00:00" endTime="2026-10-08T05:55:24.1637773+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b3ee791-c19f-4736-82ce-bf50b62af437" />
+    <UnitTestResult executionId="b5d389b8-dafd-4194-8c46-da634616dc06" testId="10e89819-885f-0466-c22b-fb339dd4fcee" testName="UnitTests.AnimalCareServiceTests.UnassignedFarmIsHiddenBeforeClinicalLookup" computerName="2e49f1bd61c7" duration="00:00:00.0079372" startTime="2026-10-08T05:55:24.3947439+00:00" endTime="2026-10-08T05:55:24.4020634+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5d389b8-dafd-4194-8c46-da634616dc06" />
+    <UnitTestResult executionId="09537998-4b15-4967-a631-77b9413b50aa" testId="1e6bdc4b-deba-c831-84f9-42c74ec7e13b" testName="UnitTests.AnimalWeighingServiceTests.NewSubmissionDerivesOwnershipAndPreservesId" computerName="2e49f1bd61c7" duration="00:00:00.0084823" startTime="2026-10-08T05:55:24.2491805+00:00" endTime="2026-10-08T05:55:24.2565338+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="09537998-4b15-4967-a631-77b9413b50aa" />
+    <UnitTestResult executionId="1f118bf7-a600-4aee-bd87-92993bafe6fa" testId="90001dec-c5d7-3943-6e6f-c0430da72d50" testName="UnitTests.AnimalGrowthServiceTests.InvalidPageDoesNotReadTheAnimal(page: 1, size: 101)" computerName="2e49f1bd61c7" duration="00:00:00.0025264" startTime="2026-10-08T05:55:24.1865698+00:00" endTime="2026-10-08T05:55:24.1887716+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1f118bf7-a600-4aee-bd87-92993bafe6fa" />
+    <UnitTestResult executionId="537c831f-79a1-471b-8593-ad3808096e92" testId="f46edb7f-0ac8-8992-3e3b-35db600d10cf" testName="UnitTests.AnimalCareServiceTests.IdentifierCannotBeReusedWithDifferentDose" computerName="2e49f1bd61c7" duration="00:00:00.0079330" startTime="2026-10-08T05:55:24.3130584+00:00" endTime="2026-10-08T05:55:24.3199501+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="537c831f-79a1-471b-8593-ad3808096e92" />
+    <UnitTestResult executionId="973745b8-60bd-45dd-8ac4-5dbbed04e9ff" testId="af1d0069-df48-b83a-a84f-04ea41cb3890" testName="UnitTests.AnimalWeighingServiceTests.InvalidWeightNeverPersists(weight: 0)" computerName="2e49f1bd61c7" duration="00:00:00.0053899" startTime="2026-10-08T05:55:24.2226176+00:00" endTime="2026-10-08T05:55:24.2279148+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="973745b8-60bd-45dd-8ac4-5dbbed04e9ff" />
+    <UnitTestResult executionId="454c3b45-a70d-4579-95a3-57ce7fed1506" testId="be3c2817-f1b4-6ac0-157e-7b7cc97888a8" testName="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: 1, pageSize: 101)" computerName="2e49f1bd61c7" duration="00:00:00.0000720" startTime="2026-10-08T05:55:24.1722668+00:00" endTime="2026-10-08T05:55:24.1722967+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="454c3b45-a70d-4579-95a3-57ce7fed1506" />
+    <UnitTestResult executionId="c31d7fc0-25ea-4b13-8869-877143800005" testId="2dbcd287-c395-8583-0dde-84d8f0414647" testName="UnitTests.AnimalCareServiceTests.ReproductionRequiresFemaleAndMatchingSire" computerName="2e49f1bd61c7" duration="00:00:00.0067088" startTime="2026-10-08T05:55:24.3607036+00:00" endTime="2026-10-08T05:55:24.3665732+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c31d7fc0-25ea-4b13-8869-877143800005" />
+    <UnitTestResult executionId="bad12209-099b-4f00-9a00-7790e9842b39" testId="3ffc1db0-bbdc-4d92-95b1-0b5dd2befd9c" testName="UnitTests.AnalyticsServiceTests.WeightUsesLastRecordPerAnimalAndAgeAtMeasurement" computerName="2e49f1bd61c7" duration="00:00:00.0075535" startTime="2026-10-08T05:55:24.0787796+00:00" endTime="2026-10-08T05:55:24.0847321+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bad12209-099b-4f00-9a00-7790e9842b39" />
+    <UnitTestResult executionId="01c8c46b-e16a-4e5f-a8c5-8e7d8862a9ba" testId="61258259-099d-99a1-ffbb-d2819d98931a" testName="UnitTests.AnimalWeighingServiceTests.MatchingReplayDoesNotWriteAgainEvenIfAnimalBecameInactive" computerName="2e49f1bd61c7" duration="00:00:00.0066589" startTime="2026-10-08T05:55:24.2414812+00:00" endTime="2026-10-08T05:55:24.2478909+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="01c8c46b-e16a-4e5f-a8c5-8e7d8862a9ba" />
+    <UnitTestResult executionId="e1ca378e-456d-46a0-910e-73737b50b549" testId="64500d52-be6d-e378-66e2-f1330c4a3741" testName="UnitTests.AnimalWeighingServiceTests.InactiveAnimalsRejectNewWeighings(status: Sold)" computerName="2e49f1bd61c7" duration="00:00:00.0102636" startTime="2026-10-08T05:55:24.2030835+00:00" endTime="2026-10-08T05:55:24.2051498+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1ca378e-456d-46a0-910e-73737b50b549" />
+    <UnitTestResult executionId="fffb4347-cb4f-4691-8b65-e90631d0c130" testId="3993a1b4-36b2-b086-7a7f-7fc84e581c6e" testName="UnitTests.AnimalLocationPolicyTests.CrossFarmPaddockIsRejectedBeforeCounting" computerName="2e49f1bd61c7" duration="00:00:00.0026881" startTime="2026-10-08T05:55:24.1768797+00:00" endTime="2026-10-08T05:55:24.1781205+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fffb4347-cb4f-4691-8b65-e90631d0c130" />
+    <UnitTestResult executionId="39742cff-40ca-4f9b-8e62-08d8c0b303ef" testId="e14813d9-8332-c0d2-64c9-e6a34916c892" testName="UnitTests.AnimalLocationPolicyTests.FullOrOverfilledDestinationRejectsArrival(residents: 2)" computerName="2e49f1bd61c7" duration="00:00:00.0025004" startTime="2026-10-08T05:55:24.1349643+00:00" endTime="2026-10-08T05:55:24.1368944+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39742cff-40ca-4f9b-8e62-08d8c0b303ef" />
+    <UnitTestResult executionId="34419f44-d86f-4e69-b630-e5f912732ee3" testId="5b485629-3941-ba41-f4d5-36f386396109" testName="UnitTests.WithdrawalPolicyTests.ShortLegacyEndDateCannotOverrideLongerSnapshot" computerName="2e49f1bd61c7" duration="00:00:00.0024939" startTime="2026-10-08T05:55:24.1473716+00:00" endTime="2026-10-08T05:55:24.1497834+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34419f44-d86f-4e69-b630-e5f912732ee3" />
+    <UnitTestResult executionId="b8cc12c8-22b5-45a8-9dce-59bbe9efab5f" testId="7a17cba8-61a4-7cd6-2509-d3fc6d16e749" testName="UnitTests.AnalyticsServiceTests.MissingMilkHasNoInventedDailyLotSeries" computerName="2e49f1bd61c7" duration="00:00:00.0341921" startTime="2026-10-08T05:55:24.0475449+00:00" endTime="2026-10-08T05:55:24.0496672+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b8cc12c8-22b5-45a8-9dce-59bbe9efab5f" />
+    <UnitTestResult executionId="94078758-45f3-4572-b0f7-ac938f350fe1" testId="603562a2-d538-888a-8ad5-f33033c08a39" testName="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: -1, pageSize: 12)" computerName="2e49f1bd61c7" duration="00:00:00.0020130" startTime="2026-10-08T05:55:24.1704014+00:00" endTime="2026-10-08T05:55:24.1712562+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94078758-45f3-4572-b0f7-ac938f350fe1" />
+    <UnitTestResult executionId="a4150d3a-a7f6-478d-852d-2b894a45e1f7" testId="8ef37956-3807-1c4f-4daf-9fe2d9703149" testName="UnitTests.AnimalCareServiceTests.MatchingReplaySurvivesCatalogChangeAndNeverWritesAgain" computerName="2e49f1bd61c7" duration="00:00:00.0079296" startTime="2026-10-08T05:55:24.3207407+00:00" endTime="2026-10-08T05:55:24.3280039+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4150d3a-a7f6-478d-852d-2b894a45e1f7" />
+    <UnitTestResult executionId="98212c9d-3035-4b52-8d80-0844290fc3f0" testId="163af77d-b541-0f6b-6a2f-b964e2913c34" testName="UnitTests.ProductCatalogServiceTests.DuplicateNormalizedSkuRejectsCreationWithoutWriting" computerName="2e49f1bd61c7" duration="00:00:00.1877432" startTime="2026-10-08T05:55:24.0475651+00:00" endTime="2026-10-08T05:55:24.1915056+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="98212c9d-3035-4b52-8d80-0844290fc3f0" />
+    <UnitTestResult executionId="9a971f0a-b8eb-495d-a92f-84cb174dd64b" testId="13e0bca6-c042-90a2-c365-6de2f9b3a46e" testName="UnitTests.AnimalLocationPolicyTests.InactiveAnimalDoesNotConsumeCapacity(status: Lost)" computerName="2e49f1bd61c7" duration="00:00:00.0023558" startTime="2026-10-08T05:55:24.1447967+00:00" endTime="2026-10-08T05:55:24.1453272+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a971f0a-b8eb-495d-a92f-84cb174dd64b" />
+    <UnitTestResult executionId="e5ef6ab7-d952-4509-b9d0-45e8814fd5e7" testId="b0b7c973-cabd-a3f6-d4e2-488bf5ef3b5e" testName="UnitTests.AnalyticsServiceTests.ZeroAverageStockHasNoInventedRotation" computerName="2e49f1bd61c7" duration="00:00:00.0003232" startTime="2026-10-08T05:55:24.0851307+00:00" endTime="2026-10-08T05:55:24.0851689+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5ef6ab7-d952-4509-b9d0-45e8814fd5e7" />
+    <UnitTestResult executionId="5ad4628d-27fb-4d33-86f5-53b839bce559" testId="472ccd66-4327-9eaa-75aa-8eabea61f815" testName="UnitTests.AnimalWeighingServiceTests.InactiveAnimalsRejectNewWeighings(status: Dead)" computerName="2e49f1bd61c7" duration="00:00:00.0063045" startTime="2026-10-08T05:55:24.1897449+00:00" endTime="2026-10-08T05:55:24.2021166+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ad4628d-27fb-4d33-86f5-53b839bce559" />
+    <UnitTestResult executionId="9f1dcec3-4877-4556-bf91-62e7788380a7" testId="56c05b1b-bbde-faee-b639-5d0c01b08c2a" testName="UnitTests.AnimalMovementServiceTests.ReplayCannotUseAnotherAuthorsIdentifier" computerName="2e49f1bd61c7" duration="00:00:00.1595608" startTime="2026-10-08T05:55:24.0474815+00:00" endTime="2026-10-08T05:55:24.1615430+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f1dcec3-4877-4556-bf91-62e7788380a7" />
+    <UnitTestResult executionId="53d66cec-daf6-4753-9a8b-287c152c5c9f" testId="c74d84ac-e236-9587-5f04-f1efde820bdf" testName="UnitTests.AnalyticsServiceTests.DailyMilkKeepsFarmAndLotIdentitiesEvenWhenNamesMatch" computerName="2e49f1bd61c7" duration="00:00:00.0247254" startTime="2026-10-08T05:55:24.0774261+00:00" endTime="2026-10-08T05:55:24.0776017+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="53d66cec-daf6-4753-9a8b-287c152c5c9f" />
+    <UnitTestResult executionId="706ac2a9-bad3-4171-bffe-a635a9ec015f" testId="ffe07119-b5f8-b788-4c83-eef9b6781cde" testName="UnitTests.AnimalCareServiceTests.UnknownProductWithdrawalNeedsExplicitPeriod" computerName="2e49f1bd61c7" duration="00:00:00.0119359" startTime="2026-10-08T05:55:24.2888441+00:00" endTime="2026-10-08T05:55:24.3002151+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="706ac2a9-bad3-4171-bffe-a635a9ec015f" />
+    <UnitTestResult executionId="d056d33b-9028-4786-9a6b-882c4cbd5ead" testId="b55f7ce9-8f89-8ae7-287c-98013e7de310" testName="UnitTests.AnimalHealthServiceTests.InactiveAnimalCannotChangeHealthStatus(status: Dead)" computerName="2e49f1bd61c7" duration="00:00:00.0042827" startTime="2026-10-08T05:55:24.1644497+00:00" endTime="2026-10-08T05:55:24.1681733+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d056d33b-9028-4786-9a6b-882c4cbd5ead" />
+    <UnitTestResult executionId="20d4f475-7b3c-4ab5-8180-f6256212d7f4" testId="58a6aa71-8b35-f6d8-828a-282d6bee7c3b" testName="UnitTests.ProductCatalogServiceTests.MissingProductThrowsAfterExactlyOneLookup" computerName="2e49f1bd61c7" duration="00:00:00.0072915" startTime="2026-10-08T05:55:24.2071357+00:00" endTime="2026-10-08T05:55:24.2132195+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="20d4f475-7b3c-4ab5-8180-f6256212d7f4" />
+    <UnitTestResult executionId="2a6d90bf-b2f0-417d-ab78-b2fa53d5c9d0" testId="6ae3c496-b4a0-6583-74e4-56324405fc31" testName="UnitTests.AnimalLocationPolicyTests.InactiveAnimalDoesNotConsumeCapacity(status: Transferred)" computerName="2e49f1bd61c7" duration="00:00:00.0010815" startTime="2026-10-08T05:55:24.1457208+00:00" endTime="2026-10-08T05:55:24.1457922+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a6d90bf-b2f0-417d-ab78-b2fa53d5c9d0" />
+    <UnitTestResult executionId="edddfe23-9e94-4a98-9538-6d117d0ffbb3" testId="0b1e8efd-be3f-228f-3b51-0395a9ea8fc2" testName="UnitTests.AnimalGrowthServiceTests.InvalidPageDoesNotReadTheAnimal(page: 100001, size: 20)" computerName="2e49f1bd61c7" duration="00:00:00.0077152" startTime="2026-10-08T05:55:24.1756347+00:00" endTime="2026-10-08T05:55:24.1826170+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="edddfe23-9e94-4a98-9538-6d117d0ffbb3" />
+    <UnitTestResult executionId="632ccbcf-9942-4632-90c6-d0538380ba2d" testId="b524a687-b731-d3ef-3186-b3c00f0d731b" testName="UnitTests.WithdrawalPolicyTests.UnknownLegacyWithdrawalFailsClosedWithoutInventingReleaseDate" computerName="2e49f1bd61c7" duration="00:00:00.0058220" startTime="2026-10-08T05:55:24.1441836+00:00" endTime="2026-10-08T05:55:24.1448426+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="632ccbcf-9942-4632-90c6-d0538380ba2d" />
+    <UnitTestResult executionId="6b4e9712-82ec-4f76-8fcc-88d9d1fbad9c" testId="d45f821a-fb5b-9a4e-5ea9-d202978513f6" testName="UnitTests.AnimalLocationPolicyTests.InactivePaddockIsRejectedBeforeCounting" computerName="2e49f1bd61c7" duration="00:00:00.0031826" startTime="2026-10-08T05:55:24.1743276+00:00" endTime="2026-10-08T05:55:24.1762438+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b4e9712-82ec-4f76-8fcc-88d9d1fbad9c" />
+    <UnitTestResult executionId="a10d9f46-63d3-4b1e-80ba-261c5a101a3a" testId="7af39775-a59d-6e52-2c8b-8b48952b58c3" testName="UnitTests.AnimalHealthServiceTests.MissingAnimalDoesNotReachAuthorizationOrPersistence" computerName="2e49f1bd61c7" duration="00:00:00.0106133" startTime="2026-10-08T05:55:24.2016428+00:00" endTime="2026-10-08T05:55:24.2054722+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a10d9f46-63d3-4b1e-80ba-261c5a101a3a" />
+    <UnitTestResult executionId="658e357c-53eb-4256-ab17-c532b1472596" testId="e72cd889-5db3-6e35-10a7-ff3a8a8795bc" testName="UnitTests.AnimalWeighingServiceTests.UnassignedFarmDoesNotReadOrWriteWeights" computerName="2e49f1bd61c7" duration="00:00:00.0070805" startTime="2026-10-08T05:55:24.2158148+00:00" endTime="2026-10-08T05:55:24.2223429+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="658e357c-53eb-4256-ab17-c532b1472596" />
+    <UnitTestResult executionId="df2d7040-1bfe-4614-bd5c-aa36dddaad25" testId="8497d7fe-616a-fe93-b17a-690db190b35a" testName="UnitTests.AnimalGrowthServiceTests.EqualTimestampsUseIdForDeterministicSelection" computerName="2e49f1bd61c7" duration="00:00:00.0036306" startTime="2026-10-08T05:55:24.2084393+00:00" endTime="2026-10-08T05:55:24.2115189+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df2d7040-1bfe-4614-bd5c-aa36dddaad25" />
+    <UnitTestResult executionId="0beb4152-cf27-41fd-aa50-9e0c90ac4c38" testId="18e3dee9-5719-5ab8-8f4c-cfff6eb8a2f2" testName="UnitTests.InventoryServiceTests.InvalidQuantityDoesNotReadInventory(quantity: 0.00001)" computerName="2e49f1bd61c7" duration="00:00:00.0066592" startTime="2026-10-08T05:55:24.2090374+00:00" endTime="2026-10-08T05:55:24.2148723+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0beb4152-cf27-41fd-aa50-9e0c90ac4c38" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.HistoryIsPagedOnServerWhileCurveAndTotalsStayComplete" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="a2853e71-fc7f-bf21-aec3-dfe65a981bd3">
+      <Execution id="274ed1e9-6e0f-46f0-88d2-279ed59b137a" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="HistoryIsPagedOnServerWhileCurveAndTotalsStayComplete" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.InactiveAnimalsRejectNewWeighings(status: Lost)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="1da5b37f-3e0d-7f03-220e-f20281bf3d68">
+      <Execution id="b7baac2c-82cd-46fb-8ced-54c453567a11" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="InactiveAnimalsRejectNewWeighings" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.InactiveAnimalsRejectNewWeighings(status: Sold)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="64500d52-be6d-e378-66e2-f1330c4a3741">
+      <Execution id="e1ca378e-456d-46a0-910e-73737b50b549" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="InactiveAnimalsRejectNewWeighings" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.ReproductionRequiresFemaleAndMatchingSire" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="2dbcd287-c395-8583-0dde-84d8f0414647">
+      <Execution id="c31d7fc0-25ea-4b13-8869-877143800005" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="ReproductionRequiresFemaleAndMatchingSire" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.TreatmentSnapshotsCatalogAndUsesFinalAdministration" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="de05bab5-1509-9d1c-a8e8-ca2e15409472">
+      <Execution id="2a3fbf44-2bc7-4cc8-b49a-cbdb772363fb" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="TreatmentSnapshotsCatalogAndUsesFinalAdministration" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.WithdrawalCoversCourseAndInclusiveFinalDay(day: 6, blocked: False)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="36b3b218-2bc7-2344-166d-70f0240a1af2">
+      <Execution id="bd84ca57-be28-4942-b3b5-3097f72ed932" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="WithdrawalCoversCourseAndInclusiveFinalDay" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.FutureCourseAndOtherAnimalDoNotBlockEarlierProduction" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="225ff88e-b28b-2fb2-1708-26bd8f2254bb">
+      <Execution id="8ddfe2ff-a9ed-42ad-b0d9-6dbc99127248" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="FutureCourseAndOtherAnimalDoNotBlockEarlierProduction" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.UnassignedFarmIsHiddenAndNeverWritten" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="175dd515-3970-6820-304f-8c0bbc135c34">
+      <Execution id="c49b107f-2442-4033-b94f-46b04e40827d" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="UnassignedFarmIsHiddenAndNeverWritten" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalMovementServiceTests.ReplayCannotUseAnotherAuthorsIdentifier" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="56c05b1b-bbde-faee-b639-5d0c01b08c2a">
+      <Execution id="9f1dcec3-4877-4556-bf91-62e7788380a7" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalMovementServiceTests" name="ReplayCannotUseAnotherAuthorsIdentifier" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.LotMustMatchSpeciesAndFarm" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="69b092c9-ce9d-35a7-be37-6cca257a2e78">
+      <Execution id="d3dbb0be-2fd7-4fa1-a5ba-bffc5c4c39e5" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="LotMustMatchSpeciesAndFarm" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalMovementServiceTests.ReplaySucceedsEvenAfterAnotherMovement" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="5ee87f3c-127e-5892-c424-24fc1a6a0b4b">
+      <Execution id="82b1f7ec-e173-4464-bbe8-dde0961880fb" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalMovementServiceTests" name="ReplaySucceedsEvenAfterAnotherMovement" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.InactiveAnimalDoesNotConsumeCapacity(status: Lost)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="13e0bca6-c042-90a2-c365-6de2f9b3a46e">
+      <Execution id="9a971f0a-b8eb-495d-a92f-84cb174dd64b" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="InactiveAnimalDoesNotConsumeCapacity" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalMovementServiceTests.InactiveAnimalCannotMove" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="4e7b3674-2f0f-c950-daab-c65b20bff220">
+      <Execution id="5ad6a5d2-4f39-490b-a071-b43b32a8ca88" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalMovementServiceTests" name="InactiveAnimalCannotMove" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.InvalidWithdrawalIsRejectedBeforeReadingAnimal(days: -1)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="bc799aa4-c3b2-a7a9-02a3-b0a13619145c">
+      <Execution id="94aaae81-078c-4d5a-ae8d-92aee03e8c12" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="InvalidWithdrawalIsRejectedBeforeReadingAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.InactiveAnimalDoesNotConsumeCapacity(status: Dead)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="f7114752-2012-951a-004e-abe22e705e8b">
+      <Execution id="7bed285c-9605-4ec8-bd1e-51f9994638d7" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="InactiveAnimalDoesNotConsumeCapacity" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.InsufficientStockRejectsWithoutMutatingBalance" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="d623c39b-3e23-fb49-2eda-e656bae0dec2">
+      <Execution id="a5104c1d-8e63-47cd-a816-7dbbf8149c4a" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="InsufficientStockRejectsWithoutMutatingBalance" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.CalvingCannotHaveMoreStillbornThanTotalOffspring" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="5e3e4ab5-7b1c-58a9-6fe2-f15660be8e58">
+      <Execution id="56f69301-bd8b-472a-823d-1d562ae8cc27" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="CalvingCannotHaveMoreStillbornThanTotalOffspring" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.CreationPreservesDecimalPricesAndNormalizesCatalogText" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="589f4e6c-dd16-4e73-6999-b73ac626f406">
+      <Execution id="f1a2a6db-3037-403d-9eeb-24a67663ea45" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="CreationPreservesDecimalPricesAndNormalizesCatalogText" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.StockedProductCannotChangeUnitOrPartiallyUpdateOtherFields" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="8b6aa387-7ba2-c961-9beb-785deecc46ee">
+      <Execution id="c671f282-6a0b-40ad-b508-4814b7e14b14" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="StockedProductCannotChangeUnitOrPartiallyUpdateOtherFields" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.OtherAdministrationCannotBypassProductWithdrawal(kind: Vaccination)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="90923483-76db-28de-8579-0f7672d98bbd">
+      <Execution id="1ed49aa6-03ae-4e35-aa8f-49579a3b2781" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="OtherAdministrationCannotBypassProductWithdrawal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.InvalidPageDoesNotReadTheAnimal(page: 1, size: 0)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="1856a292-e5b3-739b-7097-bc9c7eb9902f">
+      <Execution id="c1763320-c043-4782-b5d0-79413d16bd56" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="InvalidPageDoesNotReadTheAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites(price: 12.345)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="6437f3ee-260c-9b68-de30-5b5e7fef4051">
+      <Execution id="02792ba0-8033-43d1-ac28-e370ee530448" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.UnchangedStatusDoesNotCreateDuplicateHistory" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="d2c952df-f12b-462a-436d-d38b4af92ea6">
+      <Execution id="f0a15194-e6c2-4447-82e8-9b2754a1c4a0" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="UnchangedStatusDoesNotCreateDuplicateHistory" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.InactiveAnimalsRejectNewWeighings(status: Dead)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="472ccd66-4327-9eaa-75aa-8eabea61f815">
+      <Execution id="5ad4628d-27fb-4d33-86f5-53b839bce559" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="InactiveAnimalsRejectNewWeighings" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.InvalidQuantityDoesNotReadInventory(quantity: 0)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="ae21924d-1910-c59c-43d2-7eb5c4a62d6a">
+      <Execution id="3a2981a6-147b-4db9-b8b5-7d3d0fd6f3ff" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="InvalidQuantityDoesNotReadInventory" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.ValuationUsesStockTimesEachCatalogPriceAndIncludesThresholdBoundary" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="fc49ce42-95f2-e17b-fef4-213a75383bff">
+      <Execution id="8372c028-fcc3-4e54-8442-b5bdd1de9e43" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="ValuationUsesStockTimesEachCatalogPriceAndIncludesThresholdBoundary" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.MaximumBoundaryIsExcessAndNotCritical" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="cc6258ce-3da4-cbc5-6f43-d0246f956798">
+      <Execution id="f157aff6-8b30-487c-862d-3c2b1e6d04a3" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="MaximumBoundaryIsExcessAndNotCritical" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.ZeroAverageStockHasNoInventedRotation" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="b0b7c973-cabd-a3f6-d4e2-488bf5ef3b5e">
+      <Execution id="e5ef6ab7-d952-4509-b9d0-45e8814fd5e7" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="ZeroAverageStockHasNoInventedRotation" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.InactiveAnimalCannotRegisterClinicalEvents(status: Sold)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="0dc0cb29-77e6-bf8d-2c01-f38c56f0e83f">
+      <Execution id="2bdfe9a9-5df0-4005-a3d2-6ddda6d76836" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="InactiveAnimalCannotRegisterClinicalEvents" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.ProductionOutsideWithdrawalAllowsTreatment" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="4e0f0be4-3d4a-5ce1-3d76-194a6a543e92">
+      <Execution id="420acd2e-8084-4eac-bc1c-161cde8b17e3" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="ProductionOutsideWithdrawalAllowsTreatment" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.InvalidWithdrawalIsRejectedBeforeReadingAnimal(days: 3651)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="c0763eba-557a-3947-f5d8-e8cb0f69d920">
+      <Execution id="8b1a4aac-77eb-4ab0-b1a9-e320069554d1" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="InvalidWithdrawalIsRejectedBeforeReadingAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.EmptyHistoryDoesNotInventWeights" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="dfb321a5-5728-3333-4ac2-bcc159392afa">
+      <Execution id="9c76acaa-5a22-4706-a7ee-e1ab28ce510f" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="EmptyHistoryDoesNotInventWeights" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.OverrideCannotShortenCatalogWithdrawal(days: 0)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="66b7e14b-3680-8bde-6ae8-b74189ae402a">
+      <Execution id="a9b69195-e42d-45d6-80fe-4ca06b49be4b" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="OverrideCannotShortenCatalogWithdrawal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.CrossFarmPaddockIsRejectedBeforeCounting" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="3993a1b4-36b2-b086-7a7f-7fc84e581c6e">
+      <Execution id="fffb4347-cb4f-4691-8b65-e90631d0c130" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="CrossFarmPaddockIsRejectedBeforeCounting" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalMovementServiceTests.MissingFarmAssignmentHidesAnimal" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="f055a206-8911-b571-0ae0-171db62f0de0">
+      <Execution id="6596d043-374b-4665-9df9-0b19e16bf983" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalMovementServiceTests" name="MissingFarmAssignmentHidesAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.InactiveAnimalsRejectNewWeighings(status: Transferred)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="eaadb64a-129c-352f-3867-52e00e291ea9">
+      <Execution id="42a335df-0d87-4d4d-97ed-6b91b3c2a57b" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="InactiveAnimalsRejectNewWeighings" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.InactiveAnimalCannotChangeHealthStatus(status: Lost)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="60bb26e8-2fa1-0a15-c909-6736916f5193">
+      <Execution id="d7767d47-6c03-4688-a34a-79b37f4cdc26" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="InactiveAnimalCannotChangeHealthStatus" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalMovementServiceTests.TransferKeepsSourceAuthorAndCurrentDateAndUpdatesAnimal" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="4bd0b529-b21f-c228-ef3a-0d438db0ae5c">
+      <Execution id="a58a3f6c-950a-4959-bf38-fdb47f05c135" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalMovementServiceTests" name="TransferKeepsSourceAuthorAndCurrentDateAndUpdatesAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.IdentifierCollisionCannotOverwriteAnotherSubmission(differentAuthor: False)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="548f1209-fe9d-1a3a-da7d-1a1fefd94ca8">
+      <Execution id="10d1e609-7711-4039-b988-df1f68082c1c" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="IdentifierCollisionCannotOverwriteAnotherSubmission" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.OtherAdministrationCannotBypassProductWithdrawal(kind: Deworming)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="565f4a19-0d24-f1da-f0ff-ff777a73ef49">
+      <Execution id="81e92bc9-dd99-4683-be51-c6effe265be4" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="OtherAdministrationCannotBypassProductWithdrawal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.NewSubmissionDerivesOwnershipAndPreservesId" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="1e6bdc4b-deba-c831-84f9-42c74ec7e13b">
+      <Execution id="09537998-4b15-4967-a631-77b9413b50aa" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="NewSubmissionDerivesOwnershipAndPreservesId" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.UnknownProductWithdrawalNeedsExplicitPeriod" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="ffe07119-b5f8-b788-4c83-eef9b6781cde">
+      <Execution id="706ac2a9-bad3-4171-bffe-a635a9ec015f" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="UnknownProductWithdrawalNeedsExplicitPeriod" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.InvalidStatusIsRejectedBeforeReadingAnyAnimal" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="e100eb6e-1059-001a-9eac-75c31320688e">
+      <Execution id="e14225ba-7510-4f4b-b94d-3f6c764a82aa" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="InvalidStatusIsRejectedBeforeReadingAnyAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalMovementServiceTests.NoChangeIsRejected" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="26718400-3126-a3b5-98c8-400b26ac1678">
+      <Execution id="815d4a41-f297-4823-8ee8-e6a495989224" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalMovementServiceTests" name="NoChangeIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.MatchingReplayDoesNotWriteAgainEvenIfAnimalBecameInactive" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="61258259-099d-99a1-ffbb-d2819d98931a">
+      <Execution id="01c8c46b-e16a-4e5f-a8c5-8e7d8862a9ba" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="MatchingReplayDoesNotWriteAgainEvenIfAnimalBecameInactive" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.BackdatedTreatmentCannotContradictProduction(method: Slaughter)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="2a46984f-8856-e467-5976-3fc3edd4a6c5">
+      <Execution id="d385e63c-de24-47d2-a2db-a28f03a9c6a5" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="BackdatedTreatmentCannotContradictProduction" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.ZeroDaysStillRestrictsAdministrationDate" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="d3e2aa1c-cb26-40b4-18c3-9513e4549698">
+      <Execution id="d83f51b9-4dc5-4dc0-a9e7-75eacf65ce8e" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="ZeroDaysStillRestrictsAdministrationDate" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.InactiveAnimalDoesNotConsumeCapacity(status: Transferred)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="6ae3c496-b4a0-6583-74e4-56324405fc31">
+      <Execution id="2a6d90bf-b2f0-417d-ab78-b2fa53d5c9d0" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="InactiveAnimalDoesNotConsumeCapacity" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.InvalidQuantityDoesNotReadInventory(quantity: 0.00001)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="18e3dee9-5719-5ab8-8f4c-cfff6eb8a2f2">
+      <Execution id="0beb4152-cf27-41fd-aa50-9e0c90ac4c38" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="InvalidQuantityDoesNotReadInventory" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: 100001, pageSize: 12)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="8c1536dc-99e9-4f4a-9dd8-e26541b81621">
+      <Execution id="786e870f-464a-49a2-b212-fe96868cd7b8" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="InvalidPaginationIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.FullOrOverfilledDestinationRejectsArrival(residents: 2)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="e14813d9-8332-c0d2-64c9-e6a34916c892">
+      <Execution id="39742cff-40ca-4f9b-8e62-08d8c0b303ef" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="FullOrOverfilledDestinationRejectsArrival" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalMovementServiceTests.ChangedSourceNeverMutatesOrWrites" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="68e45e10-971c-f052-7eb1-e9439cff95ee">
+      <Execution id="5833efdd-5a5a-447d-a008-4b6a5bc31ae2" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalMovementServiceTests" name="ChangedSourceNeverMutatesOrWrites" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.BoundedCurveKeepsThePrecedingIntervalForItsFirstVisiblePoint" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="deb69767-bde9-9614-41dc-7df3fb251ff3">
+      <Execution id="cb1e5d72-7449-41b2-adfe-3e7315c1dbac" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="BoundedCurveKeepsThePrecedingIntervalForItsFirstVisiblePoint" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.InvalidPageDoesNotReadTheAnimal(page: 100001, size: 20)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="0b1e8efd-be3f-228f-3b51-0395a9ea8fc2">
+      <Execution id="edddfe23-9e94-4a98-9538-6d117d0ffbb3" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="InvalidPageDoesNotReadTheAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.DuplicateNormalizedSkuRejectsCreationWithoutWriting" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="163af77d-b541-0f6b-6a2f-b964e2913c34">
+      <Execution id="98212c9d-3035-4b52-8d80-0844290fc3f0" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="DuplicateNormalizedSkuRejectsCreationWithoutWriting" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.MilkDoesNotSumIncompatibleUnits" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="eaaf3917-9307-5be2-7755-28e04ebef183">
+      <Execution id="83aa1eac-587b-4e88-8529-d99aba2ad0ed" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="MilkDoesNotSumIncompatibleUnits" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.IncomingStockCannotClaimAnimalConsumption" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="2460942f-0c46-10a8-b51e-ef5e00dec792">
+      <Execution id="78c8461a-e71b-4779-9b28-a19031fb17c2" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="IncomingStockCannotClaimAnimalConsumption" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.OversizedSearchIsRejected" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="5187ebc2-13d4-562d-9197-b192886a9dd6">
+      <Execution id="0bcce799-1d67-401d-beb4-a8ad5f49c33a" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="OversizedSearchIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.InactiveAnimalCannotChangeHealthStatus(status: Sold)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="d7ba6c1a-10a5-f87b-c979-7a7ed874819e">
+      <Execution id="4670ae0e-85f5-4df0-b8b3-1c7e2a2bb952" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="InactiveAnimalCannotChangeHealthStatus" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: 1, pageSize: 101)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="be3c2817-f1b4-6ac0-157e-7b7cc97888a8">
+      <Execution id="454c3b45-a70d-4579-95a3-57ce7fed1506" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="InvalidPaginationIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.UnknownStatusIsRejected" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="448fa730-2360-081b-cbe5-c0e79c9d80e8">
+      <Execution id="6052cf56-f748-4c94-adc2-b4f6581ce1d7" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="UnknownStatusIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.InvalidQuantityDoesNotReadInventory(quantity: -1)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="1dd53a1c-4d67-98be-c6a5-8a23df5611e3">
+      <Execution id="1c7898d6-e243-40a5-b096-4d311a4d3fe5" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="InvalidQuantityDoesNotReadInventory" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: 1, pageSize: 0)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="9218af7f-fda3-8805-d7a1-a02e0a565029">
+      <Execution id="799d0c1f-53e7-453d-9afd-d9aacb58e49c" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="InvalidPaginationIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.UnassignedFarmDoesNotReadOrWriteWeights" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="e72cd889-5db3-6e35-10a7-ff3a8a8795bc">
+      <Execution id="658e357c-53eb-4256-ab17-c532b1472596" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="UnassignedFarmDoesNotReadOrWriteWeights" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.InactiveAnimalCannotChangeHealthStatus(status: Dead)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="b55f7ce9-8f89-8ae7-287c-98013e7de310">
+      <Execution id="d056d33b-9028-4786-9a6b-882c4cbd5ead" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="InactiveAnimalCannotChangeHealthStatus" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.ReproductiveReplayPreservesAuthorAndDoesNotDuplicate" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="fb875d9f-820c-f7de-6955-dc9ac57c91c9">
+      <Execution id="5c919ce7-a674-4118-a50a-891beb9be347" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="ReproductiveReplayPreservesAuthorAndDoesNotDuplicate" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.IdentifierCannotBeReusedWithDifferentDose" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="f46edb7f-0ac8-8992-3e3b-35db600d10cf">
+      <Execution id="537c831f-79a1-471b-8593-ad3808096e92" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="IdentifierCannotBeReusedWithDifferentDose" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.WeightUsesLastRecordPerAnimalAndAgeAtMeasurement" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="3ffc1db0-bbdc-4d92-95b1-0b5dd2befd9c">
+      <Execution id="bad12209-099b-4f00-9a00-7790e9842b39" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="WeightUsesLastRecordPerAnimalAndAgeAtMeasurement" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.InvalidWeightNeverPersists(weight: 12.345000000000001)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="25513d65-f0cd-5500-f5b5-96ce4d4a7316">
+      <Execution id="5b62ae21-2120-4127-8e07-e8cd74815a53" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="InvalidWeightNeverPersists" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.UnknownLegacyWithdrawalFailsClosedWithoutInventingReleaseDate" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="b524a687-b731-d3ef-3186-b3c00f0d731b">
+      <Execution id="632ccbcf-9942-4632-90c6-d0538380ba2d" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="UnknownLegacyWithdrawalFailsClosedWithoutInventingReleaseDate" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.EmptyFarmIsRejected" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="08aeafcd-ef74-9aff-cc90-6368adad490d">
+      <Execution id="555ea7dd-d9ff-4d06-a555-da3762a61061" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="EmptyFarmIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.BackdatedTreatmentCannotContradictProduction(method: Milking)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="90d1ba05-bbd8-f8e2-5fab-224c60108e4d">
+      <Execution id="d7c3f276-c60e-4135-a6ee-c7d3bbab4b51" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="BackdatedTreatmentCannotContradictProduction" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites(price: 0)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="d4879719-8095-db4c-bab9-a119fd6ef7b8">
+      <Execution id="fd66161f-5096-4151-bb35-12987cd2ed2d" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.DefaultsAreValid" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="bcd2aecd-c7ef-2edb-b416-147c32704c46">
+      <Execution id="af969836-4da9-4112-b696-179087a2f1d9" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="DefaultsAreValid" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.OverlappingCoursesUseLatestRelease" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="e73f0580-1710-2272-096e-e0a3dfc99417">
+      <Execution id="53f24fdc-0e37-444d-85da-a56c62445fed" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="OverlappingCoursesUseLatestRelease" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.MissingProductThrowsAfterExactlyOneLookup" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="58a6aa71-8b35-f6d8-828a-282d6bee7c3b">
+      <Execution id="20d4f475-7b3c-4ab5-8180-f6256212d7f4" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="MissingProductThrowsAfterExactlyOneLookup" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.StaleBalanceRejectsWithoutWriting" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="6f4c716f-d0f0-3adc-b5fd-cde25fca0e91">
+      <Execution id="0a4af870-d7b0-41b6-871f-0c405abb9744" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="StaleBalanceRejectsWithoutWriting" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalMovementServiceTests.InvalidBodyDoesNotReadAnimal" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="cc476ca3-fb5e-39f7-1a29-995c00cfe63a">
+      <Execution id="6187b5d1-e7b0-45b8-8430-8f7b05878889" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalMovementServiceTests" name="InvalidBodyDoesNotReadAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.SameDayObservationsStayInHistoryAndLatestDrivesCurve" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="bbb73819-6ec4-5105-c5e9-7f5eba89235b">
+      <Execution id="912fb956-049a-4f90-ab46-30452a0b0cf5" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="SameDayObservationsStayInHistoryAndLatestDrivesCurve" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.UnconfiguredCapacityDoesNotInventALimit" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="6e7c0c33-9b2f-7f55-d37b-1cfdbaa86ec7">
+      <Execution id="0b5dd492-bff9-43c1-8816-5dfd70abdadf" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="UnconfiguredCapacityDoesNotInventALimit" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.DailyGainUsesElapsedDaysAndKeepsNegativeChange" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="60d1a5b5-af9c-33b2-a6a0-5953b24298ee">
+      <Execution id="6d0b01c9-0732-41a4-8dbc-46bb772a95c9" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="DailyGainUsesElapsedDaysAndKeepsNegativeChange" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.WithdrawalCoversCourseAndInclusiveFinalDay(day: 3, blocked: True)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="a8297d59-9900-712c-cba6-dd77b754b543">
+      <Execution id="13a6236c-bdd5-4000-866a-9a16e69ee4aa" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="WithdrawalCoversCourseAndInclusiveFinalDay" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.FullOrOverfilledDestinationRejectsArrival(residents: 3)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="49dc6703-3873-17ac-2fdf-3bcf3f0ec257">
+      <Execution id="97a3820a-4cea-40b6-81be-6da3c7c7c258" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="FullOrOverfilledDestinationRejectsArrival" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.WithdrawalCoversCourseAndInclusiveFinalDay(day: 1, blocked: True)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="84d08902-273d-21cc-a7dc-aec9a6fa6157">
+      <Execution id="9cd3ebb0-fdc7-4f42-b657-c2fac0432d85" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="WithdrawalCoversCourseAndInclusiveFinalDay" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.ExistingProductIsMappedWithoutTrackingOrWriting" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="6f28d0c2-f67a-365b-8492-5d858b2acc74">
+      <Execution id="628d1a2e-3866-4823-96cb-66150cbad7d1" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="ExistingProductIsMappedWithoutTrackingOrWriting" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: -1, pageSize: 12)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="603562a2-d538-888a-8ad5-f33033c08a39">
+      <Execution id="94078758-45f3-4572-b0f7-ac938f350fe1" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="InvalidPaginationIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.RotationRequiresCompletePeriodAndConsistentClosingBalance" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="d72ff42c-60ef-c7be-5638-ddaab7a3dfca">
+      <Execution id="102702f1-0c9a-4413-9cd3-ed749d20b7a1" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="RotationRequiresCompletePeriodAndConsistentClosingBalance" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.AnimalFromAnotherFarmIsRejected" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="cd07bb35-5ab5-8adf-6586-a0764862b2ed">
+      <Execution id="ba3c2b41-b994-48c1-a61a-4daad9f0d402" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="AnimalFromAnotherFarmIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.StatusChangeRecordsPreviousStateReasonAndAuthor" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="d4b05de8-396c-0ab5-d315-bcdfe75dead7">
+      <Execution id="5aef9d2b-f475-45cb-b989-5aad9bf6dbda" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="StatusChangeRecordsPreviousStateReasonAndAuthor" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.DailyMilkKeepsFarmAndLotIdentitiesEvenWhenNamesMatch" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="c74d84ac-e236-9587-5f04-f1efde820bdf">
+      <Execution id="53d66cec-daf6-4753-9a8b-287c152c5c9f" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="DailyMilkKeepsFarmAndLotIdentitiesEvenWhenNamesMatch" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalPageRequestValidatorTests.InvalidPaginationIsRejected(page: 0, pageSize: 12)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="0486e38d-e6d3-104f-ff09-8d174d4b9d2c">
+      <Execution id="bb81aef6-6bbc-40d6-a929-888a10ff070a" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalPageRequestValidatorTests" name="InvalidPaginationIsRejected" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.UnassignedAnimalIsHiddenBeforeReadingHistory" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="2fc7e3e1-e98f-756f-e157-962ee978f22f">
+      <Execution id="c726bf13-bebe-49db-aa09-70353e8b09fd" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="UnassignedAnimalIsHiddenBeforeReadingHistory" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.FirstWithdrawalKeepsExactOpeningBalanceAndAuthorAndWritesAtomically" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="b47431b4-6dec-d947-d70f-f6b7661e24b8">
+      <Execution id="d0f30a84-8b8a-4131-a64e-4146ef9b8930" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="FirstWithdrawalKeepsExactOpeningBalanceAndAuthorAndWritesAtomically" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.InactiveAnimalCannotChangeHealthStatus(status: Transferred)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="ab7ad5da-9ebb-b88a-9e5b-72505e836577">
+      <Execution id="8b3ee791-c19f-4736-82ce-bf50b62af437" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="InactiveAnimalCannotChangeHealthStatus" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalHealthServiceTests.MissingAnimalDoesNotReachAuthorizationOrPersistence" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="7af39775-a59d-6e52-2c8b-8b48952b58c3">
+      <Execution id="a10d9f46-63d3-4b1e-80ba-261c5a101a3a" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalHealthServiceTests" name="MissingAnimalDoesNotReachAuthorizationOrPersistence" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.EqualTimestampsUseIdForDeterministicSelection" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="8497d7fe-616a-fe93-b17a-690db190b35a">
+      <Execution id="df2d7040-1bfe-4614-bd5c-aa36dddaad25" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="EqualTimestampsUseIdForDeterministicSelection" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites(price: -1)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="fe7f72c2-e2dc-234e-bc70-6cb721bf0af8">
+      <Execution id="b927336b-d230-40fa-96cc-a044bd2a5717" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="InvalidPriceIsRejectedBeforeCatalogLookupsOrWrites" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.InvalidWeightNeverPersists(weight: 0)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="af1d0069-df48-b83a-a84f-04ea41cb3890">
+      <Execution id="973745b8-60bd-45dd-8ac4-5dbbed04e9ff" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="InvalidWeightNeverPersists" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.MatchingReplaySurvivesCatalogChangeAndNeverWritesAgain" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="8ef37956-3807-1c4f-4daf-9fe2d9703149">
+      <Execution id="a4150d3a-a7f6-478d-852d-2b894a45e1f7" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="MatchingReplaySurvivesCatalogChangeAndNeverWritesAgain" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.InactivePaddockIsRejectedBeforeCounting" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="d45f821a-fb5b-9a4e-5ea9-d202978513f6">
+      <Execution id="6b4e9712-82ec-4f76-8fcc-88d9d1fbad9c" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="InactivePaddockIsRejectedBeforeCounting" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.InvalidPageDoesNotReadTheAnimal(page: 0, size: 20)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="16271602-97fb-fe5a-bb43-1671937fc1e5">
+      <Execution id="fe9a9f51-d6dd-4a0c-bb5c-914d61973aa9" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="InvalidPageDoesNotReadTheAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.IdentifierCollisionCannotOverwriteAnotherSubmission(differentAuthor: True)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="1f76a559-a751-5be9-f205-c46da637376e">
+      <Execution id="236076c4-b5e6-4869-affe-2c1d0f1ab7ff" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="IdentifierCollisionCannotOverwriteAnotherSubmission" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.AnotherAuthorsSubmissionCannotBeReplayed" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="bde5c80b-7f00-8e2c-a3fc-1c76ab4a2df3">
+      <Execution id="448eab08-1663-490c-be2e-37c68139c018" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="AnotherAuthorsSubmissionCannotBeReplayed" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.ReplayDoesNotApplyQuantityTwiceEvenWithStaleExpectedBalance" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="0d45e836-99a0-d81c-094d-6a834eef7a08">
+      <Execution id="6dfb64c2-c36b-4839-a34a-321c0afb61a4" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="ReplayDoesNotApplyQuantityTwiceEvenWithStaleExpectedBalance" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.InvalidPageDoesNotReadTheAnimal(page: 1, size: 101)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="90001dec-c5d7-3943-6e6f-c0430da72d50">
+      <Execution id="1f118bf7-a600-4aee-bd87-92993bafe6fa" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="InvalidPageDoesNotReadTheAnimal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalGrowthServiceTests.RecordsFromOtherAnimalOrFarmAreExcluded" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="be5dca88-b146-1f96-5201-82bad7028a80">
+      <Execution id="1b53dbfa-b23c-44f5-bb0a-ef5e65fec838" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalGrowthServiceTests" name="RecordsFromOtherAnimalOrFarmAreExcluded" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.OverrideCannotShortenCatalogWithdrawal(days: 4)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="f4aeb04b-978e-c4cd-0652-5b4cdbd7adb5">
+      <Execution id="5935f79f-d058-4339-a886-f61a2343d2bc" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="OverrideCannotShortenCatalogWithdrawal" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.UpdateKeepsOwnSkuAndUnitWithoutQueryingStock" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="fba279ac-e578-7041-79cf-364ae2caf5f6">
+      <Execution id="2ee1ff02-b36a-4b26-93af-38a4f5b0f130" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="UpdateKeepsOwnSkuAndUnitWithoutQueryingStock" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalWeighingServiceTests.InvalidWeightNeverPersists(weight: -1)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="02400ff9-d0a5-97e4-58d7-63fdcc2244ea">
+      <Execution id="4da5b9a9-418b-4387-a12b-d6dd3bc5edf9" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalWeighingServiceTests" name="InvalidWeightNeverPersists" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.CapacityCountsOnlyOtherActiveResidents" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="b4d745d5-83e4-f3b2-ac7a-52b03b52f850">
+      <Execution id="03f4dce0-d0c8-44ea-8d95-b501b24a9650" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="CapacityCountsOnlyOtherActiveResidents" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.InvalidCourseEndCannotPersist" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="b02c0adf-b3db-36db-2a2b-cd5b52971796">
+      <Execution id="ed641ec9-c39f-492b-8b6e-156f5ddb909b" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="InvalidCourseEndCannotPersist" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.InactiveAnimalCannotRegisterClinicalEvents(status: Dead)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="89678866-eba3-be3f-3bee-a05732509d99">
+      <Execution id="007a6b16-e770-4166-8d06-9e05a40a2b65" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="InactiveAnimalCannotRegisterClinicalEvents" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalLocationPolicyTests.InactiveAnimalDoesNotConsumeCapacity(status: Sold)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="c0cb8157-591c-7686-73ba-a1b8cea178f6">
+      <Execution id="b0c28206-7f09-4d17-996c-d6a71537dc60" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalLocationPolicyTests" name="InactiveAnimalDoesNotConsumeCapacity" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.UnassignedFarmIsHiddenBeforeClinicalLookup" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="10e89819-885f-0466-c22b-fb339dd4fcee">
+      <Execution id="b5d389b8-dafd-4194-8c46-da634616dc06" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="UnassignedFarmIsHiddenBeforeClinicalLookup" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnimalCareServiceTests.TreatmentCannotPrecedeBirth" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="b1184010-5111-8852-c01e-3739f0c73c50">
+      <Execution id="3836978a-c4ac-47c8-8dff-601f218a7ed1" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnimalCareServiceTests" name="TreatmentCannotPrecedeBirth" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.DiagnosticProportionUsesOnlyConclusiveChecks" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="62ac96b1-0d3d-4327-0561-139d845ab2d4">
+      <Execution id="ce26c769-4325-4ec6-89e7-d79941b6172c" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="DiagnosticProportionUsesOnlyConclusiveChecks" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.MissingCategoryRejectsCreationWithoutWriting" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="85399ab2-be24-e694-58c5-e0b7c18a179c">
+      <Execution id="1aaf29e7-d56b-4354-85e9-79e3e3a25481" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="MissingCategoryRejectsCreationWithoutWriting" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.WithdrawalCoversCourseAndInclusiveFinalDay(day: 5, blocked: True)" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="49325886-979a-04fc-4d52-bcbf674ab248">
+      <Execution id="cd7bc634-569e-4dbd-8cc3-989b3a89daf9" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="WithdrawalCoversCourseAndInclusiveFinalDay" />
+    </UnitTest>
+    <UnitTest name="UnitTests.AnalyticsServiceTests.MissingMilkHasNoInventedDailyLotSeries" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="7a17cba8-61a4-7cd6-2509-d3fc6d16e749">
+      <Execution id="b8cc12c8-22b5-45a8-9dce-59bbe9efab5f" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.AnalyticsServiceTests" name="MissingMilkHasNoInventedDailyLotSeries" />
+    </UnitTest>
+    <UnitTest name="UnitTests.WithdrawalPolicyTests.ShortLegacyEndDateCannotOverrideLongerSnapshot" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="5b485629-3941-ba41-f4d5-36f386396109">
+      <Execution id="34419f44-d86f-4e69-b630-e5f912732ee3" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.WithdrawalPolicyTests" name="ShortLegacyEndDateCannotOverrideLongerSnapshot" />
+    </UnitTest>
+    <UnitTest name="UnitTests.ProductCatalogServiceTests.InactiveCategoryRejectsCreationWithoutWriting" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="31a61a16-8865-4c68-785e-4a2fc355eec2">
+      <Execution id="89a7a3ca-9e6f-4c07-b1e4-a9c3f1943a49" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.ProductCatalogServiceTests" name="InactiveCategoryRejectsCreationWithoutWriting" />
+    </UnitTest>
+    <UnitTest name="UnitTests.InventoryServiceTests.InaccessibleInventoryIsHiddenBeforeSubmissionLookup" storage="/src/tests/unittests/bin/release/net10.0/unittests.dll" id="b53a03f2-9a93-5015-5441-db90d198786b">
+      <Execution id="d4701299-f73d-45c8-a7ec-2d54741c081e" />
+      <TestMethod codeBase="/src/tests/UnitTests/bin/Release/net10.0/UnitTests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="UnitTests.InventoryServiceTests" name="InaccessibleInventoryIsHiddenBeforeSubmissionLookup" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5ee87f3c-127e-5892-c424-24fc1a6a0b4b" executionId="82b1f7ec-e173-4464-bbe8-dde0961880fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e7c0c33-9b2f-7f55-d37b-1cfdbaa86ec7" executionId="0b5dd492-bff9-43c1-8816-5dfd70abdadf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1da5b37f-3e0d-7f03-220e-f20281bf3d68" executionId="b7baac2c-82cd-46fb-8ced-54c453567a11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c0763eba-557a-3947-f5d8-e8cb0f69d920" executionId="8b1a4aac-77eb-4ab0-b1a9-e320069554d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90923483-76db-28de-8579-0f7672d98bbd" executionId="1ed49aa6-03ae-4e35-aa8f-49579a3b2781" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f7114752-2012-951a-004e-abe22e705e8b" executionId="7bed285c-9605-4ec8-bd1e-51f9994638d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="de05bab5-1509-9d1c-a8e8-ca2e15409472" executionId="2a3fbf44-2bc7-4cc8-b49a-cbdb772363fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f055a206-8911-b571-0ae0-171db62f0de0" executionId="6596d043-374b-4665-9df9-0b19e16bf983" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be5dca88-b146-1f96-5201-82bad7028a80" executionId="1b53dbfa-b23c-44f5-bb0a-ef5e65fec838" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="89678866-eba3-be3f-3bee-a05732509d99" executionId="007a6b16-e770-4166-8d06-9e05a40a2b65" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b6aa387-7ba2-c961-9beb-785deecc46ee" executionId="c671f282-6a0b-40ad-b508-4814b7e14b14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d4b05de8-396c-0ab5-d315-bcdfe75dead7" executionId="5aef9d2b-f475-45cb-b989-5aad9bf6dbda" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bbb73819-6ec4-5105-c5e9-7f5eba89235b" executionId="912fb956-049a-4f90-ab46-30452a0b0cf5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="60bb26e8-2fa1-0a15-c909-6736916f5193" executionId="d7767d47-6c03-4688-a34a-79b37f4cdc26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84d08902-273d-21cc-a7dc-aec9a6fa6157" executionId="9cd3ebb0-fdc7-4f42-b657-c2fac0432d85" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c0cb8157-591c-7686-73ba-a1b8cea178f6" executionId="b0c28206-7f09-4d17-996c-d6a71537dc60" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bcd2aecd-c7ef-2edb-b416-147c32704c46" executionId="af969836-4da9-4112-b696-179087a2f1d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="deb69767-bde9-9614-41dc-7df3fb251ff3" executionId="cb1e5d72-7449-41b2-adfe-3e7315c1dbac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62ac96b1-0d3d-4327-0561-139d845ab2d4" executionId="ce26c769-4325-4ec6-89e7-d79941b6172c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe7f72c2-e2dc-234e-bc70-6cb721bf0af8" executionId="b927336b-d230-40fa-96cc-a044bd2a5717" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fc7e3e1-e98f-756f-e157-962ee978f22f" executionId="c726bf13-bebe-49db-aa09-70353e8b09fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="175dd515-3970-6820-304f-8c0bbc135c34" executionId="c49b107f-2442-4033-b94f-46b04e40827d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eaadb64a-129c-352f-3867-52e00e291ea9" executionId="42a335df-0d87-4d4d-97ed-6b91b3c2a57b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a2853e71-fc7f-bf21-aec3-dfe65a981bd3" executionId="274ed1e9-6e0f-46f0-88d2-279ed59b137a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc6258ce-3da4-cbc5-6f43-d0246f956798" executionId="f157aff6-8b30-487c-862d-3c2b1e6d04a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9218af7f-fda3-8805-d7a1-a02e0a565029" executionId="799d0c1f-53e7-453d-9afd-d9aacb58e49c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3e2aa1c-cb26-40b4-18c3-9513e4549698" executionId="d83f51b9-4dc5-4dc0-a9e7-75eacf65ce8e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4bd0b529-b21f-c228-ef3a-0d438db0ae5c" executionId="a58a3f6c-950a-4959-bf38-fdb47f05c135" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd07bb35-5ab5-8adf-6586-a0764862b2ed" executionId="ba3c2b41-b994-48c1-a61a-4daad9f0d402" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d45e836-99a0-d81c-094d-6a834eef7a08" executionId="6dfb64c2-c36b-4839-a34a-321c0afb61a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="85399ab2-be24-e694-58c5-e0b7c18a179c" executionId="1aaf29e7-d56b-4354-85e9-79e3e3a25481" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc49ce42-95f2-e17b-fef4-213a75383bff" executionId="8372c028-fcc3-4e54-8442-b5bdd1de9e43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae21924d-1910-c59c-43d2-7eb5c4a62d6a" executionId="3a2981a6-147b-4db9-b8b5-7d3d0fd6f3ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1dd53a1c-4d67-98be-c6a5-8a23df5611e3" executionId="1c7898d6-e243-40a5-b096-4d311a4d3fe5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dfb321a5-5728-3333-4ac2-bcc159392afa" executionId="9c76acaa-5a22-4706-a7ee-e1ab28ce510f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16271602-97fb-fe5a-bb43-1671937fc1e5" executionId="fe9a9f51-d6dd-4a0c-bb5c-914d61973aa9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d4879719-8095-db4c-bab9-a119fd6ef7b8" executionId="fd66161f-5096-4151-bb35-12987cd2ed2d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90d1ba05-bbd8-f8e2-5fab-224c60108e4d" executionId="d7c3f276-c60e-4135-a6ee-c7d3bbab4b51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="548f1209-fe9d-1a3a-da7d-1a1fefd94ca8" executionId="10d1e609-7711-4039-b988-df1f68082c1c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f28d0c2-f67a-365b-8492-5d858b2acc74" executionId="628d1a2e-3866-4823-96cb-66150cbad7d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e0f0be4-3d4a-5ce1-3d76-194a6a543e92" executionId="420acd2e-8084-4eac-bc1c-161cde8b17e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="589f4e6c-dd16-4e73-6999-b73ac626f406" executionId="f1a2a6db-3037-403d-9eeb-24a67663ea45" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31a61a16-8865-4c68-785e-4a2fc355eec2" executionId="89a7a3ca-9e6f-4c07-b1e4-a9c3f1943a49" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0486e38d-e6d3-104f-ff09-8d174d4b9d2c" executionId="bb81aef6-6bbc-40d6-a929-888a10ff070a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cc476ca3-fb5e-39f7-1a29-995c00cfe63a" executionId="6187b5d1-e7b0-45b8-8430-8f7b05878889" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="225ff88e-b28b-2fb2-1708-26bd8f2254bb" executionId="8ddfe2ff-a9ed-42ad-b0d9-6dbc99127248" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6437f3ee-260c-9b68-de30-5b5e7fef4051" executionId="02792ba0-8033-43d1-ac28-e370ee530448" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb875d9f-820c-f7de-6955-dc9ac57c91c9" executionId="5c919ce7-a674-4118-a50a-891beb9be347" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2460942f-0c46-10a8-b51e-ef5e00dec792" executionId="78c8461a-e71b-4779-9b28-a19031fb17c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="08aeafcd-ef74-9aff-cc90-6368adad490d" executionId="555ea7dd-d9ff-4d06-a555-da3762a61061" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="66b7e14b-3680-8bde-6ae8-b74189ae402a" executionId="a9b69195-e42d-45d6-80fe-4ca06b49be4b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d623c39b-3e23-fb49-2eda-e656bae0dec2" executionId="a5104c1d-8e63-47cd-a816-7dbbf8149c4a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8c1536dc-99e9-4f4a-9dd8-e26541b81621" executionId="786e870f-464a-49a2-b212-fe96868cd7b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25513d65-f0cd-5500-f5b5-96ce4d4a7316" executionId="5b62ae21-2120-4127-8e07-e8cd74815a53" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b53a03f2-9a93-5015-5441-db90d198786b" executionId="d4701299-f73d-45c8-a7ec-2d54741c081e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="36b3b218-2bc7-2344-166d-70f0240a1af2" executionId="bd84ca57-be28-4942-b3b5-3097f72ed932" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eaaf3917-9307-5be2-7755-28e04ebef183" executionId="83aa1eac-587b-4e88-8529-d99aba2ad0ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5e3e4ab5-7b1c-58a9-6fe2-f15660be8e58" executionId="56f69301-bd8b-472a-823d-1d562ae8cc27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b4d745d5-83e4-f3b2-ac7a-52b03b52f850" executionId="03f4dce0-d0c8-44ea-8d95-b501b24a9650" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="60d1a5b5-af9c-33b2-a6a0-5953b24298ee" executionId="6d0b01c9-0732-41a4-8dbc-46bb772a95c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0dc0cb29-77e6-bf8d-2c01-f38c56f0e83f" executionId="2bdfe9a9-5df0-4005-a3d2-6ddda6d76836" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="26718400-3126-a3b5-98c8-400b26ac1678" executionId="815d4a41-f297-4823-8ee8-e6a495989224" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e100eb6e-1059-001a-9eac-75c31320688e" executionId="e14225ba-7510-4f4b-b94d-3f6c764a82aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="565f4a19-0d24-f1da-f0ff-ff777a73ef49" executionId="81e92bc9-dd99-4683-be51-c6effe265be4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2c952df-f12b-462a-436d-d38b4af92ea6" executionId="f0a15194-e6c2-4447-82e8-9b2754a1c4a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e7b3674-2f0f-c950-daab-c65b20bff220" executionId="5ad6a5d2-4f39-490b-a071-b43b32a8ca88" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a8297d59-9900-712c-cba6-dd77b754b543" executionId="13a6236c-bdd5-4000-866a-9a16e69ee4aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f4c716f-d0f0-3adc-b5fd-cde25fca0e91" executionId="0a4af870-d7b0-41b6-871f-0c405abb9744" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bde5c80b-7f00-8e2c-a3fc-1c76ab4a2df3" executionId="448eab08-1663-490c-be2e-37c68139c018" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b1184010-5111-8852-c01e-3739f0c73c50" executionId="3836978a-c4ac-47c8-8dff-601f218a7ed1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f76a559-a751-5be9-f205-c46da637376e" executionId="236076c4-b5e6-4869-affe-2c1d0f1ab7ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d72ff42c-60ef-c7be-5638-ddaab7a3dfca" executionId="102702f1-0c9a-4413-9cd3-ed749d20b7a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b47431b4-6dec-d947-d70f-f6b7661e24b8" executionId="d0f30a84-8b8a-4131-a64e-4146ef9b8930" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7ba6c1a-10a5-f87b-c979-7a7ed874819e" executionId="4670ae0e-85f5-4df0-b8b3-1c7e2a2bb952" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49325886-979a-04fc-4d52-bcbf674ab248" executionId="cd7bc634-569e-4dbd-8cc3-989b3a89daf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02400ff9-d0a5-97e4-58d7-63fdcc2244ea" executionId="4da5b9a9-418b-4387-a12b-d6dd3bc5edf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e73f0580-1710-2272-096e-e0a3dfc99417" executionId="53f24fdc-0e37-444d-85da-a56c62445fed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fba279ac-e578-7041-79cf-364ae2caf5f6" executionId="2ee1ff02-b36a-4b26-93af-38a4f5b0f130" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f4aeb04b-978e-c4cd-0652-5b4cdbd7adb5" executionId="5935f79f-d058-4339-a886-f61a2343d2bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="68e45e10-971c-f052-7eb1-e9439cff95ee" executionId="5833efdd-5a5a-447d-a008-4b6a5bc31ae2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc799aa4-c3b2-a7a9-02a3-b0a13619145c" executionId="94aaae81-078c-4d5a-ae8d-92aee03e8c12" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="448fa730-2360-081b-cbe5-c0e79c9d80e8" executionId="6052cf56-f748-4c94-adc2-b4f6581ce1d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49dc6703-3873-17ac-2fdf-3bcf3f0ec257" executionId="97a3820a-4cea-40b6-81be-6da3c7c7c258" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="69b092c9-ce9d-35a7-be37-6cca257a2e78" executionId="d3dbb0be-2fd7-4fa1-a5ba-bffc5c4c39e5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1856a292-e5b3-739b-7097-bc9c7eb9902f" executionId="c1763320-c043-4782-b5d0-79413d16bd56" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a46984f-8856-e467-5976-3fc3edd4a6c5" executionId="d385e63c-de24-47d2-a2db-a28f03a9c6a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b02c0adf-b3db-36db-2a2b-cd5b52971796" executionId="ed641ec9-c39f-492b-8b6e-156f5ddb909b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5187ebc2-13d4-562d-9197-b192886a9dd6" executionId="0bcce799-1d67-401d-beb4-a8ad5f49c33a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab7ad5da-9ebb-b88a-9e5b-72505e836577" executionId="8b3ee791-c19f-4736-82ce-bf50b62af437" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10e89819-885f-0466-c22b-fb339dd4fcee" executionId="b5d389b8-dafd-4194-8c46-da634616dc06" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e6bdc4b-deba-c831-84f9-42c74ec7e13b" executionId="09537998-4b15-4967-a631-77b9413b50aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90001dec-c5d7-3943-6e6f-c0430da72d50" executionId="1f118bf7-a600-4aee-bd87-92993bafe6fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f46edb7f-0ac8-8992-3e3b-35db600d10cf" executionId="537c831f-79a1-471b-8593-ad3808096e92" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="af1d0069-df48-b83a-a84f-04ea41cb3890" executionId="973745b8-60bd-45dd-8ac4-5dbbed04e9ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="be3c2817-f1b4-6ac0-157e-7b7cc97888a8" executionId="454c3b45-a70d-4579-95a3-57ce7fed1506" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2dbcd287-c395-8583-0dde-84d8f0414647" executionId="c31d7fc0-25ea-4b13-8869-877143800005" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3ffc1db0-bbdc-4d92-95b1-0b5dd2befd9c" executionId="bad12209-099b-4f00-9a00-7790e9842b39" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="61258259-099d-99a1-ffbb-d2819d98931a" executionId="01c8c46b-e16a-4e5f-a8c5-8e7d8862a9ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64500d52-be6d-e378-66e2-f1330c4a3741" executionId="e1ca378e-456d-46a0-910e-73737b50b549" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3993a1b4-36b2-b086-7a7f-7fc84e581c6e" executionId="fffb4347-cb4f-4691-8b65-e90631d0c130" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e14813d9-8332-c0d2-64c9-e6a34916c892" executionId="39742cff-40ca-4f9b-8e62-08d8c0b303ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b485629-3941-ba41-f4d5-36f386396109" executionId="34419f44-d86f-4e69-b630-e5f912732ee3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7a17cba8-61a4-7cd6-2509-d3fc6d16e749" executionId="b8cc12c8-22b5-45a8-9dce-59bbe9efab5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="603562a2-d538-888a-8ad5-f33033c08a39" executionId="94078758-45f3-4572-b0f7-ac938f350fe1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ef37956-3807-1c4f-4daf-9fe2d9703149" executionId="a4150d3a-a7f6-478d-852d-2b894a45e1f7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="163af77d-b541-0f6b-6a2f-b964e2913c34" executionId="98212c9d-3035-4b52-8d80-0844290fc3f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="13e0bca6-c042-90a2-c365-6de2f9b3a46e" executionId="9a971f0a-b8eb-495d-a92f-84cb174dd64b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0b7c973-cabd-a3f6-d4e2-488bf5ef3b5e" executionId="e5ef6ab7-d952-4509-b9d0-45e8814fd5e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="472ccd66-4327-9eaa-75aa-8eabea61f815" executionId="5ad4628d-27fb-4d33-86f5-53b839bce559" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56c05b1b-bbde-faee-b639-5d0c01b08c2a" executionId="9f1dcec3-4877-4556-bf91-62e7788380a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c74d84ac-e236-9587-5f04-f1efde820bdf" executionId="53d66cec-daf6-4753-9a8b-287c152c5c9f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ffe07119-b5f8-b788-4c83-eef9b6781cde" executionId="706ac2a9-bad3-4171-bffe-a635a9ec015f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b55f7ce9-8f89-8ae7-287c-98013e7de310" executionId="d056d33b-9028-4786-9a6b-882c4cbd5ead" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="58a6aa71-8b35-f6d8-828a-282d6bee7c3b" executionId="20d4f475-7b3c-4ab5-8180-f6256212d7f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ae3c496-b4a0-6583-74e4-56324405fc31" executionId="2a6d90bf-b2f0-417d-ab78-b2fa53d5c9d0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b1e8efd-be3f-228f-3b51-0395a9ea8fc2" executionId="edddfe23-9e94-4a98-9538-6d117d0ffbb3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b524a687-b731-d3ef-3186-b3c00f0d731b" executionId="632ccbcf-9942-4632-90c6-d0538380ba2d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d45f821a-fb5b-9a4e-5ea9-d202978513f6" executionId="6b4e9712-82ec-4f76-8fcc-88d9d1fbad9c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7af39775-a59d-6e52-2c8b-8b48952b58c3" executionId="a10d9f46-63d3-4b1e-80ba-261c5a101a3a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e72cd889-5db3-6e35-10a7-ff3a8a8795bc" executionId="658e357c-53eb-4256-ab17-c532b1472596" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8497d7fe-616a-fe93-b17a-690db190b35a" executionId="df2d7040-1bfe-4614-bd5c-aa36dddaad25" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18e3dee9-5719-5ab8-8f4c-cfff6eb8a2f2" executionId="0beb4152-cf27-41fd-aa50-9e0c90ac4c38" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="122" executed="122" passed="122" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)
+[xUnit.net 00:00:00.11]   Discovering: UnitTests
+[xUnit.net 00:00:00.17]   Discovered:  UnitTests
+[xUnit.net 00:00:00.20]   Starting:    UnitTests
+[xUnit.net 00:00:00.64]   Finished:    UnitTests
+</StdOut>
+    </Output>
+    <CollectorDataEntries>
+      <Collector agentName="2e49f1bd61c7" uri="datacollector://microsoft/CoverletCodeCoverage/1.0" collectorDisplayName="XPlat code coverage">
+        <UriAttachments>
+          <UriAttachment>
+            <A href="2e49f1bd61c7/coverage.cobertura.xml"></A>
+          </UriAttachment>
+        </UriAttachments>
+      </Collector>
+    </CollectorDataEntries>
+  </ResultSummary>
+</TestRun>

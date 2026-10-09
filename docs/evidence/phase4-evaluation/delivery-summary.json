@@ -1,0 +1,21 @@
+{
+  "reviewDate": "2026-10-08",
+  "sourceCommit": "e668e4694630c3ad4530c9238faf62c68a9c272d",
+  "repository": "AndrGutierrez/DAW",
+  "branch": "codex/phase4-cattle-spa",
+  "pullRequest": "https://github.com/AndrGutierrez/DAW/pull/8",
+  "draft": true,
+  "merged": false,
+  "demo": "http://localhost:18086",
+  "preserved": [
+    "Existing demo volume",
+    ".env",
+    ".github/workflows/ci.yml"
+  ],
+  "pendingTeamDelivery": [
+    "Review and integrate pull request",
+    "Presentation and professor form",
+    "External HTTPS/access verification",
+    "Enter an actual BCV quote if demonstrating Bs valuation"
+  ]
+}

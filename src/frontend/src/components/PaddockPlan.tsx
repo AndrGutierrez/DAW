@@ -1,0 +1,11 @@
+import { occupancyState, permanenceState } from '../api/paddocks';
+import type { PaddockSnapshot } from '../api/paddocks';
+import { number } from '../api/livestock';
+export function PaddockPlan({ items, selected, onSelect }: { items: PaddockSnapshot[]; selected: string; onSelect: (id: string) => void }) {
+  return <article className="panel"><h2>Plano de potreros de la finca</h2><p className="muted">Distribución esquemática configurada: color por capacidad y borde por permanencia. Selecciona un potrero para consultar sus animales y trasladarlos.</p>{items.length ? <svg className="paddock-plan" viewBox="0 0 100 100" role="group" aria-label="Plano interactivo de potreros">
+    {items.map(p => { const state = occupancyState(p.occupancy, p.data.capacity), stay = permanenceState(p.oldestKnownArrival, p.data.maxStayDays); const x = p.data.mapX!, y = p.data.mapY!, width = p.data.mapWidth!, height = p.data.mapHeight!;
+      return <g key={p.id} role="button" tabIndex={0} aria-label={p.data.name + ': ' + p.occupancy + ' animales; ' + state.label + '; ' + stay.label} aria-pressed={selected === p.id} className={'plan-paddock fill-' + state.tone + ' border-' + stay.tone + (selected === p.id ? ' selected' : '')} onClick={() => onSelect(p.id)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(p.id); } }}>
+        <title>{p.data.name + ' · ' + state.label + ' · ' + stay.label + (p.unknownArrivals ? ' · ' + p.unknownArrivals + ' entradas sin fecha' : '')}</title><rect x={x} y={y} width={width} height={height} rx="1"/><text x={x + width / 2} y={y + height / 2 - 1} textAnchor="middle" fontSize={Math.min(3, width / Math.max(5, p.data.name.length) * 1.7)}>{p.data.name}</text><text x={x + width / 2} y={y + height / 2 + 3} textAnchor="middle" fontSize={Math.min(2.5, width / 8)}>{number(p.occupancy, 0)} / {p.data.capacity ?? '—'}</text>
+      </g>; })}
+  </svg> : <p>Aún no hay potreros activos ubicados en el plano. Configura posición y tamaño desde «Editar potrero».</p>}<p className="muted">El plano incluye todos los potreros activos configurados de esta finca, independientemente de la página o búsqueda de las tarjetas. Las posiciones no representan coordenadas GPS ni superficie en hectáreas. Los bordes sin límite o fecha tienen estado neutro.</p></article>;
+}

@@ -33,11 +33,22 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateOnly?>("DueDate")
                         .HasColumnType("date");
 
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsResolved")
                         .HasColumnType("boolean");
@@ -65,6 +76,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.HasIndex("FarmId", "IsResolved", "Severity");
 
                     b.ToTable("Alerts", (string)null);
@@ -81,8 +94,19 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -91,8 +115,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<decimal?>("ThresholdValue")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("numeric(12,2)");
+                        .HasPrecision(12, 4)
+                        .HasColumnType("numeric(12,4)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -100,6 +124,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FarmId", "Type");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("AlertRules", (string)null);
                 });
@@ -132,6 +158,12 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("DamId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
 
@@ -142,6 +174,11 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid?>("LotId")
                         .HasColumnType("uuid");
@@ -187,6 +224,10 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<decimal?>("TargetDailyGainKg")
+                        .HasPrecision(8, 4)
+                        .HasColumnType("numeric(8,4)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -215,6 +256,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("FarmId", "Rfid")
                         .IsUnique();
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("Animals", (string)null);
                 });
 
@@ -235,6 +278,12 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
 
@@ -243,6 +292,11 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid?>("FromPaddockId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Reason")
                         .HasMaxLength(300)
@@ -269,6 +323,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AnimalId", "Date");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("AnimalMovements", (string)null);
                 });
 
@@ -290,6 +346,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
 
@@ -297,6 +359,11 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<long?>("SizeBytes")
                         .HasColumnType("bigint");
@@ -315,6 +382,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalId", "UploadedAt");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("AnimalPhotos", (string)null);
                 });
@@ -336,8 +405,19 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("Method")
                         .HasColumnType("integer");
@@ -365,6 +445,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AnimalId", "Date");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.HasIndex("OperationId", "ProductType")
                         .IsUnique();
 
@@ -389,6 +471,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
 
@@ -396,6 +484,11 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
@@ -417,6 +510,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.HasIndex("OwnerType", "OwnerId");
 
@@ -471,6 +566,12 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("EntityName", "EntityId");
 
+                    b.HasIndex("FarmId", "OccurredAt");
+
+                    b.HasIndex("OccurredAt", "Id");
+
+                    b.HasIndex("UserId", "OccurredAt");
+
                     b.ToTable("AuditLogs", (string)null);
                 });
 
@@ -485,8 +586,19 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -505,6 +617,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.HasIndex("SpeciesId", "Name")
                         .IsUnique();
 
@@ -522,9 +636,20 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsNotifiable")
                         .HasColumnType("boolean");
@@ -541,7 +666,67 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SpeciesId");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("Diseases", (string)null);
+                });
+
+            modelBuilder.Entity("Core.Domain.Livestock.ExchangeRate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("BolivarsPerDollar")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("numeric(18,6)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("EffectiveDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("EntryMethod")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("manual");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("RecordedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)")
+                        .HasDefaultValue("https://www.bcv.org.ve/");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EffectiveDate", "CreatedAt");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
+                    b.ToTable("ExchangeRates", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Livestock.Farm", b =>
@@ -564,12 +749,23 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Email")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -585,6 +781,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("Farms", (string)null);
                 });
 
@@ -599,8 +797,19 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -637,6 +846,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("FarmId", "ProductId")
                         .IsUnique();
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("FarmInventory", null, t =>
                         {
                             t.HasCheckConstraint("CK_FarmInventory_Stock", "\"Stock\" >= 0 AND \"MinStock\" >= 0 AND \"MaxStock\" > \"MinStock\"");
@@ -661,8 +872,19 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid>("LotId")
                         .HasColumnType("uuid");
@@ -677,6 +899,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RationId");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.HasIndex("LotId", "Date");
 
@@ -704,6 +928,12 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("EventType")
                         .IsRequired()
                         .HasMaxLength(13)
@@ -711,6 +941,11 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
@@ -724,6 +959,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("FarmId");
 
                     b.HasIndex("AnimalId", "Date");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("HealthEvents", (string)null);
 
@@ -749,8 +986,19 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("NewStatus")
                         .HasColumnType("integer");
@@ -769,6 +1017,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AnimalId", "ChangedAt");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("HealthStatusChanges", (string)null);
                 });
 
@@ -783,6 +1033,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -791,6 +1047,11 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -802,6 +1063,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("InventoryCategories", (string)null);
 
                     b.HasData(
@@ -811,6 +1074,7 @@ namespace Infrastructure.Persistence.Migrations
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Insumos de la operación ganadera",
                             IsActive = true,
+                            IsDeleted = false,
                             Name = "Alimentación animal"
                         },
                         new
@@ -819,6 +1083,7 @@ namespace Infrastructure.Persistence.Migrations
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Insumos de la operación ganadera",
                             IsActive = true,
+                            IsDeleted = false,
                             Name = "Sanidad animal"
                         });
                 });
@@ -834,11 +1099,22 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -862,6 +1138,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("FarmId", "Name")
                         .IsUnique();
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("Lots", (string)null);
                 });
@@ -888,11 +1166,41 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<decimal?>("MapHeight")
+                        .HasPrecision(7, 4)
+                        .HasColumnType("numeric(7,4)");
+
+                    b.Property<decimal?>("MapWidth")
+                        .HasPrecision(7, 4)
+                        .HasColumnType("numeric(7,4)");
+
+                    b.Property<decimal?>("MapX")
+                        .HasPrecision(7, 4)
+                        .HasColumnType("numeric(7,4)");
+
+                    b.Property<decimal?>("MapY")
+                        .HasPrecision(7, 4)
+                        .HasColumnType("numeric(7,4)");
+
+                    b.Property<int?>("MaxStayDays")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -903,6 +1211,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("FarmId", "Name")
                         .IsUnique();
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("Paddocks", (string)null);
                 });
@@ -932,8 +1242,19 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -969,6 +1290,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("SKU")
                         .IsUnique();
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("Products", null, t =>
                         {
                             t.HasCheckConstraint("CK_Products_Prices", "NOT \"IsActive\" OR (\"Price\" > 0 AND \"CostPrice\" > 0)");
@@ -990,6 +1313,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateOnly?>("ExpirationDate")
                         .HasColumnType("date");
 
@@ -999,6 +1328,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<decimal>("InitialQuantity")
                         .HasPrecision(12, 3)
                         .HasColumnType("numeric(12,3)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
@@ -1016,6 +1350,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SupplierId");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.HasIndex("FarmId", "ProductId", "BatchNumber");
 
                     b.ToTable("ProductBatches", (string)null);
@@ -1032,8 +1368,19 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1053,6 +1400,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SpeciesId");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("Rations", (string)null);
                 });
 
@@ -1066,6 +1415,17 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
@@ -1085,6 +1445,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("ProductId");
 
                     b.HasIndex("RationId");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("RationIngredients", (string)null);
                 });
@@ -1106,6 +1468,12 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("EventType")
                         .IsRequired()
                         .HasMaxLength(21)
@@ -1113,6 +1481,11 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
@@ -1126,6 +1499,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("FarmId");
 
                     b.HasIndex("DamId", "Date");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("ReproductiveEvents", (string)null);
 
@@ -1152,11 +1527,22 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateOnly?>("ExpirationDate")
                         .HasColumnType("date");
 
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("SireName")
                         .HasMaxLength(150)
@@ -1180,6 +1566,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SupplierId");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("SemenBatches", (string)null);
                 });
 
@@ -1199,11 +1587,22 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<int?>("GestationDays")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1220,6 +1619,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("Species", (string)null);
                 });
@@ -1238,8 +1639,19 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid?>("ProductBatchId")
                         .HasColumnType("uuid");
@@ -1248,8 +1660,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Quantity")
-                        .HasPrecision(12, 3)
-                        .HasColumnType("numeric(12,3)");
+                        .HasPrecision(14, 4)
+                        .HasColumnType("numeric(14,4)");
 
                     b.Property<string>("Reason")
                         .HasMaxLength(300)
@@ -1273,6 +1685,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("ProductBatchId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.HasIndex("FarmId", "ProductId", "Date");
 
@@ -1298,9 +1712,20 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Email")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1312,6 +1737,8 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("Suppliers", (string)null);
                 });
@@ -1336,6 +1763,12 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("CreatedByUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
@@ -1345,6 +1778,11 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("Priority")
                         .HasColumnType("integer");
@@ -1371,6 +1809,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("RelatedAnimalId");
 
                     b.HasIndex("RelatedLotId");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.HasIndex("FarmId", "Status", "DueDate");
 
@@ -1410,12 +1850,23 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid?>("LotId")
                         .HasColumnType("uuid");
@@ -1439,6 +1890,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("FarmId", "Date");
 
+                    b.HasIndex("IsDeleted", "DeletedAt");
+
                     b.ToTable("Transactions", (string)null);
                 });
 
@@ -1453,11 +1906,22 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsDefault")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -1465,6 +1929,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FarmId");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.HasIndex("UserId", "FarmId")
                         .IsUnique();
@@ -1493,8 +1959,19 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("FarmId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
@@ -1510,6 +1987,8 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalId", "Date");
+
+                    b.HasIndex("IsDeleted", "DeletedAt");
 
                     b.ToTable("WeightRecords", (string)null);
                 });
@@ -1603,12 +2082,23 @@ namespace Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("GuardName")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasDefaultValue("web");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1636,6 +2126,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("RevokedAt")
+                        .IsConcurrencyToken()
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Token")
@@ -1702,6 +2193,17 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("PermissionId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.HasKey("RoleId", "PermissionId");
 
                     b.HasIndex("PermissionId");
@@ -1716,6 +2218,17 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("PermissionId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.HasKey("UserId", "PermissionId");
 
@@ -1800,6 +2313,17 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeletedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.HasKey("UserId", "RoleId");
 

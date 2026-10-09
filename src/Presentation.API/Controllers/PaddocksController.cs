@@ -1,3 +1,4 @@
+using Core.Application.Livestock;
 using Core.Application.Management;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,20 @@ namespace Presentation.API.Controllers;
 
 [ApiController]
 [Route("api/paddocks")]
-public sealed class PaddocksController(ICrudService<PaddockRequest> service) : ControllerBase
+public sealed class PaddocksController(ICrudService<PaddockRequest> service, PaddockService occupancy) : ControllerBase
 {
+    [HttpGet("destinations"), HasPermission("paddocks.list")]
+    public async Task<IActionResult> Destinations([FromQuery] Guid farmId, CancellationToken ct) => Ok(await occupancy.DestinationsAsync(farmId, ct));
+
+    [HttpGet("map"), HasPermission("paddocks.list")]
+    public async Task<IActionResult> Map([FromQuery] Guid farmId, CancellationToken ct) => Ok(await occupancy.MapAsync(farmId, ct));
+
+    [HttpGet("page"), HasPermission("paddocks.list")]
+    public async Task<IActionResult> Page([FromQuery] PaddockPageRequest query, CancellationToken ct) => Ok(await occupancy.PageAsync(query, ct));
+
+    [HttpGet("{id:guid}/residents"), HasPermission("paddocks.get"), HasPermission("animals.list")]
+    public async Task<IActionResult> Residents(Guid id, [FromQuery] PaddockResidentPageRequest query, CancellationToken ct) => Ok(await occupancy.ResidentsAsync(id, query, ct));
+
     [HttpGet, HasPermission("paddocks.list")]
     public async Task<IActionResult> List(CancellationToken ct) => Ok(await service.ListAsync(ct));
 

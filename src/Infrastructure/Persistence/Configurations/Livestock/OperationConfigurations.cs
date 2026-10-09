@@ -77,7 +77,7 @@ public sealed class AlertRuleConfiguration : IEntityTypeConfiguration<AlertRule>
         builder.HasKey(rule => rule.Id);
 
         builder.Property(rule => rule.Type).HasConversion<int>().IsRequired();
-        builder.Property(rule => rule.ThresholdValue).HasPrecision(12, 2);
+        builder.Property(rule => rule.ThresholdValue).HasPrecision(12, 4);
         builder.Property(rule => rule.IsEnabled).IsRequired();
 
         builder.HasIndex(rule => new { rule.FarmId, rule.Type });
@@ -166,5 +166,8 @@ public sealed class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         builder.Property(log => log.OccurredAt).IsRequired();
 
         builder.HasIndex(log => new { log.EntityName, log.EntityId });
+        builder.HasIndex(log => new { log.OccurredAt, log.Id });
+        builder.HasIndex(log => new { log.UserId, log.OccurredAt });
+        builder.HasIndex(log => new { log.FarmId, log.OccurredAt });
     }
 }

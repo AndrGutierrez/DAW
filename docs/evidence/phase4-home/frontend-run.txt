@@ -1,0 +1,95 @@
+
+ RUN  v5.0.3 C:/Users/santi/.codex/worktrees/phase4-cattle-spa/DAW/src/frontend
+
+ ✓ src/api/paddocks.test.ts (13 tests) 6ms
+ ✓ src/auth/navigation.test.ts (12 tests) 5ms
+ ✓ src/api/weighing.test.ts (15 tests) 9ms
+ ✓ src/auth/session.test.ts (15 tests) 91ms
+
+ Test Files  4 passed (4)
+      Tests  55 passed (55)
+   Start at  02:19:04
+   Duration  306ms (transform 46%, tests 29%, import 19%, worker 5%)
+
+
+time="2026-10-08T02:25:47-04:00" level=warning msg="Docker Compose requires buildx plugin to be installed"
+ Image daw-phase4-nginx Building
+ Image daw-phase4-nginx Building
+Sending build context to Docker daemon  524.4kB
+Sending build context to Docker daemon  1.573MB
+Sending build context to Docker daemon  3.146MB
+Sending build context to Docker daemon  4.735MB
+Sending build context to Docker daemon  4.899MB
+
+Step 1/12 : FROM node:22-alpine AS build
+ ---> 0a7108bf6c7b
+Step 2/12 : WORKDIR /app
+ ---> Using cache
+ ---> 9bca842a8957
+Step 3/12 : COPY src/frontend/package*.json ./
+ ---> Using cache
+ ---> 87d69c1516c6
+Step 4/12 : RUN npm ci
+ ---> Using cache
+ ---> 4cf277ba07d4
+Step 5/12 : COPY src/frontend/ ./
+ ---> 2c490eae536b
+Step 6/12 : RUN npm run build
+ ---> Running in af188721114e
+
+> daw-cattle-spa@0.1.0 build
+> tsc -b && vite build
+
+vite v8.3.3 building client environment for production...
+transforming...
+✓ 970 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                   0.60 kB │ gzip:   0.38 kB
+dist/assets/index-CSJKRXDu.css                   54.10 kB │ gzip:  12.27 kB
+dist/assets/rolldown-runtime-Dd_uD5pT.js          1.10 kB │ gzip:   0.62 kB
+dist/assets/reportExport-DskVPT6r.js              4.95 kB │ gzip:   2.42 kB
+dist/assets/GrowthChart-BZ1DDtbf.js               7.18 kB │ gzip:   2.96 kB
+dist/assets/purify.es-Bvo9QlJ8.js                28.08 kB │ gzip:  11.08 kB
+dist/assets/jspdf.plugin.autotable-BrAqd2M3.js   29.91 kB │ gzip:   9.53 kB
+dist/assets/AnalyticsCharts-Dy5uZpag.js          38.47 kB │ gzip:  11.72 kB
+dist/assets/SearchPickerContent-CAG93svj.js      68.93 kB │ gzip:  24.27 kB
+dist/assets/index.es-BSW95-PF.js                151.43 kB │ gzip:  48.91 kB
+dist/assets/html2canvas-CJ4rRp4d.js             199.49 kB │ gzip:  46.78 kB
+dist/assets/LineChart-BExlmn-2.js               354.32 kB │ gzip: 103.12 kB
+dist/assets/jspdf.es.min-rEw27yDh.js            399.81 kB │ gzip: 129.92 kB
+dist/assets/index-B5fkA8oj.js                   470.80 kB │ gzip: 138.28 kB
+dist/assets/exceljs.min-DgbhWywh.js             929.56 kB │ gzip: 256.44 kB
+
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 522ms
+ ---> Removed intermediate container af188721114e
+ ---> 035d0fae0d13
+Step 7/12 : FROM nginx:alpine
+ ---> df221db836e1
+Step 8/12 : COPY --from=build /app/dist /usr/share/nginx/html
+ ---> e70b9c569b32
+Step 9/12 : COPY nginx/default.conf.template /etc/nginx/templates/default.conf.template
+ ---> ac4185a63065
+Step 10/12 : COPY db/diagram /usr/share/nginx/html/erd
+ ---> 9332945adec0
+Step 11/12 : EXPOSE 80
+ ---> Running in c11b85083f92
+ ---> Removed intermediate container c11b85083f92
+ ---> 15489a243b64
+Step 12/12 : LABEL com.docker.compose.image.builder=classic
+ ---> Running in 7a679885f837
+ ---> Removed intermediate container 7a679885f837
+ ---> ba05012f74a8
+Successfully built ba05012f74a8
+Successfully tagged daw-phase4-nginx:latest
+ Image daw-phase4-nginx Built
+ Image daw-phase4-nginx Built
+ Container daw-phase4-web Recreate
+ Container daw-phase4-web Recreated
+ Container daw-phase4-web Starting
+ Container daw-phase4-web Started

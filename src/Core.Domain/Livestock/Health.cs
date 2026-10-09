@@ -4,6 +4,9 @@ namespace Core.Domain.Livestock;
 
 public abstract class HealthEvent : BaseEntity
 {
+    protected HealthEvent() { }
+    protected HealthEvent(Guid id) : base(id) { }
+
     public Guid FarmId { get; set; }
 
     public Farm Farm { get; set; } = null!;
@@ -23,6 +26,9 @@ public abstract class HealthEvent : BaseEntity
 
 public sealed class Vaccination : HealthEvent
 {
+    public Vaccination() { }
+    public Vaccination(Guid id) : base(id) { }
+
     public Guid? ProductId { get; set; }
 
     public Product? Product { get; set; }
@@ -38,6 +44,9 @@ public sealed class Vaccination : HealthEvent
 
 public sealed class Treatment : HealthEvent
 {
+    public Treatment() { }
+    public Treatment(Guid id) : base(id) { }
+
     public Guid? ProductId { get; set; }
 
     public Product? Product { get; set; }
@@ -61,6 +70,9 @@ public sealed class Treatment : HealthEvent
 
 public sealed class DiseaseCase : HealthEvent
 {
+    public DiseaseCase() { }
+    public DiseaseCase(Guid id) : base(id) { }
+
     public Guid? DiseaseId { get; set; }
 
     public Disease? Disease { get; set; }
@@ -72,6 +84,9 @@ public sealed class DiseaseCase : HealthEvent
 
 public sealed class Deworming : HealthEvent
 {
+    public Deworming() { }
+    public Deworming(Guid id) : base(id) { }
+
     public Guid? ProductId { get; set; }
 
     public Product? Product { get; set; }
@@ -81,6 +96,9 @@ public sealed class Deworming : HealthEvent
 
 public sealed class Quarantine : HealthEvent
 {
+    public Quarantine() { }
+    public Quarantine(Guid id) : base(id) { }
+
     public DateOnly? StartDate { get; set; }
 
     public DateOnly? EndDate { get; set; }

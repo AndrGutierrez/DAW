@@ -70,6 +70,16 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
+        Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 1;
+    foreach (var proxy in builder.Configuration.GetSection("ReverseProxy:KnownProxies").GetChildren())
+        if (!string.IsNullOrWhiteSpace(proxy.Value))
+            options.KnownProxies.Add(System.Net.IPAddress.Parse(proxy.Value));
+});
+builder.Services.AddSingleton<Presentation.API.Realtime.AnalyticsChanges>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -93,10 +103,39 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
         };
     });
 
+builder.Services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.Events.OnTokenValidated = async context =>
+    {
+        var manager = context.HttpContext.RequestServices.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Infrastructure.Persistence.Identity.ApplicationUser>>();
+        var id = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var user = id == null ? null : await manager.FindByIdAsync(id);
+        if (user == null || !user.IsActive || context.Principal?.FindFirst("security_stamp")?.Value != user.SecurityStamp)
+            context.Fail("The account or session is no longer active.");
+    };
+});
+
 builder.Services.AddAuthorization();
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.Name = "daw.csrf";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+    options.Cookie.Path = "/api/auth/session";
+});
 
 
 var app = builder.Build();
+
+if (args.Contains("--seed-demo"))
+{
+    var result = await app.Services.SeedShowcaseAsync();
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
+    return;
+}
 
 if (args.Contains("--seed"))
 {
@@ -104,6 +143,7 @@ if (args.Contains("--seed"))
     return;
 }
 
+app.UseForwardedHeaders();
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (!app.Environment.IsDevelopment())
@@ -143,6 +183,7 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = "swagger";
 });
 
+app.UseMiddleware<Presentation.API.Realtime.AnalyticsChangeMiddleware>();
 app.UseAntiforgery();
 app.MapControllers();
 app.MapStaticAssets();

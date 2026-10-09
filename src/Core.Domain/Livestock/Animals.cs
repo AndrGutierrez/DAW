@@ -38,6 +38,8 @@ public sealed class Animal : BaseEntity
 
     public decimal? BirthWeightKg { get; set; }
 
+    public decimal? TargetDailyGainKg { get; set; }
+
     public string? Color { get; set; }
 
     public string? Markings { get; set; }
@@ -93,6 +95,9 @@ public sealed class AnimalPhoto : BaseEntity
 
 public sealed class WeightRecord : BaseEntity
 {
+    public WeightRecord() { }
+    public WeightRecord(Guid id) : base(id) { }
+
     public Guid FarmId { get; set; }
 
     public Guid AnimalId { get; set; }

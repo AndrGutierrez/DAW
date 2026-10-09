@@ -50,6 +50,13 @@ public sealed class Paddock : BaseEntity
 
     public int? Capacity { get; set; }
 
+    public int? MaxStayDays { get; set; }
+
+    public decimal? MapX { get; set; }
+    public decimal? MapY { get; set; }
+    public decimal? MapWidth { get; set; }
+    public decimal? MapHeight { get; set; }
+
     public bool IsActive { get; set; } = true;
 }
 

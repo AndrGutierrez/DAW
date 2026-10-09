@@ -1,0 +1,55 @@
+BEGIN
+CREATE TABLE
+INSERT 0 2
+DO
+CREATE TABLE
+INSERT 0 10
+DELETE 12
+DELETE 4
+DELETE 2
+DELETE 2
+DELETE 2
+COMMIT
+ remaining_owned_products
+--------------------------
+                        0
+(1 row)
+
+     ?column?      | count
+-------------------+-------
+ milk_test_animals |     0
+(1 row)
+
+    ?column?    | count
+----------------+-------
+ milk_test_lots |     0
+(1 row)
+
+   ?column?   |  InternalTag
+--------------+----------------
+ demo_animals | DEMO-001
+ demo_animals | DEMO-F4-AURORA
+(2 rows)
+
+
+Comprobación posterior a la repetición final:
+     ?column?      | count
+-------------------+-------
+ animals-test-milk |     0
+(1 row)
+
+    ?column?    | count
+----------------+-------
+ lots-test-milk |     0
+(1 row)
+
+     ?column?      | count
+-------------------+-------
+ animals-test-loss |     0
+(1 row)
+
+   ?column?   |  InternalTag
+--------------+----------------
+ demo-animals | DEMO-001
+ demo-animals | DEMO-F4-AURORA
+(2 rows)

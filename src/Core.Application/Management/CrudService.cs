@@ -61,6 +61,18 @@ public sealed class CrudService<TEntity, TRequest>(IManagementRepository reposit
         return true;
     }, ct);
 
+    public Task RestoreAsync(Guid id, CancellationToken ct = default) => repository.ExecuteWriteAsync(async () =>
+    {
+        var entity = await repository.GetIncludingDeletedAsync<TEntity>(id, true, ct) ?? throw new KeyNotFoundException("The archived record was not found.");
+        if (definition.FarmId(entity) is Guid farmId && typeof(TEntity) != typeof(Farm) && !await farms.CanAccessAsync(farmId, ct))
+            throw new ConflictException("Restore the parent farm before this record.");
+        if (!entity.IsDeleted) return true;
+        var request = definition.Read(entity);
+        await validator.ValidateAndThrowAsync(request, ct);
+        await definition.CheckAsync(entity, request, ct);
+        entity.Restore(); await repository.SaveAsync(ct); return true;
+    }, ct);
+
     private async Task ValidateAsync(TRequest request, CancellationToken ct)
     {
         await validator.ValidateAndThrowAsync(request, ct);
@@ -93,6 +105,7 @@ public sealed class AnimalHealthService(IManagementRepository repository, IFarmA
         {
             repository.Add(new HealthStatusChange { FarmId = animal.FarmId, AnimalId = animal.Id, PreviousStatus = animal.HealthStatus, NewStatus = request.HealthStatus, Reason = request.Reason, UserId = user.UserId });
             animal.HealthStatus = request.HealthStatus;
+            animal.UpdatedAt = DateTime.UtcNow;
         }
 
         await repository.SaveAsync(ct);
