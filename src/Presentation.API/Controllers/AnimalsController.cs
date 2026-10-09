@@ -76,6 +76,9 @@ public sealed class AnimalsController(IAnimalQueryService animals, ICrudService<
         return Ok(await animals.ListStaleAsync(days, cancellationToken));
     }
 
+    [HttpGet("{id:guid}/lineage"), HasPermission("animals.get")]
+    public async Task<IActionResult> Lineage(Guid id, CancellationToken ct) => Ok(await animals.GetLineageAsync(id, ct));
+
     [HttpGet("{id:guid}")]
     [HasPermission("animals.get")]
     public async Task<ActionResult<AnimalDetail>> Get(Guid id, CancellationToken cancellationToken) =>

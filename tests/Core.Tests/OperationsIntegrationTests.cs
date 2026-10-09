@@ -74,14 +74,16 @@ public sealed partial class ManagementIntegrationTests
         Assert.Equal(HttpStatusCode.BadRequest, (await client.GetAsync("/api/inventory/page?pageSize=101")).StatusCode);
     }
     [Fact]
-    public async Task SupplyReferencesPreventAnimalAndFarmDeletion()
+    public async Task ArchivingAnAnimalRetainsSupplyHistoryAndActiveFarmDependencies()
     {
         using var factory = Factory(); await Seed(factory); using var client = factory.CreateClient(); await Login(client, "admin");
         using var scope = factory.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<AppDbContext>(); var inventory = await db.FarmInventory.FirstAsync();
         var animal = await db.Animals.FirstAsync(a => a.FarmId == inventory.FarmId && a.Status == AnimalStatus.Active);
         var q = new StockRequest(Guid.NewGuid(), StockMovementType.Out, 1, inventory.Stock, "Linked supply", animal.Id);
         Assert.Equal(HttpStatusCode.Created, (await client.PostAsJsonAsync($"/api/inventory/{inventory.Id}/movements", q)).StatusCode);
-        Assert.Equal(HttpStatusCode.Conflict, (await client.DeleteAsync($"/api/animals/{animal.Id}")).StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, (await client.DeleteAsync($"/api/animals/{animal.Id}")).StatusCode);
+        Assert.True(await db.Animals.IgnoreQueryFilters().AnyAsync(a => a.Id == animal.Id && a.IsDeleted));
+        Assert.True(await db.StockMovements.AnyAsync(m => m.ReferenceId == animal.Id));
         Assert.Equal(HttpStatusCode.Conflict, (await client.DeleteAsync($"/api/farms/{inventory.FarmId}")).StatusCode);
     }
     [Fact]

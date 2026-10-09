@@ -108,6 +108,14 @@ public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weig
             animal.SireId);
     }
 
+    public async Task<AnimalLineage> GetLineageAsync(Guid id, CancellationToken ct = default)
+    {
+        var farms = await farmAccess.GetAccessibleFarmIdsAsync(ct);
+        return await db.Animals.IgnoreQueryFilters().AsNoTracking().Where(a => a.Id == id && farms.Contains(a.FarmId))
+            .Select(a => new AnimalLineage(a.Id, a.InternalTag, a.Name, a.DamId, a.SireId, a.IsDeleted)).FirstOrDefaultAsync(ct)
+            ?? throw new KeyNotFoundException("The ancestry record was not found.");
+    }
+
     private async Task<IReadOnlyList<AnimalListItem>> MaterializeAsync(
         IQueryable<Animal> query,
         CancellationToken cancellationToken)

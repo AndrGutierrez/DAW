@@ -10,7 +10,7 @@ public sealed class ExchangeRateServiceTests
 {
     private readonly Mock<IManagementRepository> repo = new(MockBehavior.Strict);
     private readonly Mock<ICurrentUser> user = new(MockBehavior.Strict);
-    private readonly DateOnly day = DateOnly.FromDateTime(DateTime.UtcNow);
+    private readonly DateOnly day = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-4));
     private ExchangeRateService Service => new(repo.Object, user.Object, new ExchangeRateRequestValidator());
     public ExchangeRateServiceTests()
     {

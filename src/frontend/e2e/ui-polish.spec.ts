@@ -1,4 +1,3 @@
-import { clearFixtureMovements } from './fixtureCleanup';
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
@@ -23,7 +22,6 @@ test.beforeEach(async ({ request }, info) => {
 });
 test.afterEach(async ({ request }) => {
   if (process.env.E2E_ISOLATED_DATABASE !== '1') return;
-  clearFixtureMovements(animals);
   for (const id of animals.reverse()) expect((await request.delete('/api/animals/' + id, { headers })).status()).toBe(204);
 });
 

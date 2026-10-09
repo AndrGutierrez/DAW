@@ -58,14 +58,26 @@ public sealed class UserManagementStore(AppDbContext db, UserManager<Application
     }
     private async Task AssignAsync(ApplicationUser u,UserWriteRequest q,CancellationToken ct)
     {
-        var oldRoles=await manager.GetRolesAsync(u);
-        if(oldRoles.Count>0)Check(await manager.RemoveFromRolesAsync(u,oldRoles)); Check(await manager.AddToRoleAsync(u,q.Role));
-        db.UserFarms.RemoveRange(await db.UserFarms.Where(f=>f.UserId==u.Id).ToListAsync(ct));
-        db.UserPermissions.RemoveRange(await db.UserPermissions.Where(p=>p.UserId==u.Id).ToListAsync(ct));
+        var selectedRole = await db.Roles.SingleAsync(r => r.Name == q.Role, ct);
+        var roles = await db.UserRoles.IgnoreQueryFilters().Where(r => r.UserId == u.Id).ToListAsync(ct);
+        foreach (var role in roles)
+            if (role.RoleId == selectedRole.Id) db.RestoreLink(role);
+            else if (!db.Entry(role).Property<bool>("IsDeleted").CurrentValue) db.UserRoles.Remove(role);
+        if (roles.All(r => r.RoleId != selectedRole.Id)) db.UserRoles.Add(new IdentityUserRole<Guid> { UserId = u.Id, RoleId = selectedRole.Id });
+        var memberships = await db.UserFarms.IgnoreQueryFilters().Where(f => f.UserId == u.Id).ToListAsync(ct);
+        foreach (var membership in memberships)
+            if (q.FarmIds.Contains(membership.FarmId)) { membership.Restore(); membership.IsDefault = q.FarmIds.FirstOrDefault() == membership.FarmId; }
+            else membership.MarkDeleted(actor.UserId);
+        foreach (var farmId in q.FarmIds.Where(id => memberships.All(m => m.FarmId != id)))
+            db.UserFarms.Add(new UserFarm { UserId = u.Id, FarmId = farmId, IsDefault = q.FarmIds.FirstOrDefault() == farmId });
+        var selectedPermissions = await db.Permissions.Where(p => q.DirectPermissions.Contains(p.Name)).Select(p => p.Id).ToListAsync(ct);
+        var permissions = await db.UserPermissions.IgnoreQueryFilters().Where(p => p.UserId == u.Id).ToListAsync(ct);
+        foreach (var permission in permissions)
+            if (selectedPermissions.Contains(permission.PermissionId)) db.RestoreLink(permission);
+            else if (!db.Entry(permission).Property<bool>("IsDeleted").CurrentValue) db.UserPermissions.Remove(permission);
+        foreach (var permissionId in selectedPermissions.Where(id => permissions.All(p => p.PermissionId != id)))
+            db.UserPermissions.Add(new UserPermission { UserId = u.Id, PermissionId = permissionId });
         await db.SaveChangesAsync(ct);
-        db.UserFarms.AddRange(q.FarmIds.Select((id,index)=>new UserFarm { UserId=u.Id,FarmId=id,IsDefault=index==0 }));
-        var permissions=await db.Permissions.Where(p=>q.DirectPermissions.Contains(p.Name)).Select(p=>p.Id).ToListAsync(ct);
-        db.UserPermissions.AddRange(permissions.Select(id=>new UserPermission {UserId=u.Id,PermissionId=id}));await db.SaveChangesAsync(ct);
     }
     private async Task RevokeAsync(Guid id,CancellationToken ct)
     { foreach(var token in await db.RefreshTokens.Where(t=>t.UserId==id&&t.RevokedAt==null).ToListAsync(ct))token.RevokedAt=DateTime.UtcNow;await db.SaveChangesAsync(ct); }

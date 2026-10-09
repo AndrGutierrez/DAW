@@ -38,13 +38,13 @@ public sealed class OperationsReader(AppDbContext db) : IOperationsReader
         var ids = q.FarmId is Guid farm ? farms.Where(f => f == farm).ToArray() : farms.ToArray();
         var inventory = await db.FarmInventory.AsNoTracking().Where(i => ids.Contains(i.FarmId)).Select(i => new InventoryInput(i.Id, i.FarmId, i.ProductId, i.Farm.Name, i.Product.Name, i.Product.InventoryCategory.Name, i.Product.Unit, i.Stock, i.MinStock, i.MaxStock, i.Product.CostPrice, i.Product.Price)).ToListAsync(ct);
         var movements = await db.StockMovements.AsNoTracking().Where(m => ids.Contains(m.FarmId)).ToListAsync(ct);
-        var milk = await db.AnimalProduction.AsNoTracking().Where(p => ids.Contains(p.FarmId) && p.Animal.FarmId == p.FarmId && p.Date >= q.From && p.Date <= q.To && p.ProductType == AnimalProductType.Milk)
+        var milk = await db.AnimalProduction.IgnoreQueryFilters().AsNoTracking().Where(p => !p.IsDeleted && ids.Contains(p.FarmId) && p.Animal.FarmId == p.FarmId && p.Date >= q.From && p.Date <= q.To && p.ProductType == AnimalProductType.Milk)
             .Select(p => new MilkInput(p.Date, p.Farm.Name + " · " + (p.Animal.Lot == null ? "Sin lote actual" : p.Animal.Lot.Name), p.Quantity, p.Unit, p.FarmId, p.Animal.LotId)).ToListAsync(ct);
-        var weights = await db.WeightRecords.AsNoTracking().Where(w => ids.Contains(w.FarmId) && w.Animal.FarmId == w.FarmId && w.Animal.Species.Code == "BO" && w.Date >= q.From && w.Date <= q.To)
+        var weights = await db.WeightRecords.IgnoreQueryFilters().AsNoTracking().Where(w => !w.IsDeleted && !w.Animal.IsDeleted && ids.Contains(w.FarmId) && w.Animal.FarmId == w.FarmId && w.Animal.Species.Code == "BO" && w.Date >= q.From && w.Date <= q.To)
             .Select(w => new WeightInput(w.AnimalId, w.Id, w.CreatedAt, w.Date, w.Animal.BirthDate, w.WeightKg)).ToListAsync(ct);
-        var checks = await db.ReproductiveEvents.OfType<PregnancyCheck>().AsNoTracking().Where(c => ids.Contains(c.FarmId) && c.Dam.FarmId == c.FarmId && c.Date >= q.From && c.Date <= q.To).ToListAsync(ct);
-        var calvings = await db.ReproductiveEvents.OfType<Calving>().AsNoTracking().Where(c => ids.Contains(c.FarmId) && c.Dam.FarmId == c.FarmId && c.Date >= q.From && c.Date <= q.To).ToListAsync(ct);
-        var reproduction = await db.ReproductiveEvents.AsNoTracking().Where(e => ids.Contains(e.FarmId) &&
+        var checks = await db.ReproductiveEvents.OfType<PregnancyCheck>().IgnoreQueryFilters().AsNoTracking().Where(c => !c.IsDeleted && ids.Contains(c.FarmId) && c.Dam.FarmId == c.FarmId && c.Date >= q.From && c.Date <= q.To).ToListAsync(ct);
+        var calvings = await db.ReproductiveEvents.OfType<Calving>().IgnoreQueryFilters().AsNoTracking().Where(c => !c.IsDeleted && ids.Contains(c.FarmId) && c.Dam.FarmId == c.FarmId && c.Date >= q.From && c.Date <= q.To).ToListAsync(ct);
+        var reproduction = await db.ReproductiveEvents.IgnoreQueryFilters().AsNoTracking().Where(e => !e.IsDeleted && ids.Contains(e.FarmId) &&
             e.Dam.FarmId == e.FarmId && e.Dam.Species.Code == "BO" && e.Dam.Sex == Sex.Female && e.Date >= q.From && e.Date <= q.To).ToListAsync(ct);
         return new(inventory, movements, milk, weights, checks, calvings, reproduction);
     }
@@ -55,19 +55,19 @@ public sealed class OperationsReader(AppDbContext db) : IOperationsReader
         var ids = q.FarmId is Guid farm ? farms.Where(f => f == farm).ToArray() : farms.ToArray();
         if (!clinical)
         {
-            var rows = db.AnimalProduction.AsNoTracking().Where(p => ids.Contains(p.FarmId) && p.Animal.FarmId == p.FarmId && p.Date >= q.From && p.Date <= q.To);
+            var rows = db.AnimalProduction.IgnoreQueryFilters().AsNoTracking().Where(p => !p.IsDeleted && ids.Contains(p.FarmId) && p.Animal.FarmId == p.FarmId && p.Date >= q.From && p.Date <= q.To);
             var total = await rows.CountAsync(ct);
             if (q.PageSize == 10000 && total > 10000) throw new ConflictException("The report exceeds 10000 records. Narrow the period or farm before exporting.");
             var page = await rows.OrderByDescending(p => p.Date).ThenByDescending(p => p.CreatedAt).ThenByDescending(p => p.Id).Skip((q.Page - 1) * q.PageSize).Take(q.PageSize)
                 .Select(p => new ReportRow(p.Id, p.Date, p.Farm.Name, p.Animal.InternalTag, p.ProductType.ToString(), null, p.Quantity, p.Unit.ToString(), p.Notes, null, p.Method.ToString())).ToListAsync(ct);
             return new(new(page, total, q.Page, q.PageSize), generatedAt);
         }
-        var events = db.HealthEvents.AsNoTracking().Where(e => ids.Contains(e.FarmId) && e.Animal.FarmId == e.FarmId && e.Date >= q.From && e.Date <= q.To);
+        var events = db.HealthEvents.IgnoreQueryFilters().AsNoTracking().Where(e => !e.IsDeleted && ids.Contains(e.FarmId) && e.Animal.FarmId == e.FarmId && e.Date >= q.From && e.Date <= q.To);
         var count = await events.CountAsync(ct);
         if (q.PageSize == 10000 && count > 10000) throw new ConflictException("The report exceeds 10000 records. Narrow the period or farm before exporting.");
         var items = await events.Include(e => e.Farm).Include(e => e.Animal).OrderByDescending(e => e.Date).ThenByDescending(e => e.CreatedAt).ThenByDescending(e => e.Id).Skip((q.Page - 1) * q.PageSize).Take(q.PageSize).ToListAsync(ct);
         var productIds = items.Select(AnimalCareService.Read).Where(e => e.ProductId.HasValue).Select(e => e.ProductId!.Value).ToArray();
-        var products = await db.Products.AsNoTracking().Where(p => productIds.Contains(p.Id)).ToDictionaryAsync(p => p.Id, p => p.Name + " · " + p.SKU, ct);
+        var products = await db.Products.IgnoreQueryFilters().AsNoTracking().Where(p => productIds.Contains(p.Id)).ToDictionaryAsync(p => p.Id, p => p.Name + " · " + p.SKU, ct);
         return new(new(items.Select(e => { var data = AnimalCareService.Read(e); return new ReportRow(e.Id, e.Date, e.Farm.Name, e.Animal.InternalTag, data.Kind.ToString(), data.ProductId is Guid product && products.TryGetValue(product, out var name) ? name : null, data.Dose, data.Dose.HasValue ? "DoseWithoutUnit" : null, e.Notes, (e as Treatment)?.WithdrawalEndDate, data.Reason ?? data.Severity ?? (e is Treatment ? data.Route.ToString() : null)); }).ToList(), count, q.Page, q.PageSize), generatedAt);
     }
 }

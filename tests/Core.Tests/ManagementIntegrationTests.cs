@@ -32,7 +32,7 @@ public sealed partial class ManagementIntegrationTests
         var lot = await Create(client, "lots", new { farmId = farm, speciesId = species, name = "CRUD Lot", purpose = "Wool", paddockId = paddock });
         var category = await Create(client, "categories", new { name = "CRUD Category" });
         var product = await Create(client, "products", new { sku = "CRUD-001", name = "Feed", categoryId = category, price = 20.25, costPrice = 10.50, unit = "Bag" });
-        var inventory = await Create(client, "inventory", new { farmId = farm, productId = product, stock = 20, minStock = 2, maxStock = 100, location = "Warehouse" });
+        var inventory = await Create(client, "inventory", new { farmId = farm, productId = product, stock = 0, minStock = 2, maxStock = 100, location = "Warehouse" });
         var animal = await Create(client, "animals", new { farmId = farm, speciesId = species, breedId = breed, internalTag = "crud-001", sex = "Female", purpose = "Wool" });
         var date = DateOnly.FromDateTime(DateTime.UtcNow);
         var weight = await Create(client, "weights", new { farmId = farm, animalId = animal, date, weightKg = 45.25 });

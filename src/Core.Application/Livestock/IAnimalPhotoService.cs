@@ -16,6 +16,7 @@ public interface IAnimalPhotoService
         CancellationToken cancellationToken = default);
 
     Task DeleteAsync(Guid animalId, Guid photoId, CancellationToken cancellationToken = default);
+    Task RestoreAsync(Guid animalId, Guid photoId, CancellationToken ct = default);
 
     Task<AnimalPhotoContent> OpenReadAsync(Guid animalId, Guid photoId, CancellationToken cancellationToken = default);
 }

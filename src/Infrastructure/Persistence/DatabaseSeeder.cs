@@ -19,7 +19,7 @@ public static class DatabaseSeeder
         var configuration = services.GetRequiredService<IConfiguration>();
         await SeedPermissionsAsync(db, cancellationToken);
         await SeedRolesAsync(roleManager, db, cancellationToken);
-        await SeedAdminAsync(userManager, configuration, cancellationToken);
+        await SeedAdminAsync(userManager, configuration, db, cancellationToken);
         await SeedLivestockAsync(db, cancellationToken);
         await SeedOperationalDataAsync(db, cancellationToken);
         await SeedInventoryAndProductionAsync(db, cancellationToken);
@@ -30,8 +30,9 @@ public static class DatabaseSeeder
     {
         var catalog = PermissionCatalog.All().ToList();
         var catalogNames = catalog.Select(definition => definition.Name).ToHashSet();
-        var existing = await db.Permissions.ToListAsync(cancellationToken);
-        var obsolete = existing.Where(permission => !catalogNames.Contains(permission.Name)).ToList();
+        var existing = await db.Permissions.IgnoreQueryFilters().ToListAsync(cancellationToken);
+        var obsolete = existing.Where(permission => !catalogNames.Contains(permission.Name) && !db.Entry(permission).Property<bool>("IsDeleted").CurrentValue).ToList();
+        foreach (var permission in existing.Where(p => catalogNames.Contains(p.Name))) db.RestoreLink(permission);
         if (obsolete.Count > 0)
         {
             db.Permissions.RemoveRange(obsolete);
@@ -71,7 +72,7 @@ public static class DatabaseSeeder
                 await roleManager.UpdateAsync(role);
             }
 
-            var desired = PermissionCatalog.All().Where(definition => definition.Resource != "auditlogs" || name is "Admin" or "Administrador").Where(selector).Select(definition => definition.Name).ToHashSet();
+            var desired = PermissionCatalog.All().Where(definition => definition.Resource is not ("auditlogs" or "archive") || name is "Admin" or "Administrador").Where(selector).Select(definition => definition.Name).ToHashSet();
             var current = await db.RolePermissions.Where(rolePermission => rolePermission.RoleId == role.Id).Select(rolePermission => rolePermission.Permission.Name).ToListAsync(cancellationToken);
             var missing = desired.Except(current).ToList();
             var extra = current.Except(desired).ToList();
@@ -80,7 +81,9 @@ public static class DatabaseSeeder
                 var permissions = await db.Permissions.Where(permission => missing.Contains(permission.Name)).ToListAsync(cancellationToken);
                 foreach (var permission in permissions)
                 {
-                    db.RolePermissions.Add(new RolePermission { RoleId = role.Id, PermissionId = permission.Id });
+                    var retained = await db.RolePermissions.IgnoreQueryFilters().SingleOrDefaultAsync(p => p.RoleId == role.Id && p.PermissionId == permission.Id, cancellationToken);
+                    if (retained is not null) db.RestoreLink(retained);
+                    else db.RolePermissions.Add(new RolePermission { RoleId = role.Id, PermissionId = permission.Id });
                 }
             }
 
@@ -97,7 +100,7 @@ public static class DatabaseSeeder
         }
     }
 
-    private static async Task SeedAdminAsync(UserManager<ApplicationUser> userManager, IConfiguration configuration, CancellationToken cancellationToken)
+    private static async Task SeedAdminAsync(UserManager<ApplicationUser> userManager, IConfiguration configuration, AppDbContext db, CancellationToken cancellationToken)
     {
         var username = configuration["Seed:AdminUsername"] ?? "admin";
         var password = configuration["Seed:AdminPassword"];
@@ -135,11 +138,19 @@ public static class DatabaseSeeder
 
         if (!await userManager.IsInRoleAsync(admin, "Administrador"))
         {
-            await userManager.AddToRoleAsync(admin, "Administrador");
+            await AssignSeedRoleAsync(userManager, db, admin, "Administrador", cancellationToken);
         }
 
         if (!await userManager.IsInRoleAsync(admin, "Admin"))
-            await userManager.AddToRoleAsync(admin, "Admin");
+            await AssignSeedRoleAsync(userManager, db, admin, "Admin", cancellationToken);
+    }
+
+    private static async Task AssignSeedRoleAsync(UserManager<ApplicationUser> manager, AppDbContext db, ApplicationUser user, string roleName, CancellationToken ct)
+    {
+        var roleId = await db.Roles.Where(r => r.Name == roleName).Select(r => r.Id).SingleAsync(ct);
+        var retained = await db.UserRoles.IgnoreQueryFilters().SingleOrDefaultAsync(r => r.UserId == user.Id && r.RoleId == roleId, ct);
+        if (retained is null) await manager.AddToRoleAsync(user, roleName);
+        else { db.RestoreLink(retained); await db.SaveChangesAsync(ct); }
     }
 
     private static async Task SeedLivestockAsync(AppDbContext db, CancellationToken cancellationToken)
@@ -156,7 +167,7 @@ public static class DatabaseSeeder
             ("AP", "Apícola", ProductivePurpose.Work, null, []),
             ("AC", "Acuícola", ProductivePurpose.Meat, null, [])
         };
-        var existingCodes = await db.Species.Select(species => species.Code).ToHashSetAsync(cancellationToken);
+        var existingCodes = await db.Species.IgnoreQueryFilters().Select(species => species.Code).ToHashSetAsync(cancellationToken);
         foreach (var definition in speciesDefinitions)
         {
             if (existingCodes.Contains(definition.Code))
@@ -184,13 +195,13 @@ public static class DatabaseSeeder
 
     private static async Task SeedOperationalDataAsync(AppDbContext db, CancellationToken cancellationToken)
     {
-        if (await db.Farms.AnyAsync(farm => farm.Code == "DEMO", cancellationToken))
+        if (await db.Farms.IgnoreQueryFilters().AnyAsync(farm => farm.Code == "DEMO", cancellationToken))
         {
             return;
         }
 
-        var speciesByCode = await db.Species.ToDictionaryAsync(species => species.Code, cancellationToken);
-        var breedsByName = await db.Breeds.ToDictionaryAsync(breed => (breed.SpeciesId, breed.Name), cancellationToken);
+        var speciesByCode = await db.Species.IgnoreQueryFilters().ToDictionaryAsync(species => species.Code, cancellationToken);
+        var breedsByName = await db.Breeds.IgnoreQueryFilters().ToDictionaryAsync(breed => (breed.SpeciesId, breed.Name), cancellationToken);
         var farm = new Farm
         {
             Name = "Finca El Paraíso",
@@ -272,7 +283,8 @@ public static class DatabaseSeeder
 
     private static async Task SeedInventoryAndProductionAsync(AppDbContext db, CancellationToken ct)
     {
-        var farm = await db.Farms.SingleAsync(x => x.Code == "DEMO", ct);
+        var farm = await db.Farms.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.Code == "DEMO", ct);
+        if (farm is null || farm.IsDeleted) return;
         foreach (var name in new[]
         {
             "Alimentación animal",
@@ -280,10 +292,10 @@ public static class DatabaseSeeder
         }
 
         )
-            if (!await db.InventoryCategories.AnyAsync(x => x.Name == name, ct))
+            if (!await db.InventoryCategories.IgnoreQueryFilters().AnyAsync(x => x.Name == name, ct))
                 db.InventoryCategories.Add(new InventoryCategory { Name = name, Description = "Insumos de la operación ganadera" });
         await db.SaveChangesAsync(ct);
-        var categories = await db.InventoryCategories.ToDictionaryAsync(x => x.Name, ct);
+        var categories = await db.InventoryCategories.IgnoreQueryFilters().ToDictionaryAsync(x => x.Name, ct);
         var samples = new[]
         {
             (SKU: "ALI-001", Name: "Concentrado bovino", Category: "Alimentación animal", Price: 24.50m, Cost: 18.00m, Stock: 40m, Min: 10m, Max: 100m, Unit: MeasurementUnit.Bag, Brand: "AgroCampo"),
@@ -293,7 +305,7 @@ public static class DatabaseSeeder
         };
         foreach (var s in samples)
         {
-            var product = await db.Products.SingleOrDefaultAsync(x => x.SKU == s.SKU, ct);
+            var product = await db.Products.IgnoreQueryFilters().SingleOrDefaultAsync(x => x.SKU == s.SKU, ct);
             if (product is null)
             {
                 product = new Product
@@ -309,25 +321,25 @@ public static class DatabaseSeeder
                 db.Products.Add(product);
             }
 
-            if (!await db.FarmInventory.AnyAsync(x => x.FarmId == farm.Id && x.ProductId == product.Id, ct))
+            if (!await db.FarmInventory.IgnoreQueryFilters().AnyAsync(x => x.FarmId == farm.Id && x.ProductId == product.Id, ct))
                 db.FarmInventory.Add(new FarmInventory { FarmId = farm.Id, Product = product, Stock = s.Stock, MinStock = s.Min, MaxStock = s.Max, Location = "Almacén principal" });
         }
 
         await db.SaveChangesAsync(ct);
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var milkAnimal = await db.Animals.SingleAsync(x => x.FarmId == farm.Id && x.InternalTag == "DEMO-002", ct);
-        var sheep = await db.Animals.SingleAsync(x => x.FarmId == farm.Id && x.InternalTag == "DEMO-101", ct);
+        var milkAnimal = await db.Animals.IgnoreQueryFilters().SingleAsync(x => x.FarmId == farm.Id && x.InternalTag == "DEMO-002", ct);
+        var sheep = await db.Animals.IgnoreQueryFilters().SingleAsync(x => x.FarmId == farm.Id && x.InternalTag == "DEMO-101", ct);
         var operationIds = new[]
         {
             Guid.Parse("c3b917cc-5569-4fe3-89dc-41dcf3887301"),
             Guid.Parse("c3b917cc-5569-4fe3-89dc-41dcf3887302"),
             Guid.Parse("c3b917cc-5569-4fe3-89dc-41dcf3887303")
         };
-        if (!await db.AnimalProduction.AnyAsync(x => x.OperationId == operationIds[0], ct))
+        if (!await db.AnimalProduction.IgnoreQueryFilters().AnyAsync(x => x.OperationId == operationIds[0], ct))
             db.AnimalProduction.Add(new AnimalProduction { FarmId = farm.Id, AnimalId = milkAnimal.Id, OperationId = operationIds[0], Date = today, ProductType = AnimalProductType.Milk, Method = ProductionMethod.Milking, Quantity = 18.5m, Unit = MeasurementUnit.Liter, Notes = "Ordeño de demostración" });
-        if (!await db.AnimalProduction.AnyAsync(x => x.OperationId == operationIds[1], ct))
+        if (!await db.AnimalProduction.IgnoreQueryFilters().AnyAsync(x => x.OperationId == operationIds[1], ct))
             db.AnimalProduction.Add(new AnimalProduction { FarmId = farm.Id, AnimalId = sheep.Id, OperationId = operationIds[1], Date = today.AddDays(-30), ProductType = AnimalProductType.Wool, Method = ProductionMethod.Shearing, Quantity = 3.2m, Unit = MeasurementUnit.Kilogram, Notes = "Esquila previa al sacrificio de demostración" });
-        if (!await db.AnimalProduction.AnyAsync(x => x.OperationId == operationIds[2], ct))
+        if (!await db.AnimalProduction.IgnoreQueryFilters().AnyAsync(x => x.OperationId == operationIds[2], ct))
         {
             db.AnimalProduction.Add(new AnimalProduction { FarmId = farm.Id, AnimalId = sheep.Id, OperationId = operationIds[2], Date = today, ProductType = AnimalProductType.Meat, Method = ProductionMethod.Slaughter, Quantity = 28m, Unit = MeasurementUnit.Kilogram });
             db.AnimalProduction.Add(new AnimalProduction { FarmId = farm.Id, AnimalId = sheep.Id, OperationId = operationIds[2], Date = today, ProductType = AnimalProductType.Hide, Method = ProductionMethod.Slaughter, Quantity = 1m, Unit = MeasurementUnit.Unit });
@@ -360,10 +372,10 @@ public static class DatabaseSeeder
         }
 
         // Existing accounts retain the access chosen by their administrator.
-        if (await db.UserFarms.AnyAsync(x => x.UserId == employee.Id, ct) || await manager.GetRolesAsync(employee) is { Count: > 0 }) return;
+        if (await db.UserFarms.IgnoreQueryFilters().AnyAsync(x => x.UserId == employee.Id, ct) || await db.UserRoles.IgnoreQueryFilters().AnyAsync(x => x.UserId == employee.Id, ct)) return;
         if (!await manager.IsInRoleAsync(employee, "Employee"))
             await manager.AddToRoleAsync(employee, "Employee");
-        var farmId = await db.Farms.Where(x => x.Code == "DEMO").Select(x => x.Id).SingleAsync(ct);
+        var farmId = await db.Farms.IgnoreQueryFilters().Where(x => x.Code == "DEMO").Select(x => x.Id).SingleAsync(ct);
         if (!await db.UserFarms.AnyAsync(x => x.UserId == employee.Id && x.FarmId == farmId, ct))
         {
             db.UserFarms.Add(new UserFarm { UserId = employee.Id, FarmId = farmId, IsDefault = true });

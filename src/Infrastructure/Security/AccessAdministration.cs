@@ -55,15 +55,16 @@ public sealed class AccessAdministration(AppDbContext db, ICurrentUser actor) : 
             .FirstOrDefaultAsync(candidate => candidate.Id == permissionId, cancellationToken)
             ?? throw new KeyNotFoundException("The requested permission was not found.");
 
-        var link = await db.RolePermissions
+        var link = await db.RolePermissions.IgnoreQueryFilters()
             .FirstOrDefaultAsync(
                 rolePermission => rolePermission.RoleId == roleId
                     && rolePermission.PermissionId == permissionId,
                 cancellationToken);
 
-        if (grant && link is null)
+        if (grant && (link is null || db.Entry(link).Property<bool>("IsDeleted").CurrentValue))
         {
-            db.RolePermissions.Add(new Persistence.Identity.RolePermission
+            if (link is not null) db.RestoreLink(link);
+            else db.RolePermissions.Add(new Persistence.Identity.RolePermission
             {
                 RoleId = roleId,
                 PermissionId = permissionId
@@ -72,7 +73,7 @@ public sealed class AccessAdministration(AppDbContext db, ICurrentUser actor) : 
             RecordAudit(roleId, role.Name!, permissionId, permission.Name, grant);
             await db.SaveChangesAsync(cancellationToken);
         }
-        else if (!grant && link is not null)
+        else if (!grant && link is not null && !db.Entry(link).Property<bool>("IsDeleted").CurrentValue)
         {
             db.RolePermissions.Remove(link);
             RecordAudit(roleId, role.Name!, permissionId, permission.Name, grant);

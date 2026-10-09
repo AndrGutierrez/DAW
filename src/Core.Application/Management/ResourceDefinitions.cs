@@ -35,7 +35,7 @@ public sealed class FarmDefinition(IManagementRepository r) : ResourceDefinition
 {
     public override async Task BeforeDeleteAsync(Farm e, CancellationToken ct)
     {
-        Check(!await Repository.ExistsAsync<StockMovement>(m => m.FarmId == e.Id, ct), "A farm with stock movements cannot be deleted. Deactivate it instead.");
+        Check(!await Repository.ExistsAsync<Animal>(x => x.FarmId == e.Id, ct) && !await Repository.ExistsAsync<FarmInventory>(x => x.FarmId == e.Id, ct) && !await Repository.ExistsAsync<Paddock>(x => x.FarmId == e.Id, ct) && !await Repository.ExistsAsync<Lot>(x => x.FarmId == e.Id, ct), "Archive the farm's animals, inventory, paddocks and lots first.");
     }
     public override Guid? FarmId(Farm e) => e.Id;
     public override Expression<Func<Farm, bool>> Scope(IReadOnlyCollection<Guid> ids) => e => ids.Contains(e.Id);
@@ -55,6 +55,8 @@ public sealed class FarmDefinition(IManagementRepository r) : ResourceDefinition
 
 public sealed class SpeciesDefinition(IManagementRepository r) : ResourceDefinition<Species, SpeciesRequest>(r)
 {
+    public override async Task BeforeDeleteAsync(Species e, CancellationToken ct) { Check(!await Repository.ExistsAsync<Animal>(x => x.SpeciesId == e.Id, ct) && !await Repository.ExistsAsync<Breed>(x => x.SpeciesId == e.Id, ct) && !await Repository.ExistsAsync<Lot>(x => x.SpeciesId == e.Id, ct), "This species is used by animals, breeds or lots."); }
+
     public override SpeciesRequest Read(Species e) => new(e.Name, e.Code, e.Purpose, e.GestationDays, e.IsActive);
     public override void Apply(Species e, SpeciesRequest q)
     {
@@ -70,6 +72,8 @@ public sealed class SpeciesDefinition(IManagementRepository r) : ResourceDefinit
 
 public sealed class BreedDefinition(IManagementRepository r) : ResourceDefinition<Breed, BreedRequest>(r)
 {
+    public override async Task BeforeDeleteAsync(Breed e, CancellationToken ct) { Check(!await Repository.ExistsAsync<Animal>(x => x.BreedId == e.Id, ct), "This breed is used by animals."); }
+
     public override BreedRequest Read(Breed e) => new(e.SpeciesId, e.Name, e.Purpose, e.Origin, e.IsActive);
     public override void Apply(Breed e, BreedRequest q)
     {
@@ -91,6 +95,8 @@ public sealed class BreedDefinition(IManagementRepository r) : ResourceDefinitio
 
 public sealed class PaddockDefinition(IManagementRepository r) : ResourceDefinition<Paddock, PaddockRequest>(r)
 {
+    public override async Task BeforeDeleteAsync(Paddock e, CancellationToken ct) { Check(!await Repository.ExistsAsync<Animal>(x => x.PaddockId == e.Id, ct) && !await Repository.ExistsAsync<Lot>(x => x.PaddockId == e.Id, ct), "Move the animals and lots out of this paddock before archiving it."); }
+
     public override Guid? FarmId(Paddock e) => e.FarmId;
     public override Guid? FarmId(PaddockRequest q) => q.FarmId;
     public override Expression<Func<Paddock, bool>> Scope(IReadOnlyCollection<Guid> ids) => e => ids.Contains(e.FarmId);
@@ -119,6 +125,8 @@ public sealed class PaddockDefinition(IManagementRepository r) : ResourceDefinit
 
 public sealed class LotDefinition(IManagementRepository r) : ResourceDefinition<Lot, LotRequest>(r)
 {
+    public override async Task BeforeDeleteAsync(Lot e, CancellationToken ct) { Check(!await Repository.ExistsAsync<Animal>(x => x.LotId == e.Id, ct), "Move the animals out of this lot before archiving it."); }
+
     public override Guid? FarmId(Lot e) => e.FarmId;
     public override Guid? FarmId(LotRequest q) => q.FarmId;
     public override Expression<Func<Lot, bool>> Scope(IReadOnlyCollection<Guid> ids) => e => ids.Contains(e.FarmId);
@@ -147,6 +155,8 @@ public sealed class LotDefinition(IManagementRepository r) : ResourceDefinition<
 
 public sealed class CategoryDefinition(IManagementRepository r) : ResourceDefinition<InventoryCategory, CategoryRequest>(r)
 {
+    public override async Task BeforeDeleteAsync(InventoryCategory e, CancellationToken ct) { Check(!await Repository.ExistsAsync<Product>(x => x.CategoryId == e.Id, ct), "Archive or reassign the products in this category first."); }
+
     public override CategoryRequest Read(InventoryCategory e) => new(e.Name, e.Description, e.IsActive);
     public override void Apply(InventoryCategory e, CategoryRequest q)
     {
@@ -160,6 +170,8 @@ public sealed class CategoryDefinition(IManagementRepository r) : ResourceDefini
 
 public sealed class ProductDefinition(IManagementRepository r) : ResourceDefinition<Product, ProductRequest>(r)
 {
+    public override async Task BeforeDeleteAsync(Product e, CancellationToken ct) { Check(!await Repository.ExistsAsync<FarmInventory>(x => x.ProductId == e.Id, ct), "Archive this product's inventory first."); }
+
     public override ProductRequest Read(Product e) => new(e.SKU, e.Name, e.CategoryId, e.Price, e.CostPrice, e.Unit, e.Brand, e.WithdrawalDays, e.RequiresPrescription, e.IsActive);
     public override void Apply(Product e, ProductRequest q)
     {
@@ -187,9 +199,10 @@ public sealed class ProductDefinition(IManagementRepository r) : ResourceDefinit
 public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefinition<FarmInventory, InventoryRequest>(r)
 {
     private Task<bool> RepositoryHasHistory(FarmInventory e, CancellationToken ct) => Repository.ExistsAsync<StockMovement>(m => m.FarmId == e.FarmId && m.ProductId == e.ProductId && m.ReferenceType == "OpeningBalance", ct);
-    public override async Task BeforeDeleteAsync(FarmInventory e, CancellationToken ct)
+    public override Task BeforeDeleteAsync(FarmInventory e, CancellationToken ct)
     {
-        if (await RepositoryHasHistory(e, ct)) throw new ConflictException("A traced inventory cannot be deleted. Deactivate the product instead.");
+        Check(e.Stock == 0, "Inventory with a non-zero balance cannot be archived. Record the stock correction first.");
+        return Task.CompletedTask;
     }
     public override Guid? FarmId(FarmInventory e) => e.FarmId;
     public override Guid? FarmId(InventoryRequest q) => q.FarmId;
@@ -277,7 +290,7 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user,
                 Check(!await Repository.ExistsAsync<Animal>(x => x.DamId == e.Id || x.SireId == e.Id, ct), "A recorded parent cannot change species, sex or birth date while offspring reference it.");
             }
             if (e.Status == AnimalStatus.Dead && q.Status != AnimalStatus.Dead)
-                Check(!await Repository.ExistsAsync<AnimalProduction>(x => x.AnimalId == e.Id && x.Method == ProductionMethod.Slaughter, ct), "A slaughtered animal cannot become active again.");
+                Check(!(await Repository.ListIncludingDeletedAsync<AnimalProduction>(x => x.AnimalId == e.Id && x.Method == ProductionMethod.Slaughter, ct)).Any(), "A slaughtered animal cannot become active again.");
             if (e.HealthStatus != q.HealthStatus)
             {
                 Check(e.Status == AnimalStatus.Active && q.Status == AnimalStatus.Active, "Only active animals can change health status.");
@@ -294,7 +307,7 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user,
     {
         if (parentId is not Guid id)
             return;
-        var parent = await Require<Animal>(id, ct);
+        var parent = (id == e.DamId || id == e.SireId ? await Repository.GetIncludingDeletedAsync<Animal>(id, ct: ct) : await Repository.GetAsync<Animal>(id, ct: ct)) ?? throw new ArgumentException("The parent does not exist or is archived.");
         Check(parent.Id != e.Id && parent.FarmId == q.FarmId && parent.SpeciesId == q.SpeciesId && parent.Sex == expectedSex, "The parent does not match the farm, species or sex.");
         Check(q.BirthDate == null || parent.BirthDate == null || parent.BirthDate < q.BirthDate, "A parent must be older than the offspring.");
         var pending = new Queue<Guid>();
@@ -305,7 +318,7 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user,
             Check(ancestorId != e.Id, "The parent relationship would create a cycle.");
             if (!seen.Add(ancestorId))
                 continue;
-            var ancestor = await Require<Animal>(ancestorId, ct);
+            var ancestor = await Repository.GetIncludingDeletedAsync<Animal>(ancestorId, ct: ct) ?? throw new ArgumentException("The ancestor does not exist.");
             if (ancestor.DamId is Guid dam)
                 pending.Enqueue(dam);
             if (ancestor.SireId is Guid sire)
@@ -313,13 +326,8 @@ public sealed class AnimalDefinition(IManagementRepository r, ICurrentUser user,
         }
     }
 
-    public override async Task BeforeDeleteAsync(Animal e, CancellationToken ct)
-    {
-        Check(!await Repository.ExistsAsync<AnimalMovement>(m => m.AnimalId == e.Id, ct), "This animal has movement history. Change its operational status to preserve traceability.");
-        Check(!await Repository.ExistsAsync<StockMovement>(m => m.FarmId == e.FarmId && m.ReferenceType == "Animal" && m.ReferenceId == e.Id, ct), "This animal has supply history. Deactivate it to preserve traceability.");
-        Check(!await Repository.ExistsAsync<AnimalPhoto>(x => x.AnimalId == e.Id, ct), "Delete the animal photos before deleting the animal.");
-        Check(!await Repository.ExistsAsync<HealthStatusChange>(x => x.AnimalId == e.Id, ct), "This animal has health history. Deactivate it to preserve traceability.");
-    }
+    // Archiving preserves all dependent history and parent references.
+
 }
 
 public sealed class WeightDefinition(IManagementRepository r, ICurrentUser user) : ResourceDefinition<WeightRecord, WeightRequest>(r)
@@ -344,7 +352,7 @@ public sealed class WeightDefinition(IManagementRepository r, ICurrentUser user)
         Check(animal.FarmId == q.FarmId, "The animal belongs to a different farm.");
         Check(e.AnimalId == Guid.Empty || e.AnimalId == q.AnimalId, "A weight record cannot change animal.");
         Check(animal.BirthDate == null || q.Date >= animal.BirthDate, "The weighing date precedes the animal birth.");
-        var slaughter = await Repository.ListAsync<AnimalProduction>(x => x.AnimalId == animal.Id && x.Method == ProductionMethod.Slaughter, ct);
+        var slaughter = await Repository.ListIncludingDeletedAsync<AnimalProduction>(x => x.AnimalId == animal.Id && x.Method == ProductionMethod.Slaughter, ct);
         Check(slaughter.All(x => q.Date < x.Date ||
             (e.AnimalId != Guid.Empty && e.Date == q.Date && q.Date == x.Date && e.CreatedAt < x.CreatedAt)),
             "Live weight cannot be recorded on or after slaughter; an existing weight recorded earlier that day may be corrected.");
@@ -383,7 +391,7 @@ public sealed class ProductionDefinition(IManagementRepository r) : ResourceDefi
             Check(e.OperationId == q.OperationId && e.Method == q.Method && e.Date == q.Date, "An existing operation keeps its identifier, method and date; only its yield can be corrected.");
         if (q.Method is ProductionMethod.Milking or ProductionMethod.Slaughter)
             await new WithdrawalPolicy(Repository).CheckAsync(animal.Id, q.Date, ct);
-        var slaughter = await Repository.ListAsync<AnimalProduction>(x => x.AnimalId == q.AnimalId && x.Method == ProductionMethod.Slaughter, ct);
+        var slaughter = await Repository.ListIncludingDeletedAsync<AnimalProduction>(x => x.AnimalId == q.AnimalId && x.Method == ProductionMethod.Slaughter, ct);
         if (q.Method == ProductionMethod.Slaughter)
         {
             Check(slaughter.All(x => x.OperationId == q.OperationId && x.Date == q.Date), "An animal cannot be slaughtered in a second operation.");
@@ -413,9 +421,5 @@ public sealed class ProductionDefinition(IManagementRepository r) : ResourceDefi
         animal.UpdatedAt = DateTime.UtcNow;
     }
 
-    public override Task BeforeDeleteAsync(AnimalProduction e, CancellationToken ct)
-    {
-        Check(e.Method != ProductionMethod.Slaughter, "Slaughter is irreversible. Correct its yield or deactivate the record through a future reversal workflow.");
-        return Task.CompletedTask;
-    }
+    // Annulled yield is excluded from reports; the historical slaughter fact remains irreversible.
 }

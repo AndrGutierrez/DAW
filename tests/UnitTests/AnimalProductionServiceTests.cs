@@ -23,6 +23,7 @@ public sealed class AnimalProductionServiceTests
         repo.Setup(r => r.GetAsync<Animal>(animal.Id, It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(animal);
         repo.Setup(r => r.GetAsync<Species>(animal.SpeciesId, false, It.IsAny<CancellationToken>())).ReturnsAsync(species);
         repo.Setup(r => r.GetAsync<AnimalProduction>(It.IsAny<Guid>(), false, It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, bool _, CancellationToken _) => records.SingleOrDefault(r => r.Id == id));
+        repo.Setup(r => r.ListIncludingDeletedAsync<AnimalProduction>(It.IsAny<Expression<Func<AnimalProduction, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync((Expression<Func<AnimalProduction, bool>> filter, CancellationToken _) => records.Where(filter.Compile()).ToArray());
         repo.Setup(r => r.ListAsync(It.IsAny<Expression<Func<AnimalProduction, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync((Expression<Func<AnimalProduction, bool>> filter, CancellationToken _) => records.Where(filter.Compile()).ToArray());
         repo.Setup(r => r.ListAsync(It.IsAny<Expression<Func<Treatment, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync((Expression<Func<Treatment, bool>> filter, CancellationToken _) => treatments.Where(filter.Compile()).ToArray());
         repo.Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<AnimalProduction, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync((Expression<Func<AnimalProduction, bool>> filter, CancellationToken _) => records.Any(filter.Compile()));
@@ -89,7 +90,8 @@ public sealed class AnimalProductionServiceTests
         var q = Request with { ProductType = AnimalProductType.Meat, Method = ProductionMethod.Slaughter, Unit = MeasurementUnit.Kilogram };
         await Service.RecordAsync(animal.Id, q); Assert.Equal(AnimalStatus.Dead, animal.Status);
         await Assert.ThrowsAsync<ConflictException>(() => Service.RecordAsync(animal.Id, q with { SubmissionId = Guid.NewGuid() }));
-        await Assert.ThrowsAsync<ConflictException>(() => new ProductionDefinition(repo.Object).BeforeDeleteAsync(records[0], default));
+        await new ProductionDefinition(repo.Object).BeforeDeleteAsync(records[0], default);
+        Assert.Equal(AnimalStatus.Dead, animal.Status);
         repo.Verify(r => r.SaveAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
     [Fact]

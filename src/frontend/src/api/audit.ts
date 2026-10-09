@@ -5,7 +5,7 @@ export type AuditEntry = {
 export type AuditDetail = { entry: AuditEntry; ipAddress: string | null; oldValues: string | null; newValues: string | null };
 export type AuditOptions = { actions: string[]; entities: string[]; farms: { id: string; name: string }[] };
 export const auditActions: Record<string, string> = {
-  Added: 'Creación', Modified: 'Modificación', Deleted: 'Eliminación', UserCreated: 'Cuenta creada',
+  Archived: 'Archivado', Restored: 'Restaurado', Added: 'Creación', Modified: 'Modificación', Deleted: 'Eliminación', UserCreated: 'Cuenta creada',
   UserUpdated: 'Cuenta actualizada', RolePermissionGranted: 'Permiso concedido', RolePermissionRevoked: 'Permiso retirado', PasswordReset: 'Contraseña restablecida', LoginSucceeded: 'Inicio de sesión',
   LoginRejected: 'Acceso rechazado', Logout: 'Cierre de sesión', RegistrationSucceeded: 'Registro de cuenta',
 };
@@ -23,6 +23,7 @@ export const auditEntity = (name: string) => entities[name] || name.replace(/([a
 export const auditActor = (entry: AuditEntry) => entry.actorName || (entry.userId ? 'Usuario no disponible' : entry.action === 'LoginRejected' ? 'Identidad no validada' : 'Sin usuario registrado');
 export const auditTime = (value: string) => new Date(value).toLocaleString('es-VE', { dateStyle: 'medium', timeStyle: 'medium' });
 const fields: Record<string, string> = {
+  IsDeleted: 'Archivado', DeletedAt: 'Fecha de archivo', DeletedByUserId: 'Archivado por (ID)', PublishedAt: 'Publicación de la referencia', EntryMethod: 'Origen de la referencia', Source: 'Fuente',
   Id: 'Identificador', FarmId: 'Finca (ID)', AnimalId: 'Animal (ID)', InternalTag: 'Identificación interna', Name: 'Nombre',
   OfficialId: 'Identificación oficial', Rfid: 'RFID', BreedId: 'Raza (ID)', SpeciesId: 'Especie (ID)', LotId: 'Lote (ID)',
   PaddockId: 'Potrero (ID)', Sex: 'Sexo', Status: 'Estado', HealthStatus: 'Estado sanitario', BirthDate: 'Nacimiento',

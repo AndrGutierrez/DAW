@@ -23,7 +23,7 @@ public sealed class FarmAccess(AppDbContext db, IHttpContextAccessor httpContext
         }
 
         return await db.UserFarms.AsNoTracking()
-            .AnyAsync(membership => membership.UserId == user.Id && membership.FarmId == farmId,
+            .AnyAsync(membership => membership.UserId == user.Id && membership.FarmId == farmId && db.Farms.Any(f => f.Id == membership.FarmId),
                 cancellationToken);
     }
 
@@ -41,7 +41,7 @@ public sealed class FarmAccess(AppDbContext db, IHttpContextAccessor httpContext
         }
 
         return await db.UserFarms.AsNoTracking()
-            .Where(membership => membership.UserId == user.Id)
+            .Where(membership => membership.UserId == user.Id && db.Farms.Any(f => f.Id == membership.FarmId))
             .Select(membership => membership.FarmId)
             .Distinct()
             .ToListAsync(cancellationToken);

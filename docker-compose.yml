@@ -27,6 +27,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=false
       - ReverseProxy__KnownProxies__0=${TRUSTED_PROXY_IP:-}
+      - BcvSync__Enabled=${BCV_AUTO_SYNC:-true}
       - DisableHttpsRedirection=${DISABLE_HTTPS_REDIRECTION}
       - ConnectionStrings__Default=Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       - Jwt__Key=${JWT_KEY}

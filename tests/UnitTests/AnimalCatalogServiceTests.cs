@@ -36,13 +36,15 @@ public sealed class AnimalCatalogServiceTests
         repo.Setup(r => r.ExecuteWriteAsync(It.IsAny<Func<Task<bool>>>(), It.IsAny<CancellationToken>())).Returns((Func<Task<bool>> action, CancellationToken _) => action());
         repo.Setup(r => r.GetAsync<Farm>(farm.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(farm);
         repo.Setup(r => r.GetAsync<Species>(species.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(species);
-        repo.Setup(r => r.GetAsync<Animal>(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, bool _, CancellationToken _) => animals.SingleOrDefault(a => a.Id == id));
-        repo.Setup(r => r.ListAsync(It.IsAny<Expression<Func<Animal, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync((Expression<Func<Animal, bool>> filter, CancellationToken _) => animals.Where(filter.Compile()).ToArray());
+        repo.Setup(r => r.GetAsync<Animal>(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, bool _, CancellationToken _) => animals.SingleOrDefault(a => a.Id == id && !a.IsDeleted));
+        repo.Setup(r => r.GetIncludingDeletedAsync<Animal>(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync((Guid id, bool _, CancellationToken _) => animals.SingleOrDefault(a => a.Id == id));
+        repo.Setup(r => r.ListIncludingDeletedAsync<AnimalProduction>(It.IsAny<Expression<Func<AnimalProduction, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync((Expression<Func<AnimalProduction, bool>> p, CancellationToken _) => production.Where(p.Compile()).ToArray());
+        repo.Setup(r => r.ListAsync(It.IsAny<Expression<Func<Animal, bool>>>(), It.IsAny<CancellationToken>())).ReturnsAsync((Expression<Func<Animal, bool>> filter, CancellationToken _) => animals.Where(a => !a.IsDeleted).Where(filter.Compile()).ToArray());
         Exists(animals); Exists(weights); Exists(health); Exists(reproduction); Exists(production); Exists(photos); Exists(changes); Exists(stock); Exists(moves);
         repo.Setup(r => r.Add(It.IsAny<Animal>())).Callback<Animal>(animals.Add);
         repo.Setup(r => r.Add(It.IsAny<HealthStatusChange>())).Callback<HealthStatusChange>(changes.Add);
         repo.Setup(r => r.Add(It.IsAny<AnimalMovement>())).Callback<AnimalMovement>(moves.Add);
-        repo.Setup(r => r.Remove(It.IsAny<Animal>())).Callback<Animal>(a => animals.Remove(a));
+        repo.Setup(r => r.Remove(It.IsAny<Animal>())).Callback<Animal>(a => a.MarkDeleted(author));
         repo.Setup(r => r.SaveAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
     }
     private void Exists<T>(List<T> rows) where T : Core.Domain.Common.BaseEntity =>
@@ -117,15 +119,15 @@ public sealed class AnimalCatalogServiceTests
         Assert.Equal(HealthStatus.Healthy, change.PreviousStatus); Assert.Equal(HealthStatus.InTreatment, change.NewStatus); Assert.Equal(author, change.UserId);
     }
     [Theory] [InlineData("supply")] [InlineData("photo")] [InlineData("health")] [InlineData("movement")]
-    public async Task TraceableHistoryPreventsHardDeletion(string history)
+    public async Task ArchivingPreservesTraceableHistory(string history)
     {
         if (history == "movement") moves.Add(new() { AnimalId = animal.Id });
         if (history == "supply") stock.Add(new() { FarmId = farm.Id, ReferenceType = "Animal", ReferenceId = animal.Id });
         if (history == "photo") photos.Add(new() { AnimalId = animal.Id }); if (history == "health") changes.Add(new() { AnimalId = animal.Id });
-        await Assert.ThrowsAsync<ConflictException>(() => Service.DeleteAsync(animal.Id)); Assert.Contains(animal, animals);
-        repo.Verify(r => r.Remove(It.IsAny<Animal>()), Times.Never); repo.Verify(r => r.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+        await Service.DeleteAsync(animal.Id); Assert.Contains(animal, animals); Assert.True(animal.IsDeleted); Assert.Equal(author, animal.DeletedByUserId);
+        repo.Verify(r => r.Remove(animal), Times.Once); repo.Verify(r => r.SaveAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
     [Fact]
-    public async Task UnreferencedAnimalCanBeDeletedOnce()
-    { await Service.DeleteAsync(animal.Id); Assert.Empty(animals); repo.Verify(r => r.Remove(animal), Times.Once); repo.Verify(r => r.SaveAsync(It.IsAny<CancellationToken>()), Times.Once); }
+    public async Task ArchivedAnimalIsHiddenAndCannotBeArchivedTwice()
+    { await Service.DeleteAsync(animal.Id); Assert.Single(animals); Assert.True(animal.IsDeleted); Assert.Empty(await Service.ListAsync()); await Assert.ThrowsAsync<KeyNotFoundException>(() => Service.DeleteAsync(animal.Id)); repo.Verify(r => r.Remove(animal), Times.Once); repo.Verify(r => r.SaveAsync(It.IsAny<CancellationToken>()), Times.Once); }
 }

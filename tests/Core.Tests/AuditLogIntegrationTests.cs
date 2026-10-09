@@ -104,14 +104,14 @@ public sealed partial class ManagementIntegrationTests
     }
 
     [Fact]
-    public async Task AnimalWithMovementHistoryCannotBeHardDeleted()
+    public async Task AnimalArchiveRetainsMovementHistory()
     {
         using var factory = Factory(); await Seed(factory); using var client = factory.CreateClient(); await Login(client, "admin");
         var (farm, species) = await DemoIds(factory); var id = await Create(client, "animals", new AnimalRequest(farm, species, "AUDIT-MOVE", Sex.Male, ProductivePurpose.Meat));
         using var scope = factory.Services.CreateScope(); var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         db.AnimalMovements.Add(new AnimalMovement { AnimalId = id, Date = DateOnly.FromDateTime(DateTime.UtcNow), Reason = "Recorded transfer" }); await db.SaveChangesAsync();
-        Assert.Equal(HttpStatusCode.Conflict, (await client.DeleteAsync("/api/animals/" + id)).StatusCode);
-        Assert.True(await db.Animals.AnyAsync(x => x.Id == id)); Assert.True(await db.AnimalMovements.AnyAsync(x => x.AnimalId == id));
+        Assert.Equal(HttpStatusCode.NoContent, (await client.DeleteAsync("/api/animals/" + id)).StatusCode);
+        Assert.False(await db.Animals.AnyAsync(x => x.Id == id)); Assert.True(await db.Animals.IgnoreQueryFilters().AnyAsync(x => x.Id == id && x.IsDeleted)); Assert.True(await db.AnimalMovements.AnyAsync(x => x.AnimalId == id));
     }
 
     [Fact]
@@ -137,8 +137,8 @@ public sealed partial class ManagementIntegrationTests
         Assert.Equal(HttpStatusCode.NoContent, (await client.DeleteAsync($"/api/animals/{animal.Id}/photos/{photoId}")).StatusCode);
         var events = await db.AuditLogs.Where(x => x.EntityName == "AnimalPhoto" && x.EntityId == photoId.ToString()).ToListAsync(); Assert.Equal(2, events.Count);
         Assert.All(events, row => { Assert.NotNull(row.UserId); Assert.Equal(animal.FarmId, row.FarmId); Assert.Equal("192.0.2.20", row.IpAddress); });
-        var added = Assert.Single(events, x => x.Action == "Added"); var deleted = Assert.Single(events, x => x.Action == "Deleted");
-        Assert.Null(added.OldValues); Assert.Contains("image/png", added.NewValues!); Assert.Null(deleted.NewValues); Assert.Equal(added.NewValues, deleted.OldValues);
+        var added = Assert.Single(events, x => x.Action == "Added"); var deleted = Assert.Single(events, x => x.Action == "Archived");
+        Assert.Null(added.OldValues); Assert.Contains("image/png", added.NewValues!); Assert.Contains("\"IsDeleted\":true", deleted.NewValues!); Assert.Equal(added.NewValues, deleted.OldValues);
         Assert.DoesNotContain(Convert.ToBase64String(TestImages.Png), added.NewValues!);
     }
 

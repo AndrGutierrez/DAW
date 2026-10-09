@@ -1,4 +1,3 @@
-import { clearFixtureMovements } from './fixtureCleanup';
 import { test, expect } from '@playwright/test';
 import type { APIRequestContext, Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
@@ -35,7 +34,6 @@ test.beforeEach(async ({ request }, testInfo) => {
 });
 test.afterEach(async ({ request }) => {
   if (process.env.E2E_ISOLATED_DATABASE !== '1') return;
-  clearFixtureMovements(created);
   for (const id of [...created].reverse()) {
     const growth = await request.get('/api/animals/' + id + '/growth?pageSize=100', { headers });
     if (growth.ok()) for (const record of (await growth.json()).records)
@@ -112,11 +110,11 @@ test('photo upload compresses a large original and removal requires confirmation
   expect(compressed.subarray(0, 2).toString('hex')).toBe('ffd8');
   const image = page.getByAltText('Fotografía de ' + prefix + '-PHOTO').first();
   await expect(image).toBeVisible(); expect(await image.evaluate((element: HTMLImageElement) => element.naturalWidth)).toBe(1920);
-  await page.getByRole('button', { name: 'Eliminar fotografía' }).click();
+  await page.getByRole('button', { name: 'Archivar fotografía' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Cancelar', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Eliminar fotografía' })).toBeVisible();
-  await page.getByRole('button', { name: 'Eliminar fotografía' }).click();
+  await expect(page.getByRole('button', { name: 'Archivar fotografía' })).toBeVisible();
+  await page.getByRole('button', { name: 'Archivar fotografía' }).click();
   await page.getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByText('Aún no hay fotografías registradas.')).toBeVisible();
 });
@@ -259,7 +257,7 @@ test('employee can record weights while photo deletion remains restricted', asyn
   await page.goto('/animals/' + id + '?tab=photos');
   await expect(page.getByRole('link', { name: 'Editar ficha' })).toBeVisible();
   await expect(page.getByAltText('Fotografía de ' + prefix + '-EMPLOYEE').first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Eliminar fotografía' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Archivar fotografía' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Registrar peso', exact: true }).click();
   await page.getByLabel('Peso vivo (kg) *', { exact: true }).fill('165');
   await page.getByRole('button', { name: 'Guardar pesaje', exact: true }).click();

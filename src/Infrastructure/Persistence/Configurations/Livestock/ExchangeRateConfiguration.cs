@@ -7,6 +7,8 @@ public sealed class ExchangeRateConfiguration : IEntityTypeConfiguration<Exchang
     public void Configure(EntityTypeBuilder<ExchangeRate> builder)
     {
         builder.ToTable("ExchangeRates"); builder.HasKey(r => r.Id);
+        builder.Property(r => r.Source).HasMaxLength(400).HasDefaultValue("https://www.bcv.org.ve/");
+        builder.Property(r => r.EntryMethod).HasMaxLength(20).HasDefaultValue("manual");
         builder.Property(r => r.BolivarsPerDollar).HasPrecision(18, 6).IsRequired();
         builder.HasIndex(r => new { r.EffectiveDate, r.CreatedAt });
     }

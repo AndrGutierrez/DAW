@@ -4,7 +4,7 @@ import { AnimalPanel, AnimalSections, animalSections } from '../components/Anima
 import { Button, Input, Select } from '../components/ui/Controls';
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useResource } from '../api/useResource';
 
@@ -81,6 +81,8 @@ export function AnimalPage() {
   const { can, request, isAdmin } = useAuth();
   const { notify, confirm } = useFeedback();
   const [photoBusy, setPhotoBusy] = useState(false);
+  const [archiveBusy, setArchiveBusy] = useState(false);
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const active = animalSections.some(section => section.id === params.get('tab')) ? params.get('tab')! : 'identity';
   function selectTab(tab: string) { setParams(current => { const next = new URLSearchParams(current); next.set('tab', tab); return next; }, { replace: true }); }
@@ -92,11 +94,17 @@ export function AnimalPage() {
   if (error) return <ResourceError error={error} reload={reload} />;
   if (!animal) return null;
   async function removePhoto(photoId: string) {
-    if (!await confirm("¿Quieres eliminar esta fotografía de la ficha?", { destructive: true })) return;
+    if (!await confirm("¿Archivar esta fotografía? Se conservará en la papelera y podrá restaurarse.", { destructive: true })) return;
     setPhotoBusy(true);
-    try { await request("/api/animals/" + id + "/photos/" + photoId, { method: "DELETE" }); notify("Fotografía eliminada."); reload(); }
+    try { await request("/api/animals/" + id + "/photos/" + photoId, { method: "DELETE" }); notify("Fotografía archivada."); reload(); }
     catch (failure) { notify(errorMessage(failure), "error"); }
     finally { setPhotoBusy(false); }
+  }
+  async function archiveAnimal() {
+    if (!await confirm("¿Archivar esta ficha? Se conservarán sus registros, fotografías y genealogía. Podrás restaurarla desde la papelera.", { destructive: true, confirmLabel: "Archivar animal" })) return;
+    setArchiveBusy(true);
+    try { await request("/api/animals/" + id, { method: "DELETE" }); notify("Ficha archivada."); navigate("/animals"); }
+    catch (failure) { notify(errorMessage(failure), "error"); setArchiveBusy(false); }
   }
   const fields = [
     ['Identificación oficial', animal.officialId], ['RFID', animal.rfid], ['Especie', animal.species], ['Raza', animal.breed],
@@ -104,7 +112,7 @@ export function AnimalPage() {
     ['Origen', text(animal.origin)], ['Propósito', text(animal.purpose)], ['Finca', animal.farm], ['Lote', animal.lot],
     ['Potrero', animal.paddock], ['Condición corporal', animal.bodyConditionScore?.toString()], ['Color', animal.color],
   ];
-  return <section className="animal-workspace"><Link className="back-link" to="/animals"><Icon name="back" size={17} />Volver a los animales</Link><div className="page-heading"><div><span className="eyebrow">{animal.internalTag}</span><h1>{animal.name || 'Ficha del animal'}</h1><p className="muted">{animal.species} · {animal.farm}</p></div><div className="heading-actions"><span className={'status-pill ' + (animal.status === 'Active' ? 'positive' : '')}>{text(animal.status)}</span>{can('animals.update') && <Link className="button secondary" to={'/animals/' + animal.id + '/edit'}><Icon name="edit" size={17} />Editar ficha</Link>}{can('weights.create') && animal.status === 'Active' && <Button type="button" className="button primary" onClick={() => { selectTab('growth'); setFocusWeigh(true); }}><Icon name="scale" size={18} />Registrar peso</Button>}</div></div>
+  return <section className="animal-workspace"><Link className="back-link" to="/animals"><Icon name="back" size={17} />Volver a los animales</Link><div className="page-heading"><div><span className="eyebrow">{animal.internalTag}</span><h1>{animal.name || 'Ficha del animal'}</h1><p className="muted">{animal.species} · {animal.farm}</p></div><div className="heading-actions"><span className={'status-pill ' + (animal.status === 'Active' ? 'positive' : '')}>{text(animal.status)}</span>{can('animals.update') && <Link className="button secondary" to={'/animals/' + animal.id + '/edit'}><Icon name="edit" size={17} />Editar ficha</Link>}{isAdmin && can('animals.delete') && <Button variant="secondary" disabled={archiveBusy} onClick={() => void archiveAnimal()}><Icon name="archive" size={17} />{archiveBusy ? 'Archivando…' : 'Archivar ficha'}</Button>}{can('weights.create') && animal.status === 'Active' && <Button type="button" className="button primary" onClick={() => { selectTab('growth'); setFocusWeigh(true); }}><Icon name="scale" size={18} />Registrar peso</Button>}</div></div>
     <div className="detail-top"><div className="panel detail-cover">{animal.photos.length && can('photos.get') ? <ProtectedPhoto path={animal.photos[0].url} alt={'Fotografía de ' + animal.internalTag} /> : <div className="detail-monogram"><Icon name="animal" size={65} />{animal.internalTag}<small>Sin fotografía disponible</small></div>}</div><div className="panel detail-summary"><span className="eyebrow">SEGUIMIENTO ACTUAL</span><h2>{kg(animal.currentWeightKg)}</h2><p className="muted">Último peso registrado</p><div className="summary-health"><span className={"status-pill " + healthTone(animal.healthStatus)}><span className="status-dot" />{text(animal.healthStatus)}</span></div><p className="muted">Última actualización: {date(animal.updatedAt)}</p></div></div>
     <AnimalSections active={active} onChange={selectTab} />
     <AnimalPanel id="identity" active={active}>
@@ -124,7 +132,7 @@ export function AnimalPage() {
     <AnimalPanel id="growth" active={active}><AnimalGrowth key={animal.id} animalId={animal.id} />
     {can("weights.create") && animal.status === "Active" && <section id="weigh" className="panel animal-details"><h2>Registrar un pesaje</h2><WeighingForm animalId={animal.id} onSaved={reload} /></section>}
     </AnimalPanel>
-    <AnimalPanel id="photos" active={active}><section id="photos" className="panel animal-details"><h2>Fotografías</h2>{can("photos.create") && <PhotoUploader animalId={animal.id} onSaved={reload} />}{can("photos.get") && animal.photos.length > 0 && <div className="photo-gallery">{animal.photos.map(photo => <figure key={photo.id}><ProtectedPhoto path={photo.url} alt={"Fotografía de " + animal.internalTag} /><figcaption><span>{date(photo.uploadedAt)}</span>{isAdmin && can("photos.delete") && <Button className="text-button danger-text" disabled={photoBusy} onClick={() => void removePhoto(photo.id)} aria-label="Eliminar fotografía">Eliminar</Button>}</figcaption></figure>)}</div>}{!animal.photos.length && <p className="muted">Aún no hay fotografías registradas.</p>}</section>
+    <AnimalPanel id="photos" active={active}><section id="photos" className="panel animal-details"><h2>Fotografías</h2>{can("photos.create") && <PhotoUploader animalId={animal.id} onSaved={reload} />}{can("photos.get") && animal.photos.length > 0 && <div className="photo-gallery">{animal.photos.map(photo => <figure key={photo.id}><ProtectedPhoto path={photo.url} alt={"Fotografía de " + animal.internalTag} /><figcaption><span>{date(photo.uploadedAt)}</span>{isAdmin && can("photos.delete") && <Button className="text-button danger-text" disabled={photoBusy} onClick={() => void removePhoto(photo.id)} aria-label="Archivar fotografía">Archivar</Button>}</figcaption></figure>)}</div>}{!animal.photos.length && <p className="muted">Aún no hay fotografías registradas.</p>}</section>
     </AnimalPanel>
   </section>;
 }

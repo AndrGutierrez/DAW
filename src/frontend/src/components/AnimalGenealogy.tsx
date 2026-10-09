@@ -3,8 +3,8 @@ import { useResource } from '../api/useResource';
 import type { AnimalDetail } from '../api/livestock';
 
 function Ancestor({ id, label, depth }: { id: string | null; label: string; depth: number }) {
-  const result = useResource<AnimalDetail>('/api/animals/' + id, !!id);
-  return <li className="genealogy-branch"><div className="genealogy-node"><small className="muted">{label}</small>{result.data ? <Link to={'/animals/' + id}>{result.data.name || result.data.internalTag}<span className="tag">{result.data.internalTag}</span></Link> : <span>{!id ? 'Sin registro' : result.loading ? 'Cargando…' : 'Sin acceso a esta ficha'}</span>}</div>
+  const result = useResource<Pick<AnimalDetail, 'internalTag' | 'name' | 'damId' | 'sireId'> & { isArchived: boolean }>('/api/animals/' + id + '/lineage', !!id);
+  return <li className="genealogy-branch"><div className="genealogy-node"><small className="muted">{label}</small>{result.data ? result.data.isArchived ? <span>{result.data.name || result.data.internalTag}<span className="tag">Archivado · {result.data.internalTag}</span></span> : <Link to={'/animals/' + id}>{result.data.name || result.data.internalTag}<span className="tag">{result.data.internalTag}</span></Link> : <span>{!id ? 'Sin registro' : result.loading ? 'Cargando…' : 'Sin acceso a esta ficha'}</span>}</div>
     {result.data && depth > 0 && <ul><Ancestor id={result.data.damId} label="Madre" depth={depth - 1} /><Ancestor id={result.data.sireId} label="Padre" depth={depth - 1} /></ul>}
   </li>;
 }

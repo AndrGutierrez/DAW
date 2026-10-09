@@ -13,7 +13,7 @@ public sealed partial class ManagementIntegrationTests
     public async Task ExchangeRatesRequireAdminKeepHistoryAndNeverApplyAFutureQuote()
     {
         using var factory = Factory(); await Seed(factory); using var client = factory.CreateClient(); await Login(client, "admin");
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-4));
         Assert.Equal(HttpStatusCode.NoContent, (await client.GetAsync("/api/exchange-rates/usd-ves")).StatusCode);
         var q = new ExchangeRateRequest(Guid.NewGuid(), today.AddDays(-1), 41.123456m);
         Assert.Equal(HttpStatusCode.OK, (await client.PostAsJsonAsync("/api/exchange-rates/usd-ves", q)).StatusCode);

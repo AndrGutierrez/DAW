@@ -25,6 +25,7 @@ public interface ICrudService<TRequest>
     Task<ResourceResult<TRequest>> CreateAsync(TRequest request, CancellationToken ct = default);
     Task<ResourceResult<TRequest>> UpdateAsync(Guid id, TRequest request, CancellationToken ct = default);
     Task DeleteAsync(Guid id, CancellationToken ct = default);
+    Task RestoreAsync(Guid id, CancellationToken ct = default);
 }
 
 // Persistence port: Application depends on this contract, never on EF Core.
@@ -43,6 +44,8 @@ public interface IManagementRepository
         where T : BaseEntity;
     void Remove<T>(T entity)
         where T : BaseEntity;
+    Task<T?> GetIncludingDeletedAsync<T>(Guid id, bool tracking = false, CancellationToken ct = default) where T : BaseEntity;
+    Task<IReadOnlyList<T>> ListIncludingDeletedAsync<T>(Expression<Func<T, bool>> predicate, CancellationToken ct = default) where T : BaseEntity;
     Task SaveAsync(CancellationToken ct = default);
 }
 

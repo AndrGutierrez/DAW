@@ -58,6 +58,7 @@ public static class DependencyInjection
         services.AddScoped<IFarmAccess, FarmAccess>();
         services.AddScoped<IManagementRepository, ManagementRepository>();
         services.AddScoped<Core.Application.Auditing.IAuditReader, AuditReader>();
+        services.AddScoped<IArchiveStore, ArchiveStore>();
         services.AddScoped<AnimalHealthService>();
         services.AddScoped<WithdrawalPolicy>();
         services.AddScoped<AnimalProductionService>();
@@ -68,6 +69,15 @@ public static class DependencyInjection
         services.AddScoped<InventoryService>();
         services.AddScoped<AnalyticsService>();
         services.AddScoped<ExchangeRateService>();
+        services.Configure<BcvSyncOptions>(configuration.GetSection("BcvSync"));
+        services.AddHttpClient<IBcvRateProvider, BcvRateProvider>(client =>
+        {
+            client.BaseAddress = new Uri("https://bcv.today/"); client.Timeout = TimeSpan.FromSeconds(8);
+            client.MaxResponseContentBufferSize = 65536;
+            client.DefaultRequestHeaders.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true };
+        });
+        services.AddSingleton<IBcvSynchronizer, BcvSynchronizer>();
+        services.AddHostedService<BcvRefreshService>();
         services.AddScoped<ReportService>();
         services.AddScoped<IOperationsReader, OperationsReader>();
         services.AddScoped<IPaddockReader, PaddockReader>();

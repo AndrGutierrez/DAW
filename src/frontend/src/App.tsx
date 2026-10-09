@@ -17,6 +17,7 @@ const UsersPage = lazy(() => import('./pages/UsersPage').then(module => ({ defau
 const MonitoringPage = lazy(() => import('./pages/MonitoringPage').then(module => ({ default: module.MonitoringPage })));
 const AnimalsPage = lazy(() => import('./pages/AnimalsPage').then(module => ({ default: module.AnimalsPage })));
 const AnimalPage = lazy(() => import('./pages/AnimalsPage').then(module => ({ default: module.AnimalPage })));
+const ArchivePage = lazy(() => import('./pages/ArchivePage').then(module => ({ default: module.ArchivePage })));
 const AuditLogsPage = lazy(() => import('./pages/AuditLogsPage').then(module => ({ default: module.AuditLogsPage })));
 const PerformancePage = lazy(() => import('./pages/PerformancePage').then(module => ({ default: module.PerformancePage })));
 
@@ -40,7 +41,7 @@ export function App() {
   if (auth.status === 'unavailable') return <main className="connection-state"><h1>No pudimos conectar</h1><p role="alert">{auth.error}</p><Button className="button primary" onClick={() => void auth.retry()}>Reintentar</Button></main>;
   return <Suspense fallback={<RouteLoading />}><Routes>
     <Route path="/login" element={<LoginPage />} />
-    <Route element={<RequireSession />}><Route element={<AppLayout />}><Route path="/" element={<Navigate to={homePath(auth.isAdmin, auth.can)} replace />} /><Route path="/animals" element={<AnimalsPage />} /><Route path="/animals/new" element={<AnimalEditorPage />} /><Route path="/animals/:id/edit" element={<AnimalEditorPage />} /><Route path="/weighing" element={<WeighingPage />} /><Route path="/paddocks" element={<PaddocksPage />} /><Route path="/animals/:id" element={<AnimalPage />} /><Route path="/account" element={<AccountPage />} /><Route path="/diagnostics" element={<PerformancePage />} /><Route path="/inventory" element={<InventoryPage />} /><Route path="/dashboard" element={<DashboardPage />} /><Route path="/reports" element={<ReportsPage />} /><Route path="/users" element={<UsersPage />} /><Route path="/auditlogs" element={<AuditLogsPage />} /><Route path="/monitoring" element={<MonitoringPage />} /></Route></Route>
+    <Route element={<RequireSession />}><Route element={<AppLayout />}><Route path="/" element={<Navigate to={homePath(auth.isAdmin, auth.can)} replace />} /><Route path="/animals" element={<AnimalsPage />} /><Route path="/animals/new" element={<AnimalEditorPage />} /><Route path="/animals/:id/edit" element={<AnimalEditorPage />} /><Route path="/weighing" element={<WeighingPage />} /><Route path="/paddocks" element={<PaddocksPage />} /><Route path="/animals/:id" element={<AnimalPage />} /><Route path="/account" element={<AccountPage />} /><Route path="/diagnostics" element={<PerformancePage />} /><Route path="/inventory" element={<InventoryPage />} /><Route path="/dashboard" element={<DashboardPage />} /><Route path="/reports" element={<ReportsPage />} /><Route path="/users" element={<UsersPage />} /><Route path="/auditlogs" element={<AuditLogsPage />} /><Route path="/archive" element={<ArchivePage />} /><Route path="/monitoring" element={<MonitoringPage />} /></Route></Route>
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes></Suspense>;
 }
