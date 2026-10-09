@@ -33,9 +33,9 @@ export function useCareSubmission(path: string, onSaved: () => void) {
   }
   return { busy, uncertain, error, errors, submit };
 }
-export function CareFormResult({ state, label }: { state: ReturnType<typeof useCareSubmission>; label: string }) {
+export function CareFormResult({ state, label, disabled = false }: { state: ReturnType<typeof useCareSubmission>; label: string; disabled?: boolean }) {
   return <>{state.error && <p className="error-banner" role="alert">{state.error}</p>}{state.uncertain && <p className="warning-banner">Conservamos este envío. Reintentar confirma el mismo registro y evita duplicarlo.</p>}
-    <div className="button-row"><Button type="submit" className="button primary" disabled={state.busy}>{state.busy ? 'Guardando…' : state.uncertain ? 'Reintentar y confirmar registro' : label}</Button></div></>;
+    <div className="button-row"><Button type="submit" className="button primary" disabled={state.busy || disabled}>{state.busy ? 'Guardando…' : state.uncertain ? 'Reintentar y confirmar registro' : label}</Button></div></>;
 }
 export function CarePagination({ page, total, pageSize, onPage }: { page: number; total: number; pageSize: number; onPage: (page: number) => void }) {
   return <div className="pagination"><small className="muted">{total} registros · página {page} de {Math.max(1, Math.ceil(total / pageSize))}</small><div>

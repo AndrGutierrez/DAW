@@ -28,6 +28,12 @@ public sealed class PaddockReader(AppDbContext db) : IPaddockReader
         var count = await query.CountAsync(ct);
         return (await ReadPageAsync(new PaddockPageRequest(PageSize: Math.Max(1, count)), query, ct)).Items;
     }
+    public async Task<IReadOnlyList<PaddockSnapshot>> DestinationsAsync(Guid farmId, CancellationToken ct)
+    {
+        var query = db.Paddocks.AsNoTracking().Where(p => p.FarmId == farmId && p.IsActive);
+        var count = await query.CountAsync(ct);
+        return (await ReadPageAsync(new PaddockPageRequest(PageSize: Math.Max(1, count)), query, ct)).Items;
+    }
     private async Task<CarePage<PaddockSnapshot>> ReadPageAsync(PaddockPageRequest request, IQueryable<Paddock> query, CancellationToken ct)
     {
         if (request.FarmId is Guid farm) query = query.Where(p => p.FarmId == farm);

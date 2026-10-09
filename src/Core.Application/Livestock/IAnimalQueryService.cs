@@ -19,7 +19,9 @@ public sealed record AnimalListItem(
     int PhotoCount,
     DateTime UpdatedAt,
     Guid FarmId,
-    Guid SpeciesId);
+    Guid SpeciesId,
+    Guid? LotId = null,
+    Guid? PaddockId = null);
 
 public sealed record AnimalDetail(
     Guid Id,

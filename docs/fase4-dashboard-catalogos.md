@@ -24,7 +24,7 @@ Preñez y fertilidad tienen bloques separados con un indicador circular basado e
 | Pesajes y crecimiento | Pesaje y ficha → Crecimiento | Captura consecutiva, historial y curva; objetivos en Seguimiento |
 | Sanidad, reproducción y producción | Pestañas de la ficha del animal | Registro y consulta de eventos, reglas sanitarias y estado reproductivo |
 | Fotografías y genealogía | Pestañas de la ficha del animal | Fotografías privadas/archivado; parentesco navegable |
-| Traslados y ocupación | Ficha → Ubicación y detalle de Potreros | Registro de traslados y permanencia; la referencia del lote no mueve animales automáticamente |
+| Traslados y ocupación | Traslados (/transfers), ficha → Ubicación y detalle de Potreros | Traslado individual o de grupos/lotes, registro de permanencia; la referencia del lote no mueve animales automáticamente |
 | Personas y acceso | Usuarios; /users | Cuentas, roles, fincas asignadas, contraseña y desactivación |
 | Recuperación e historial | Papelera y Auditoría | Restauración validada y consulta de cambios; sin borrado permanente |
 

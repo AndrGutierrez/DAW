@@ -13,6 +13,12 @@ public sealed class PaddockService(IManagementRepository repository, IFarmAccess
             throw new KeyNotFoundException("The farm was not found.");
         return await reader.MapAsync(farmId, ct);
     }
+    public async Task<IReadOnlyList<PaddockSnapshot>> DestinationsAsync(Guid farmId, CancellationToken ct = default)
+    {
+        if (!await farms.CanAccessAsync(farmId, ct) || await repository.GetAsync<Farm>(farmId, ct: ct) == null)
+            throw new KeyNotFoundException("The farm was not found.");
+        return await reader.DestinationsAsync(farmId, ct);
+    }
     public async Task<CarePage<PaddockSnapshot>> PageAsync(PaddockPageRequest query, CancellationToken ct = default)
     {
         await new PaddockPageRequestValidator().ValidateAndThrowAsync(query, ct);
@@ -42,7 +48,10 @@ public sealed class AnimalMovementService(IManagementRepository repository, IFar
         var items = await repository.PageAsync<AnimalMovement, DateTime>(m => m.AnimalId == id && m.FarmId == animal.FarmId, m => m.CreatedAt, (query.Page - 1) * query.PageSize, query.PageSize, ct);
         return new(items.Select(Read).ToList(), count, query.Page, query.PageSize);
     }
-    public Task<CareSubmission<AnimalMovementRecord>> RecordAsync(Guid id, AnimalMovementRequest query, CancellationToken ct = default) => repository.ExecuteWriteAsync(async () =>
+    public Task<CareSubmission<AnimalMovementRecord>> RecordAsync(Guid id, AnimalMovementRequest query, CancellationToken ct = default) =>
+        repository.ExecuteWriteAsync(() => RecordCoreAsync(id, query, ct), ct);
+
+    private async Task<CareSubmission<AnimalMovementRecord>> RecordCoreAsync(Guid id, AnimalMovementRequest query, CancellationToken ct)
     {
         await new AnimalMovementRequestValidator().ValidateAndThrowAsync(query, ct);
         var q = query with { Reason = query.Reason.Trim() };
@@ -70,6 +79,29 @@ public sealed class AnimalMovementService(IManagementRepository repository, IFar
         animal.PaddockId = q.ToPaddockId; animal.LotId = q.ToLotId; animal.UpdatedAt = DateTime.UtcNow;
         repository.Add(movement); await repository.SaveAsync(ct);
         return new CareSubmission<AnimalMovementRecord>(movement.Id, false, Read(movement));
-    }, ct);
+    }
+
+    public Task<AnimalMovementBatchResult> RecordBatchAsync(AnimalMovementBatchRequest query, CancellationToken ct = default) =>
+        repository.ExecuteWriteAsync(async () =>
+        {
+            await new AnimalMovementBatchRequestValidator().ValidateAndThrowAsync(query, ct);
+            // Check every member before writing; the outer serializable transaction also protects capacity.
+            foreach (var item in query.Animals)
+            {
+                var animal = await FindAsync(item.AnimalId, false, ct);
+                if (animal.FarmId != query.FarmId)
+                    throw new ConflictException("Only animals from the selected farm can be moved together.");
+            }
+            var results = new List<AnimalMovementBatchItemResult>();
+            foreach (var item in query.Animals)
+            {
+                var request = new AnimalMovementRequest(item.SubmissionId, query.ToPaddockId,
+                    query.ChangeLot ? query.ToLotId : item.ExpectedFromLotId,
+                    item.ExpectedFromPaddockId, item.ExpectedFromLotId, query.Reason);
+                var result = await RecordCoreAsync(item.AnimalId, request, ct);
+                results.Add(new(item.AnimalId, result.Id, result.Replayed, result.Data));
+            }
+            return new AnimalMovementBatchResult(results, results.All(x => x.Replayed));
+        }, ct);
     private static AnimalMovementRecord Read(AnimalMovement m) => new(m.Id, m.FromPaddockId, m.ToPaddockId, m.FromLotId, m.ToLotId, m.Date, m.Reason, m.UserId);
 }

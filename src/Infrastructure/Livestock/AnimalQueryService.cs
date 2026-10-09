@@ -154,7 +154,9 @@ public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weig
                 animal.Photos.Count,
                 animal.UpdatedAt,
                 animal.FarmId,
-                animal.SpeciesId))
+                animal.SpeciesId,
+                animal.LotId,
+                animal.PaddockId))
             .ToList();
     }
 }

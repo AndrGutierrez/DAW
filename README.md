@@ -135,3 +135,5 @@ El módulo **Auditoría** permite consultar actividad y comparar cambios desde u
 La [conservación y tasa BCV](docs/fase4-conservacion-bcv.md) incorpora papelera, restauración, genealogía conservada y consulta automática mediante BCV Today, con fecha/origen verificables, historial y alternativa manual. Los reportes anteriores identificados arriba son históricos; consultar la [evidencia actual](docs/evidence/phase4-retention-bcv/README.md).
 
 La SPA incluye **Fincas y catálogos** para administrar fincas, especies, razas y lotes. En móvil se encuentra en **Más**. Dashboard abre sus filtros desde un botón; [gestión, interacción y permisos](docs/fase4-dashboard-catalogos.md) documenta los accesos y la evidencia actual.
+
+La SPA incluye **Traslados** para mover animales o lotes completos entre potreros de una misma finca, y selección de todas las páginas de una búsqueda en **Pesaje**. [Uso, permisos y garantías](docs/fase4-traslados-pesaje.md).

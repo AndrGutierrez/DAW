@@ -2,6 +2,7 @@ export type Animal = {
   id: string; farmId: string; speciesId: string; internalTag: string; name: string | null;
   species: string; breed: string | null; sex: string; status: string; healthStatus: string;
   birthDate: string | null; currentWeightKg: number | null; lot: string | null; farm: string;
+  lotId?: string | null; paddockId?: string | null;
   coverPhotoUrl: string | null; photoCount: number; updatedAt: string;
 };
 export type AnimalDetail = Animal & {

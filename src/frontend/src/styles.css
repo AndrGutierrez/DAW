@@ -3075,3 +3075,17 @@ table, .metric-grid strong, .stock-value, input[type=number] { font-variant-nume
   .dashboard-animals-link .desktop-label { display: none; }
   .dashboard-animals-link .mobile-label { display: inline; }
 }
+
+.selection-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
+.selection-toolbar .button-row { flex-wrap: wrap; }
+.transfer-selection { border: 0; padding: 0; margin: 0; min-width: 0; }
+.transfer-destination { padding: 26px; margin-top: 24px; }
+.transfer-destination fieldset { min-width: 0; }
+.transfer-capacity { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; background: var(--soft); border-radius: 12px; padding: 16px; margin-top: 18px; }
+.transfer-capacity span { color: var(--muted); }
+.transfer-completed { display: flex; gap: 16px; padding: 24px; margin-bottom: 20px; }
+.transfer-completed > svg { color: var(--primary); flex-shrink: 0; }
+.transfer-completed h2 { margin-top: 0; }
+.transfer-record-links { display: flex; flex-wrap: wrap; gap: 8px 18px; max-height: 150px; overflow-y: auto; }
+.transfer-submit .button-row { justify-content: flex-end; }
+@media (max-width: 600px) { .selection-toolbar { align-items: stretch; } .selection-toolbar .button-row { width: 100%; } .selection-toolbar .button { flex: 1 1 100%; white-space: normal; } .transfer-destination { padding: 18px; } .transfer-capacity { flex-direction: column; } .transfer-submit .button { width: 100%; } }

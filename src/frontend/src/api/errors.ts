@@ -33,6 +33,7 @@ const messages: Record<string, string> = {
   'The capacity cannot be lower than the current occupancy.': 'La capacidad no puede ser menor que la cantidad de animales activos presentes.',
   'An occupied paddock cannot be deactivated.': 'Traslada los animales activos antes de desactivar este potrero.',
   'The animal location changed. Refresh before moving it.': 'Otro usuario cambió la ubicación del animal. Actualiza la ficha y revisa el destino antes de trasladarlo.',
+  'Only animals from the selected farm can be moved together.': 'Todos los animales del traslado deben pertenecer a la finca seleccionada.',
   'The animal is already at this location.': 'El animal ya tiene este potrero y lote. Selecciona una ubicación distinta.',
   'Only active animals can be moved.': 'Solo los animales activos pueden trasladarse.',
   'The paddock does not belong to this farm or is inactive.': 'Selecciona un potrero activo de esta finca.',

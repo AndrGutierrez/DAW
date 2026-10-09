@@ -7,6 +7,7 @@ import { kg, today } from '../api/livestock';
 import type { Animal, AnimalPageResult, CatalogItem } from '../api/livestock';
 import { useFeedback } from '../components/Feedback';
 import { Field } from '../components/Field';
+import { useSearchSelection } from '../components/useSearchSelection';
 import { WeighingForm } from '../components/WeighingForm';
 import type { SavedWeighing } from '../components/WeighingForm';
 export function WeighingPage() {
@@ -28,6 +29,8 @@ export function WeighingPage() {
   const [weighDate, setWeighDate] = useState(today());
   const [saved, setSaved] = useState<SavedWeighing[]>([]);
   const params = new URLSearchParams({ farmId, page: String(page), pageSize: '12', status: 'Active', ...(lotId ? { lotId } : {}), ...(query ? { search: query } : {}) });
+  const selectionFilters = new URLSearchParams({ farmId, status: 'Active', ...(lotId ? { lotId } : {}), ...(query ? { search: query } : {}) }).toString();
+  const selection = useSearchSelection(selectionFilters, setSelected);
   const animals = useResource<AnimalPageResult>('/api/animals/page?' + params, allowed && !!farmId && !queue);
   useEffect(() => { if (!farmId && farms.data?.filter(item => item.data.isActive).length === 1) setFarmId(farms.data.find(item => item.data.isActive)!.id); }, [farms.data, farmId]);
   useEffect(() => {
@@ -35,7 +38,7 @@ export function WeighingPage() {
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
     window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn);
   }, [queue, index]);
-  function choose(animal: Animal) { setSelected(items => items.some(item => item.id === animal.id) ? items.filter(item => item.id !== animal.id) : items.length < 50 ? [...items, animal] : items); }
+  function choose(animal: Animal) { setSelected(items => items.some(item => item.id === animal.id) ? items.filter(item => item.id !== animal.id) : [...items, animal]); }
   async function skip() {
     if (blocked || !queue?.[index] || !await confirm("Este animal se omitirá sin registrar un peso. ¿Quieres continuar con el siguiente?")) return;
     setSkipped(items => [...items, queue[index]]); setIndex(current => current + 1);
@@ -48,11 +51,13 @@ export function WeighingPage() {
       <form className="compact-search" onSubmit={event => { event.preventDefault(); setQuery(search.trim()); setPage(1); }}><Input aria-label="Buscar animales para pesar" value={search} maxLength={100} placeholder="Arete o nombre" onChange={event => setSearch(event.target.value)} /><Button className="button secondary" disabled={!farmId}>Buscar</Button></form></div>
       {(farms.error || lots.error || animals.error) && <div className="panel error-banner" role="alert"><p>{farms.error || lots.error || animals.error}</p><Button className="button secondary" onClick={() => { farms.reload(); lots.reload(); animals.reload(); }}>Reintentar</Button></div>}
       {animals.loading && farmId && <p role="status">Cargando animales activos…</p>}
-      {animals.data && <div className="selection-grid">{animals.data.items.map(animal => <label className={'panel animal-choice ' + (selected.some(item => item.id === animal.id) ? 'selected' : '')} key={animal.id}><Input type="checkbox" aria-label={'Seleccionar ' + animal.internalTag} checked={selected.some(item => item.id === animal.id)} disabled={selected.length >= 50 && !selected.some(item => item.id === animal.id)} onChange={() => choose(animal)} /><span><strong>{animal.internalTag}</strong><small>{animal.name || animal.species}</small><small>{kg(animal.currentWeightKg)} · {animal.lot || 'Sin lote'}</small></span></label>)}</div>}
+      {animals.data && <div className="selection-toolbar"><strong>{selected.length} seleccionados</strong><div className="button-row"><Button variant="secondary" disabled={selection.busy || animals.loading || !animals.data.total} onClick={() => void selection.selectAll()}>{selection.busy ? 'Seleccionando…' : 'Seleccionar todos los resultados (' + animals.data.total + ')'}</Button><Button variant="quiet" disabled={selection.busy || !selected.length} onClick={() => setSelected([])}>Limpiar selección</Button></div></div>}
+      {selection.busy && <p role="status">Seleccionando todas las páginas de esta búsqueda…</p>}{selection.error && <p className="error-banner" role="alert">{selection.error}</p>}
+      {animals.data && <div className="selection-grid">{animals.data.items.map(animal => <label className={'panel animal-choice ' + (selected.some(item => item.id === animal.id) ? 'selected' : '')} key={animal.id}><Input type="checkbox" aria-label={'Seleccionar ' + animal.internalTag} checked={selected.some(item => item.id === animal.id)} disabled={selection.busy} onChange={() => choose(animal)} /><span><strong>{animal.internalTag}</strong><small>{animal.name || animal.species}</small><small>{kg(animal.currentWeightKg)} · {animal.lot || 'Sin lote'}</small></span></label>)}</div>}
       {!farmId && <div className="panel empty-state"><h2>Comienza por la finca</h2><p className="muted">Solo se muestran animales activos de tus fincas asignadas.</p></div>}
       {animals.data && !animals.data.items.length && <p className="panel empty-state">No hay animales activos en esta consulta.</p>}
       {animals.data && <div className="pagination"><p className="muted">{animals.data.total} animales · página {page}</p><div><Button className="button secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</Button><Button className="button secondary" disabled={page * 12 >= animals.data.total} onClick={() => setPage(page + 1)}>Siguiente</Button></div></div>}
-      <div className="panel form-actions"><div><strong>{selected.length} animales seleccionados</strong><p className="muted">Hasta 50 por sesión. La selección se conserva entre páginas y búsquedas.</p></div><Button className="button primary" disabled={!selected.length || !weighDate || weighDate > today()} onClick={() => { setQueue([...selected]); setSaved([]); setSkipped([]); setIndex(0); }}>Comenzar pesaje</Button></div>
+      <div className="panel form-actions"><div><strong>{selected.length} animales seleccionados</strong><p className="muted">La selección se conserva entre páginas y búsquedas. Seleccionar todos incluye los resultados de todas las páginas.</p></div><Button className="button primary" disabled={selection.busy || !selected.length || !weighDate || weighDate > today()} onClick={() => { setQueue([...selected]); setSaved([]); setSkipped([]); setIndex(0); }}>Comenzar pesaje</Button></div>
     </> : current ? <><div className="weighing-progress" aria-label="Progreso del pesaje"><span style={{ width: (index / queue.length * 100) + '%' }} /></div><div className="panel weighing-current"><div className="section-heading"><div><span className="eyebrow">ANIMAL {index + 1} DE {queue.length}</span><h2>{current.internalTag}{current.name ? ' · ' + current.name : ''}</h2><p className="muted">{current.farm} · último peso: {kg(current.currentWeightKg)}</p></div></div><WeighingForm key={current.id} animalId={current.id} initialDate={weighDate} consecutive onSaved={finish} onPendingChange={setBlocked} /><Button type="button" className="text-button" disabled={blocked} onClick={() => void skip()}>Omitir este animal</Button></div><p className="muted">El siguiente animal aparece solo cuando el servidor confirma el registro. La cola pendiente se conserva mientras mantengas esta página abierta.</p></>
       : <div className="panel empty-state"><span className="completion-mark" aria-hidden="true">✓</span><h2>Pesaje completado</h2><p>{saved.length} registros confirmados en el servidor.{skipped.length > 0 && " " + skipped.length + " animales omitidos sin registrar un peso."}</p><Button className="button primary" onClick={() => { setQueue(null); setSelected([]); setSaved([]); setSkipped([]); animals.reload(); }}>Iniciar otro pesaje</Button></div>}
     {skipped.length > 0 && <div className="panel animal-details"><h2>Animales omitidos</h2><p className="muted">{skipped.map(animal => animal.internalTag).join(", ")}. No se creó un pesaje para estos animales.</p></div>}

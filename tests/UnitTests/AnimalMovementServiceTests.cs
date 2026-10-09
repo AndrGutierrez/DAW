@@ -94,4 +94,63 @@ public sealed class AnimalMovementServiceTests
         animal.Status = AnimalStatus.Sold;
         await Assert.ThrowsAsync<ConflictException>(() => Service.RecordAsync(animal.Id, Request));
     }
+
+    [Fact]
+    public async Task BatchKeepsLotsAndWritesInsideOneTransaction()
+    {
+        var target = Guid.NewGuid();
+        var second = new Animal { FarmId = animal.FarmId, SpeciesId = animal.SpeciesId, PaddockId = animal.PaddockId };
+        repository.Setup(r => r.GetAsync<Animal>(animal.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(animal);
+        repository.Setup(r => r.GetAsync<Animal>(second.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(second);
+        repository.Setup(r => r.GetAsync<Animal>(second.Id, true, It.IsAny<CancellationToken>())).ReturnsAsync(second);
+        repository.Setup(r => r.GetAsync<Paddock>(target, false, It.IsAny<CancellationToken>())).ReturnsAsync(new Paddock { FarmId = animal.FarmId, IsActive = true });
+        repository.Setup(r => r.GetAsync<Lot>(animal.LotId!.Value, false, It.IsAny<CancellationToken>())).ReturnsAsync(new Lot { FarmId = animal.FarmId, SpeciesId = animal.SpeciesId, IsActive = true });
+        repository.Setup(r => r.ExecuteWriteAsync(It.IsAny<Func<Task<AnimalMovementBatchResult>>>(), It.IsAny<CancellationToken>())).Returns((Func<Task<AnimalMovementBatchResult>> action, CancellationToken _) => action());
+        var saved = new List<AnimalMovement>();
+        repository.Setup(r => r.Add(It.IsAny<AnimalMovement>())).Callback<AnimalMovement>(saved.Add);
+        repository.Setup(r => r.SaveAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        var originalLot = animal.LotId;
+        var result = await Service.RecordBatchAsync(new(animal.FarmId, target, " Rotation ", [
+            new(animal.Id, Guid.NewGuid(), animal.PaddockId, animal.LotId), new(second.Id, Guid.NewGuid(), second.PaddockId, null)]));
+        Assert.Equal(2, result.Items.Count); Assert.False(result.Replayed);
+        Assert.Equal(target, animal.PaddockId); Assert.Equal(target, second.PaddockId);
+        Assert.Equal(originalLot, animal.LotId); Assert.Null(second.LotId);
+        Assert.All(saved, record => { Assert.Equal(author, record.UserId); Assert.Equal("Rotation", record.Reason); });
+        repository.Verify(r => r.ExecuteWriteAsync(It.IsAny<Func<Task<AnimalMovementBatchResult>>>(), It.IsAny<CancellationToken>()), Times.Once);
+        repository.Verify(r => r.ExecuteWriteAsync(It.IsAny<Func<Task<CareSubmission<AnimalMovementRecord>>>>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+    [Fact]
+    public async Task MixedFarmBatchIsRejectedBeforeAnyWrites()
+    {
+        var second = new Animal { FarmId = Guid.NewGuid() };
+        repository.Setup(r => r.GetAsync<Animal>(animal.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(animal);
+        repository.Setup(r => r.GetAsync<Animal>(second.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(second);
+        farms.Setup(f => f.CanAccessAsync(second.FarmId, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+        repository.Setup(r => r.ExecuteWriteAsync(It.IsAny<Func<Task<AnimalMovementBatchResult>>>(), It.IsAny<CancellationToken>())).Returns((Func<Task<AnimalMovementBatchResult>> action, CancellationToken _) => action());
+        await Assert.ThrowsAsync<ConflictException>(() => Service.RecordBatchAsync(new(animal.FarmId, Guid.NewGuid(), "Rotation", [
+            new(animal.Id, Guid.NewGuid(), animal.PaddockId, animal.LotId), new(second.Id, Guid.NewGuid(), null, null)])));
+        repository.Verify(r => r.Add(It.IsAny<AnimalMovement>()), Times.Never);
+    }
+    [Fact]
+    public async Task DuplicateBatchMembersAreRejectedBeforeReadingAnimals()
+    {
+        repository.Setup(r => r.ExecuteWriteAsync(It.IsAny<Func<Task<AnimalMovementBatchResult>>>(), It.IsAny<CancellationToken>())).Returns((Func<Task<AnimalMovementBatchResult>> action, CancellationToken _) => action());
+        var member = new AnimalMovementBatchItem(animal.Id, Guid.NewGuid(), animal.PaddockId, animal.LotId);
+        await Assert.ThrowsAsync<ValidationException>(() => Service.RecordBatchAsync(new(animal.FarmId, Guid.NewGuid(), "Rotation", [member, member])));
+        repository.Verify(r => r.GetAsync<Animal>(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+    [Fact]
+    public async Task BatchReplayKeepsTheOriginalLotEvenIfTheAnimalLaterChangesGroup()
+    {
+        var target = Guid.NewGuid(); var sourceLot = animal.LotId; var sourcePaddock = animal.PaddockId; var submission = Guid.NewGuid();
+        var record = new AnimalMovement(submission) { FarmId = animal.FarmId, AnimalId = animal.Id, UserId = author,
+            FromPaddockId = sourcePaddock, FromLotId = sourceLot, ToPaddockId = target, ToLotId = sourceLot, Reason = "Rotation" };
+        repository.Setup(r => r.GetAsync<Animal>(animal.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(animal);
+        repository.Setup(r => r.GetAsync<AnimalMovement>(submission, false, It.IsAny<CancellationToken>())).ReturnsAsync(record);
+        repository.Setup(r => r.ExecuteWriteAsync(It.IsAny<Func<Task<AnimalMovementBatchResult>>>(), It.IsAny<CancellationToken>())).Returns((Func<Task<AnimalMovementBatchResult>> action, CancellationToken _) => action());
+        animal.LotId = Guid.NewGuid();
+        var result = await Service.RecordBatchAsync(new(animal.FarmId, target, "Rotation", [new(animal.Id, submission, sourcePaddock, sourceLot)]));
+        Assert.True(result.Replayed); Assert.Equal(sourceLot, Assert.Single(result.Items).Data.ToLotId);
+        repository.Verify(r => r.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
 }
