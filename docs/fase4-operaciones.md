@@ -1,5 +1,8 @@
 # Inventario, dashboard y reportes de Fase 4
 
+> Actualización vigente: [conservación de registros y consulta automática BCV](fase4-conservacion-bcv.md). Sustituye los apartados anteriores de borrado físico y cotización exclusivamente manual. Los conteos de pruebas aquí consignados conservan la fecha y el alcance de esa revisión.
+
+
 ## Propósito y uso
 
 La SPA incorpora /inventory, /dashboard y /reports. Inventario ofrece existencias por finca, búsqueda de productos, mínimos y máximos, ubicaciones, catálogo de productos y categorías. Los editores y el historial se abren en un panel lateral. El administrador mantiene productos/categorías; el empleado consulta el catálogo y registra entradas/salidas según sus permisos. Las eliminaciones administrativas requieren confirmación y las referencias existentes pueden impedirlas.

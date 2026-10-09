@@ -1,6 +1,6 @@
 {
   "source": "db/schema.sql",
-  "sourceSha256": "453c4e48faf2fb7477ee70213af7b400993ea23e9c90bc57e08b02b011de27bb",
+  "sourceSha256": "bbdb3c557f6814e3b058f44b16736fff28c2cc0df28c72cd88036090b8b002b2",
   "tableCount": 44,
   "foreignKeyCount": 72,
   "modules": [
@@ -151,6 +151,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -227,6 +245,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -303,6 +339,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -373,6 +427,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -449,6 +521,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [
@@ -620,6 +710,24 @@
           "type": "numeric(8,4)",
           "nullable": true,
           "definition": "numeric(8,4)"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -715,6 +823,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -843,6 +969,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -898,6 +1042,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -938,6 +1100,42 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "EntryMethod",
+          "type": "character varying(20)",
+          "nullable": false,
+          "definition": "character varying(20) DEFAULT 'manual'::character varying NOT NULL"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
+        },
+        {
+          "name": "PublishedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "Source",
+          "type": "character varying(400)",
+          "nullable": false,
+          "definition": "character varying(400) DEFAULT 'https://www.bcv.org.ve/'::character varying NOT NULL"
         }
       ],
       "checks": [],
@@ -996,6 +1194,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [
@@ -1065,6 +1281,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1131,6 +1365,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1327,6 +1579,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1391,6 +1661,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1431,6 +1719,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1497,6 +1803,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1594,6 +1918,24 @@
           "type": "integer",
           "nullable": true,
           "definition": "integer"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1631,6 +1973,24 @@
           "type": "character varying(100)",
           "nullable": false,
           "definition": "character varying(100) DEFAULT 'web'::character varying NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1704,6 +2064,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1786,6 +2164,24 @@
           "type": "character varying(50)",
           "nullable": false,
           "definition": "character varying(50) DEFAULT ''::character varying NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [
@@ -1842,6 +2238,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -1888,6 +2302,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2096,6 +2528,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2152,6 +2602,24 @@
           "type": "uuid",
           "nullable": false,
           "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2277,6 +2745,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2329,6 +2815,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2426,6 +2930,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2478,6 +3000,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2572,6 +3112,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2666,6 +3224,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2740,6 +3316,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2806,6 +3400,24 @@
           "type": "uuid",
           "nullable": false,
           "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -2829,6 +3441,24 @@
           "type": "uuid",
           "nullable": false,
           "definition": "uuid NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],
@@ -3075,6 +3705,24 @@
           "type": "timestamp with time zone",
           "nullable": false,
           "definition": "timestamp with time zone DEFAULT now() NOT NULL"
+        },
+        {
+          "name": "DeletedAt",
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "definition": "timestamp with time zone"
+        },
+        {
+          "name": "DeletedByUserId",
+          "type": "uuid",
+          "nullable": true,
+          "definition": "uuid"
+        },
+        {
+          "name": "IsDeleted",
+          "type": "boolean",
+          "nullable": false,
+          "definition": "boolean DEFAULT false NOT NULL"
         }
       ],
       "checks": [],

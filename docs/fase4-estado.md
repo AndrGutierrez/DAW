@@ -1,5 +1,8 @@
 # Estado de implementación de Fase 4
 
+> Actualización vigente: [conservación de registros y consulta automática BCV](fase4-conservacion-bcv.md). Sustituye los apartados anteriores de borrado físico y cotización exclusivamente manual. Los conteos de pruebas aquí consignados conservan la fecha y el alcance de esa revisión.
+
+
 > Actualización posterior: consultar la [auditoría integral](fase4-auditoria-integral.md) y la [evidencia de UI/testing/rendimiento](evidence/phase4-ui-quality/README.md). Incorporan Classroom y el quiz, 107 pruebas frontend, distribución de pesos y los conteos/coberturas actuales. Los resultados de este documento se conservan como evidencia de la revisión anterior.
 
 

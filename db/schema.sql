@@ -2,6 +2,7 @@
 -- PostgreSQL database dump
 --
 
+\restrict Vfnm5D7kQ0Ua6RJptACQ0oRjnNygN3XHL6y21PJZqobRXc9yhkXdOMLBdW8K1Fe
 
 -- Dumped from database version 15.19
 -- Dumped by pg_dump version 15.19
@@ -32,7 +33,10 @@ CREATE TABLE public."AlertRules" (
     "ThresholdValue" numeric(12,4),
     "ThresholdDays" integer,
     "IsEnabled" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -51,7 +55,10 @@ CREATE TABLE public."Alerts" (
     "DueDate" date,
     "IsResolved" boolean NOT NULL,
     "ResolvedAt" timestamp with time zone,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -70,7 +77,10 @@ CREATE TABLE public."AnimalMovements" (
     "Date" date NOT NULL,
     "Reason" character varying(300),
     "UserId" uuid,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -88,7 +98,10 @@ CREATE TABLE public."AnimalPhotos" (
     "SizeBytes" bigint,
     "UploadedByUserId" uuid,
     "UploadedAt" timestamp with time zone NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -108,6 +121,9 @@ CREATE TABLE public."AnimalProduction" (
     "Unit" integer NOT NULL,
     "Notes" character varying(1000),
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL,
     CONSTRAINT "CK_AnimalProduction_Quantity" CHECK (("Quantity" > (0)::numeric))
 );
 
@@ -141,7 +157,10 @@ CREATE TABLE public."Animals" (
     "Notes" character varying(2000),
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
     "UpdatedAt" timestamp with time zone DEFAULT now() NOT NULL,
-    "TargetDailyGainKg" numeric(8,4)
+    "TargetDailyGainKg" numeric(8,4),
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -159,7 +178,10 @@ CREATE TABLE public."Attachments" (
     "ContentType" character varying(100),
     "SizeBytes" bigint,
     "UploadedByUserId" uuid,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -193,7 +215,10 @@ CREATE TABLE public."Breeds" (
     "Purpose" integer NOT NULL,
     "Origin" character varying(100),
     "IsActive" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -207,7 +232,10 @@ CREATE TABLE public."Diseases" (
     "Description" character varying(1000),
     "IsNotifiable" boolean NOT NULL,
     "SpeciesId" uuid,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -220,7 +248,13 @@ CREATE TABLE public."ExchangeRates" (
     "EffectiveDate" date NOT NULL,
     "BolivarsPerDollar" numeric(18,6) NOT NULL,
     "RecordedByUserId" uuid,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "EntryMethod" character varying(20) DEFAULT 'manual'::character varying NOT NULL,
+    "IsDeleted" boolean DEFAULT false NOT NULL,
+    "PublishedAt" timestamp with time zone,
+    "Source" character varying(400) DEFAULT 'https://www.bcv.org.ve/'::character varying NOT NULL
 );
 
 
@@ -237,6 +271,9 @@ CREATE TABLE public."FarmInventory" (
     "MaxStock" numeric(14,4) DEFAULT 100.0 NOT NULL,
     "Location" character varying(150) DEFAULT 'Main warehouse'::character varying NOT NULL,
     "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL,
     CONSTRAINT "CK_FarmInventory_Stock" CHECK ((("Stock" >= (0)::numeric) AND ("MinStock" >= (0)::numeric) AND ("MaxStock" > "MinStock")))
 );
 
@@ -253,7 +290,10 @@ CREATE TABLE public."Farms" (
     "Phone" character varying(50),
     "Email" character varying(200),
     "IsActive" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -269,7 +309,10 @@ CREATE TABLE public."FeedingRecords" (
     "Date" date NOT NULL,
     "QuantityKg" numeric(10,3) NOT NULL,
     "Cost" numeric(18,2),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -308,7 +351,10 @@ CREATE TABLE public."HealthEvents" (
     "Vaccination_ProductBatchId" uuid,
     "Vaccination_Dose" numeric(10,3),
     "NextDueDate" date,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -325,7 +371,10 @@ CREATE TABLE public."HealthStatusChanges" (
     "ChangedAt" timestamp with time zone NOT NULL,
     "Reason" character varying(500),
     "UserId" uuid,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -338,7 +387,10 @@ CREATE TABLE public."InventoryCategories" (
     "Name" character varying(100) NOT NULL,
     "Description" character varying(500),
     "IsActive" boolean DEFAULT true NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -354,7 +406,10 @@ CREATE TABLE public."Lots" (
     "Name" character varying(150) NOT NULL,
     "Purpose" integer NOT NULL,
     "IsActive" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -375,7 +430,10 @@ CREATE TABLE public."Paddocks" (
     "MapWidth" numeric(7,4),
     "MapX" numeric(7,4),
     "MapY" numeric(7,4),
-    "MaxStayDays" integer
+    "MaxStayDays" integer,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -386,7 +444,10 @@ CREATE TABLE public."Paddocks" (
 CREATE TABLE public."Permissions" (
     "Id" uuid NOT NULL,
     "Name" character varying(150) NOT NULL,
-    "GuardName" character varying(100) DEFAULT 'web'::character varying NOT NULL
+    "GuardName" character varying(100) DEFAULT 'web'::character varying NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -403,7 +464,10 @@ CREATE TABLE public."ProductBatches" (
     "ExpirationDate" date,
     "InitialQuantity" numeric(12,3) NOT NULL,
     "UnitCost" numeric(18,2),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -424,6 +488,9 @@ CREATE TABLE public."Products" (
     "CostPrice" numeric(18,2) DEFAULT 0.0 NOT NULL,
     "Price" numeric(18,2) DEFAULT 0.0 NOT NULL,
     "SKU" character varying(50) DEFAULT ''::character varying NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL,
     CONSTRAINT "CK_Products_Prices" CHECK (((NOT "IsActive") OR (("Price" > (0)::numeric) AND ("CostPrice" > (0)::numeric))))
 );
 
@@ -438,7 +505,10 @@ CREATE TABLE public."RationIngredients" (
     "ProductId" uuid NOT NULL,
     "Quantity" numeric(10,3) NOT NULL,
     "Unit" integer NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -452,7 +522,10 @@ CREATE TABLE public."Rations" (
     "SpeciesId" uuid,
     "Name" character varying(150) NOT NULL,
     "Purpose" character varying(200),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -498,7 +571,10 @@ CREATE TABLE public."ReproductiveEvents" (
     "ExpectedCalvingDate" date,
     "OffspringId" uuid,
     "WeightKg" numeric(8,2),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -534,7 +610,10 @@ ALTER TABLE public."RoleClaims" ALTER COLUMN "Id" ADD GENERATED BY DEFAULT AS ID
 
 CREATE TABLE public."RolePermissions" (
     "RoleId" uuid NOT NULL,
-    "PermissionId" uuid NOT NULL
+    "PermissionId" uuid NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -566,7 +645,10 @@ CREATE TABLE public."SemenBatches" (
     "StrawCount" integer,
     "StorageTank" character varying(50),
     "ExpirationDate" date,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -581,7 +663,10 @@ CREATE TABLE public."Species" (
     "Purpose" integer NOT NULL,
     "GestationDays" integer,
     "IsActive" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -601,7 +686,10 @@ CREATE TABLE public."StockMovements" (
     "ReferenceType" character varying(100),
     "ReferenceId" uuid,
     "UserId" uuid,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -616,7 +704,10 @@ CREATE TABLE public."Suppliers" (
     "Phone" character varying(50),
     "Email" character varying(200),
     "Address" character varying(300),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -638,7 +729,10 @@ CREATE TABLE public."Tasks" (
     "RelatedLotId" uuid,
     "CreatedByUserId" uuid,
     "CompletedAt" timestamp with time zone,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -660,7 +754,10 @@ CREATE TABLE public."Transactions" (
     "LotId" uuid,
     "ProductId" uuid,
     "UserId" uuid,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -699,7 +796,10 @@ CREATE TABLE public."UserFarms" (
     "UserId" uuid NOT NULL,
     "FarmId" uuid NOT NULL,
     "IsDefault" boolean NOT NULL,
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -721,7 +821,10 @@ CREATE TABLE public."UserLogins" (
 
 CREATE TABLE public."UserPermissions" (
     "UserId" uuid NOT NULL,
-    "PermissionId" uuid NOT NULL
+    "PermissionId" uuid NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -731,7 +834,10 @@ CREATE TABLE public."UserPermissions" (
 
 CREATE TABLE public."UserRoles" (
     "UserId" uuid NOT NULL,
-    "RoleId" uuid NOT NULL
+    "RoleId" uuid NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -788,7 +894,10 @@ CREATE TABLE public."WeightRecords" (
     "BodyConditionScore" numeric(4,2),
     "RecordedByUserId" uuid,
     "Notes" character varying(500),
-    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL
+    "CreatedAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "DeletedAt" timestamp with time zone,
+    "DeletedByUserId" uuid,
+    "IsDeleted" boolean DEFAULT false NOT NULL
 );
 
 
@@ -1169,10 +1278,24 @@ CREATE INDEX "IX_AlertRules_FarmId_Type" ON public."AlertRules" USING btree ("Fa
 
 
 --
+-- Name: IX_AlertRules_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AlertRules_IsDeleted_DeletedAt" ON public."AlertRules" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_Alerts_FarmId_IsResolved_Severity; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX "IX_Alerts_FarmId_IsResolved_Severity" ON public."Alerts" USING btree ("FarmId", "IsResolved", "Severity");
+
+
+--
+-- Name: IX_Alerts_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Alerts_IsDeleted_DeletedAt" ON public."Alerts" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1197,6 +1320,13 @@ CREATE INDEX "IX_AnimalMovements_FromPaddockId" ON public."AnimalMovements" USIN
 
 
 --
+-- Name: IX_AnimalMovements_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AnimalMovements_IsDeleted_DeletedAt" ON public."AnimalMovements" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_AnimalMovements_ToLotId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1218,6 +1348,13 @@ CREATE INDEX "IX_AnimalPhotos_AnimalId_UploadedAt" ON public."AnimalPhotos" USIN
 
 
 --
+-- Name: IX_AnimalPhotos_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AnimalPhotos_IsDeleted_DeletedAt" ON public."AnimalPhotos" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_AnimalProduction_AnimalId_Date; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1229,6 +1366,13 @@ CREATE INDEX "IX_AnimalProduction_AnimalId_Date" ON public."AnimalProduction" US
 --
 
 CREATE INDEX "IX_AnimalProduction_FarmId" ON public."AnimalProduction" USING btree ("FarmId");
+
+
+--
+-- Name: IX_AnimalProduction_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AnimalProduction_IsDeleted_DeletedAt" ON public."AnimalProduction" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1274,6 +1418,13 @@ CREATE UNIQUE INDEX "IX_Animals_FarmId_Rfid" ON public."Animals" USING btree ("F
 
 
 --
+-- Name: IX_Animals_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Animals_IsDeleted_DeletedAt" ON public."Animals" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_Animals_LotId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1302,6 +1453,13 @@ CREATE INDEX "IX_Animals_SpeciesId" ON public."Animals" USING btree ("SpeciesId"
 
 
 --
+-- Name: IX_Attachments_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Attachments_IsDeleted_DeletedAt" ON public."Attachments" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_Attachments_OwnerType_OwnerId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1316,10 +1474,45 @@ CREATE INDEX "IX_AuditLogs_EntityName_EntityId" ON public."AuditLogs" USING btre
 
 
 --
+-- Name: IX_AuditLogs_FarmId_OccurredAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AuditLogs_FarmId_OccurredAt" ON public."AuditLogs" USING btree ("FarmId", "OccurredAt");
+
+
+--
+-- Name: IX_AuditLogs_OccurredAt_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AuditLogs_OccurredAt_Id" ON public."AuditLogs" USING btree ("OccurredAt", "Id");
+
+
+--
+-- Name: IX_AuditLogs_UserId_OccurredAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_AuditLogs_UserId_OccurredAt" ON public."AuditLogs" USING btree ("UserId", "OccurredAt");
+
+
+--
+-- Name: IX_Breeds_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Breeds_IsDeleted_DeletedAt" ON public."Breeds" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_Breeds_SpeciesId_Name; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX "IX_Breeds_SpeciesId_Name" ON public."Breeds" USING btree ("SpeciesId", "Name");
+
+
+--
+-- Name: IX_Diseases_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Diseases_IsDeleted_DeletedAt" ON public."Diseases" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1337,10 +1530,24 @@ CREATE INDEX "IX_ExchangeRates_EffectiveDate_CreatedAt" ON public."ExchangeRates
 
 
 --
+-- Name: IX_ExchangeRates_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ExchangeRates_IsDeleted_DeletedAt" ON public."ExchangeRates" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_FarmInventory_FarmId_ProductId; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX "IX_FarmInventory_FarmId_ProductId" ON public."FarmInventory" USING btree ("FarmId", "ProductId");
+
+
+--
+-- Name: IX_FarmInventory_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_FarmInventory_IsDeleted_DeletedAt" ON public."FarmInventory" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1355,6 +1562,20 @@ CREATE INDEX "IX_FarmInventory_ProductId" ON public."FarmInventory" USING btree 
 --
 
 CREATE UNIQUE INDEX "IX_Farms_Code" ON public."Farms" USING btree ("Code");
+
+
+--
+-- Name: IX_Farms_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Farms_IsDeleted_DeletedAt" ON public."Farms" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
+-- Name: IX_FeedingRecords_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_FeedingRecords_IsDeleted_DeletedAt" ON public."FeedingRecords" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1390,6 +1611,13 @@ CREATE INDEX "IX_HealthEvents_DiseaseId" ON public."HealthEvents" USING btree ("
 --
 
 CREATE INDEX "IX_HealthEvents_FarmId" ON public."HealthEvents" USING btree ("FarmId");
+
+
+--
+-- Name: IX_HealthEvents_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_HealthEvents_IsDeleted_DeletedAt" ON public."HealthEvents" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1435,6 +1663,20 @@ CREATE INDEX "IX_HealthStatusChanges_AnimalId_ChangedAt" ON public."HealthStatus
 
 
 --
+-- Name: IX_HealthStatusChanges_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_HealthStatusChanges_IsDeleted_DeletedAt" ON public."HealthStatusChanges" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
+-- Name: IX_InventoryCategories_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_InventoryCategories_IsDeleted_DeletedAt" ON public."InventoryCategories" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_InventoryCategories_Name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1446,6 +1688,13 @@ CREATE UNIQUE INDEX "IX_InventoryCategories_Name" ON public."InventoryCategories
 --
 
 CREATE UNIQUE INDEX "IX_Lots_FarmId_Name" ON public."Lots" USING btree ("FarmId", "Name");
+
+
+--
+-- Name: IX_Lots_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Lots_IsDeleted_DeletedAt" ON public."Lots" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1470,6 +1719,13 @@ CREATE UNIQUE INDEX "IX_Paddocks_FarmId_Name" ON public."Paddocks" USING btree (
 
 
 --
+-- Name: IX_Paddocks_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Paddocks_IsDeleted_DeletedAt" ON public."Paddocks" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_Permissions_Name_GuardName; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1481,6 +1737,13 @@ CREATE UNIQUE INDEX "IX_Permissions_Name_GuardName" ON public."Permissions" USIN
 --
 
 CREATE INDEX "IX_ProductBatches_FarmId_ProductId_BatchNumber" ON public."ProductBatches" USING btree ("FarmId", "ProductId", "BatchNumber");
+
+
+--
+-- Name: IX_ProductBatches_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ProductBatches_IsDeleted_DeletedAt" ON public."ProductBatches" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1505,6 +1768,13 @@ CREATE INDEX "IX_Products_CategoryId" ON public."Products" USING btree ("Categor
 
 
 --
+-- Name: IX_Products_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Products_IsDeleted_DeletedAt" ON public."Products" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_Products_Name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1516,6 +1786,13 @@ CREATE INDEX "IX_Products_Name" ON public."Products" USING btree ("Name");
 --
 
 CREATE UNIQUE INDEX "IX_Products_SKU" ON public."Products" USING btree ("SKU");
+
+
+--
+-- Name: IX_RationIngredients_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_RationIngredients_IsDeleted_DeletedAt" ON public."RationIngredients" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1537,6 +1814,13 @@ CREATE INDEX "IX_RationIngredients_RationId" ON public."RationIngredients" USING
 --
 
 CREATE INDEX "IX_Rations_FarmId" ON public."Rations" USING btree ("FarmId");
+
+
+--
+-- Name: IX_Rations_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Rations_IsDeleted_DeletedAt" ON public."Rations" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1579,6 +1863,13 @@ CREATE INDEX "IX_ReproductiveEvents_FarmId" ON public."ReproductiveEvents" USING
 --
 
 CREATE INDEX "IX_ReproductiveEvents_Insemination_SireId" ON public."ReproductiveEvents" USING btree ("Insemination_SireId");
+
+
+--
+-- Name: IX_ReproductiveEvents_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ReproductiveEvents_IsDeleted_DeletedAt" ON public."ReproductiveEvents" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1631,6 +1922,13 @@ CREATE INDEX "IX_SemenBatches_FarmId" ON public."SemenBatches" USING btree ("Far
 
 
 --
+-- Name: IX_SemenBatches_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_SemenBatches_IsDeleted_DeletedAt" ON public."SemenBatches" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_SemenBatches_SupplierId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1642,6 +1940,13 @@ CREATE INDEX "IX_SemenBatches_SupplierId" ON public."SemenBatches" USING btree (
 --
 
 CREATE UNIQUE INDEX "IX_Species_Code" ON public."Species" USING btree ("Code");
+
+
+--
+-- Name: IX_Species_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Species_IsDeleted_DeletedAt" ON public."Species" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1659,6 +1964,13 @@ CREATE INDEX "IX_StockMovements_FarmId_ProductId_Date" ON public."StockMovements
 
 
 --
+-- Name: IX_StockMovements_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_StockMovements_IsDeleted_DeletedAt" ON public."StockMovements" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_StockMovements_ProductBatchId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1673,10 +1985,24 @@ CREATE INDEX "IX_StockMovements_ProductId" ON public."StockMovements" USING btre
 
 
 --
+-- Name: IX_Suppliers_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Suppliers_IsDeleted_DeletedAt" ON public."Suppliers" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_Tasks_FarmId_Status_DueDate; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX "IX_Tasks_FarmId_Status_DueDate" ON public."Tasks" USING btree ("FarmId", "Status", "DueDate");
+
+
+--
+-- Name: IX_Tasks_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Tasks_IsDeleted_DeletedAt" ON public."Tasks" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1708,6 +2034,13 @@ CREATE INDEX "IX_Transactions_FarmId_Date" ON public."Transactions" USING btree 
 
 
 --
+-- Name: IX_Transactions_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Transactions_IsDeleted_DeletedAt" ON public."Transactions" USING btree ("IsDeleted", "DeletedAt");
+
+
+--
 -- Name: IX_Transactions_LotId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1733,6 +2066,13 @@ CREATE INDEX "IX_UserClaims_UserId" ON public."UserClaims" USING btree ("UserId"
 --
 
 CREATE INDEX "IX_UserFarms_FarmId" ON public."UserFarms" USING btree ("FarmId");
+
+
+--
+-- Name: IX_UserFarms_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_UserFarms_IsDeleted_DeletedAt" ON public."UserFarms" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -1768,6 +2108,13 @@ CREATE INDEX "IX_UserRoles_RoleId" ON public."UserRoles" USING btree ("RoleId");
 --
 
 CREATE INDEX "IX_WeightRecords_AnimalId_Date" ON public."WeightRecords" USING btree ("AnimalId", "Date");
+
+
+--
+-- Name: IX_WeightRecords_IsDeleted_DeletedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_WeightRecords_IsDeleted_DeletedAt" ON public."WeightRecords" USING btree ("IsDeleted", "DeletedAt");
 
 
 --
@@ -2363,3 +2710,5 @@ ALTER TABLE ONLY public."WeightRecords"
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict Vfnm5D7kQ0Ua6RJptACQ0oRjnNygN3XHL6y21PJZqobRXc9yhkXdOMLBdW8K1Fe

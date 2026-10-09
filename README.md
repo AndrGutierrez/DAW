@@ -60,7 +60,7 @@ Para los recursos de la tabla existen **POST, GET de lista, GET por ID, PUT por 
 
 Otras operaciones: login, registro, renovación de token, perfil actual; administración de permisos; subida, consulta privada y eliminación de fotos; animales sin actualización reciente. Los contratos completos y ejemplos están en Swagger y la [guía del producto](docs/product-and-technical-guide.md).
 
-**Reglas de eliminación:** todos los DELETE requieren Admin/Administrador. Las referencias importantes usan `Restrict`; si existen dependencias se devuelve 409 y deben resolverse primero. El sacrificio es irreversible: su rendimiento puede corregirse, pero el registro no se borra ni el animal se reactiva. El historial sanitario también se conserva.
+**Reglas de eliminación:** todos los DELETE requieren Admin/Administrador y archivan el registro con fecha y autor, conservando filas, fotografías e historial. La papelera permite consultar y restaurar con validación de dependencias y reglas actuales. El inventario con saldo distinto de cero debe corregirse mediante movimientos antes de archivarse. Anular un rendimiento de sacrificio no reactiva al animal. [Conservación y recuperación](docs/fase4-conservacion-bcv.md).
 
 ## Verificación
 
@@ -130,4 +130,6 @@ La colección [Fase 4](postman/Phase4.postman_collection.json) verifica cuentas,
 
 Rama publicada para revisión en el [PR #8](https://github.com/AndrGutierrez/DAW/pull/8), en borrador. main conserva su estado anterior hasta integrar la revisión.
 
-El módulo **Auditoría** permite consultar actividad y comparar cambios desde un panel lateral, exclusivamente para administradores. Incluye eventos de login/rechazo/logout y origen de conexión, con proxies explícitamente confiables. Las [decisiones de auditoría y conservación](docs/fase4-registros-auditoria.md) explican el borrado físico frente a la desactivación y los límites del registro; la [evidencia de esta ampliación](docs/evidence/phase4-audit-module/README.md) acredita 237 UnitTests, 169 Core.Tests, 117 Vitest y 133 Playwright aprobadas (una omisión exclusiva móvil).
+El módulo **Auditoría** permite consultar actividad y comparar cambios desde un panel lateral, exclusivamente para administradores. Incluye eventos de login/rechazo/logout y origen de conexión, con proxies explícitamente confiables. Las [decisiones de auditoría y conservación](docs/fase4-registros-auditoria.md) explican archivado, desactivación y los límites del registro; la [evidencia de esta ampliación](docs/evidence/phase4-audit-module/README.md) acredita 237 UnitTests, 169 Core.Tests, 117 Vitest y 133 Playwright aprobadas (una omisión exclusiva móvil).
+
+La [conservación y tasa BCV](docs/fase4-conservacion-bcv.md) incorpora papelera, restauración, genealogía conservada y consulta automática mediante BCV Today, con fecha/origen verificables, historial y alternativa manual. Los reportes anteriores identificados arriba son históricos; consultar la [evidencia actual](docs/evidence/phase4-retention-bcv/README.md).

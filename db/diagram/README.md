@@ -1,6 +1,6 @@
 # Diagrama entidad–relación
 
-Modelo físico generado a partir de [schema.sql](../schema.sql): **44 tablas**, de las cuales 43 pertenecen al modelo de la aplicación y una es `__EFMigrationsHistory`, con **72 claves foráneas**. El SQL corresponde al modelo final de las siete migraciones actuales.
+Modelo físico generado a partir de [schema.sql](../schema.sql): **44 tablas**, de las cuales 43 pertenecen al modelo de la aplicación y una es `__EFMigrationsHistory`, con **72 claves foráneas**. El SQL corresponde al modelo final de las nueve migraciones actuales, incluida SoftDeletionAndBcvReferences.
 
 ## Consultar el diagrama
 

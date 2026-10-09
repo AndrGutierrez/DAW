@@ -1,5 +1,8 @@
 # Fase 4: ficha del animal y pesaje consecutivo
 
+> Actualización vigente: [conservación de registros y consulta automática BCV](fase4-conservacion-bcv.md). Sustituye los apartados anteriores de borrado físico y cotización exclusivamente manual. Los conteos de pruebas aquí consignados conservan la fecha y el alcance de esa revisión.
+
+
 Este segundo incremento conecta el registro y la edición del animal, sus fotografías privadas y el seguimiento de peso con la SPA. Desarrolla la curva de GDP, la carga con compresión y el pesaje consecutivo descritos para el grupo 3 en los [lineamientos del profesor](https://gramirezsunet.github.io/desarrolloAplicacionesWeb/REAF-F4/).
 
 El tercer incremento amplía esta ficha con historial clínico, retiro, reproducción, producción y árbol genealógico. Sus reglas se explican en [sanidad y reproducción](fase4-sanidad.md); el alcance restante está en [estado de implementación](fase4-estado.md).

@@ -1,6 +1,6 @@
 # Auditoría integral de Fase 4
 
-Revisión del 8 de octubre de 2026. Este informe contrasta requisitos, implementación y evidencia; no asigna una calificación ni acredita la entrega en Classroom. Sustituye los conteos anteriores para esta revisión. [Evidencia y reproducción](evidence/phase4-ui-quality/README.md).
+Revisión del 8 de octubre de 2026. Actualización de conservación y cotización automática: [comportamiento vigente](fase4-conservacion-bcv.md) y [evidencia actual](evidence/phase4-retention-bcv/README.md). Los conteos y coberturas de las revisiones anteriores se identifican como históricos. Este informe contrasta requisitos, implementación y evidencia; no asigna una calificación ni acredita la entrega en Classroom. Sustituye los conteos anteriores para esta revisión. [Evidencia y reproducción](evidence/phase4-ui-quality/README.md).
 
 ## Fuentes y prioridad
 
@@ -58,7 +58,7 @@ Tailwind 4 está integrado con el plugin de Vite y su configuración CSS. La aus
 | 5. Búsqueda/paginación servidor | Implementado en listas extensas | Animales, selectores, registros clínicos/producción y residentes usan consultas paginadas. Series analíticas y agregados se solicitan por período; los catálogos de selección no se presentan como paginación universal |
 | 6. Responsivo | Implementado y probado | Escritorio/móvil, cinco accesos móviles incluyendo Más; tablas con scroll accesible por teclado solo cuando desbordan; sin desbordamiento horizontal de página en las pantallas verificadas |
 | 7. Carga/skeleton | Implementado | Estados de sesión, rutas y recursos; se conservan datos durante actualización y se ofrecen reintentos; reserva de espacio del dashboard al cargar |
-| 8. USD/Bs y tasa oficial | Parcial en la demostración | Conversión, dos decimales, fecha efectiva, historial y auditoría implementados; entrada manual explícita. Falta registrar una referencia oficial verificable en la instancia de demostración. Sin ella Bs queda deshabilitado |
+| 8. USD/Bs y tasa oficial | Implementado con fuente identificada | Consulta automática mediante BCV Today, fecha efectiva/publicación, historial y alternativa manual. La demo obtuvo 874,7321 Bs/USD para el 8 de octubre; el proveedor replica la referencia BCV y no es una API oficial del banco |
 | 9. Docker | Implementado | PostgreSQL 15 + inicialización .NET 10 + API + Nginx con docker compose up --build -d --wait; volumen vacío y entorno existente comprobados. No se promete que una descarga/build en frío tarde menos de dos minutos |
 | 10. Defensa E2E | Preparado, pendiente de realización | Guion y evidencia técnica disponibles. Ensayo presencial, acceso desde el equipo de presentación, entrega de enlace/formulario y sustentación corresponden al equipo |
 
@@ -84,7 +84,7 @@ La distribución de pesos era una brecha: un promedio no muestra distribución. 
 
 La revisión no calcula un porcentaje de cumplimiento ni predice una nota. El documento **Instrucciones y Evaluación 09 Octubre** exige un «nivel razonable de cobertura», y Classroom pide cobertura adecuada de componentes esenciales; ninguno fija 100% de líneas. Los cuatro criterios del documento tienen implementación y evidencia. El dato de cobertura global se publica como medición técnica, no como porcentaje de requisitos cumplidos.
 
-La referencia a cobertura completa pertenece al material anterior. La ausencia de una tasa verificada es un pendiente para demostrar Bs; JWT y colores son decisiones frente a fuentes que difieren; los permisos del catálogo se contrastan con un antecedente de Fase 3. Estas categorías no equivalen a funcionalidades ausentes de los cuatro criterios vigentes.
+La referencia a cobertura completa pertenece al material anterior. La tasa automática ya permite demostrar Bs con origen/fecha identificados; JWT sigue REAF y la paleta ganadera y restricción Employee del catálogo fueron ratificadas por el usuario frente a fuentes anteriores. Estas categorías no equivalen a funcionalidades ausentes de los cuatro criterios vigentes.
 
 ## Auditoría persistida y alcance
 
@@ -100,7 +100,7 @@ Mi cuenta se abre desde el avatar del encabezado, sin entrada en la barra latera
 2. **Identidad visual:** la asignación/rúbrica anterior exige Azul UNET #003366; el usuario pidió expresamente una paleta de finca. Se mantuvo esa decisión: neutros dominantes, verde para acciones/estados positivos y azul/ámbar/rojo/tierra según función. No es cumplimiento literal del requisito de marca institucional.
 3. **Rol Employee del catálogo:** la asignación de Fase 3 permite crear productos al empleado. Actualmente ProductsController y los permisos sembrados reservan creación/edición a Admin/Administrador, coherente con la UI y el control de precios/retiro del catálogo compartido. Es una desviación del antecedente de Fase 3; no se amplió un permiso sensible silenciosamente durante el pulido de Fase 4.
 4. **Cobertura:** 100% de casos aprobados no es 100% de cobertura. La medición global frontend es 36,49% de líneas / 21,81% de ramas, incluyendo módulos no montados por Vitest; Login 89,74%, editor animal 90,62%, dashboard 91,30%, pesaje 89,65% y diagnósticos 85,71% de líneas. Los recorridos E2E de esos otros módulos no se suman a V8. Core.Application: UnitTests 68,05% líneas / 67,32% ramas; Core.Tests 88,50% / 57,80%. Ninguna suite acredita la exigencia literal de cobertura completa.
-5. **Cotización:** conversión implementada, pero no existe una tasa BCV vigente verificada en la demo. El sitio oficial no respondió a la consulta automatizada. Debe incorporarse una referencia fechada y comprobable por el administrador antes de demostrar Bs; las tasas sintéticas de las pruebas permanecen únicamente en la base desechable.
+5. **Cotización:** la demo ya conserva la referencia automática para el 8 de octubre desde BCV Today. La fuente, fecha efectiva y publicación se muestran; se documenta que es un proveedor de terceros. Las tasas sintéticas de pruebas permanecen en la base desechable.
 6. **Rendimiento real:** existen mediciones y umbrales observables. Las muestras locales no certifican Core Web Vitals del percentil 75 de usuarios reales, conexiones lentas o equipos de finca. Las rutas SPA y las exportaciones grandes requieren evaluar su uso real; ExcelJS permanece como chunk grande cargado bajo demanda.
 
 ## Verificación y siguiente paso de entrega
@@ -113,8 +113,12 @@ Mi cuenta se abre desde el avatar del encabezado, sin entrada en la barra latera
 
 Para presentar: abrir el dashboard, contrastar un KPI con API, cambiar finca/período, registrar pesajes consecutivos, mostrar retiro y rechazo esperado, abrir potrero en lateral y finalmente demostrar revocación de una cuenta de prueba. Mostrar Mi cuenta → Rendimiento y explicar valores pendientes, límites del muestreo y p75 local. Utilizar la [guía del 9 de octubre](fase4-evaluacion-09-octubre.md) para los escenarios xUnit/Moq.
 
-Quedan acciones de entrega y sustentación, no botones ficticios en la UI: referencia BCV comprobable, ensayo en el equipo/red de presentación, publicación del enlace requerido y explicación de las desviaciones anteriores. La revisión del PR no sustituye el envío del entregable ni integra main automáticamente.
+Quedan acciones de entrega y sustentación, no botones ficticios en la UI: ensayo en el equipo/red de presentación, publicación del enlace requerido y explicación de las desviaciones anteriores. La revisión del PR no sustituye el envío del entregable ni integra main automáticamente.
 
 ## Actualización: visor de auditoría y conservación
 
-La ampliación posterior a la revisión visual añade el módulo de consulta, IP y eventos de acceso, y bloquea borrar físicamente un animal con traslados. [Documentación del módulo](fase4-registros-auditoria.md). Verificación actual: 237 UnitTests, 169 Core.Tests, 117 Vitest y 133 Playwright aprobadas, una omisión exclusiva móvil y 48 combinaciones esenciales de axe sin infracciones, más dos detalles laterales. V8 actual: 40,04% de líneas / 24,41% de ramas globales; visor 100% / 76%. Las mediciones .NET y de cobertura anteriores citadas arriba conservan su alcance histórico. [Evidencia de la ampliación](evidence/phase4-audit-module/README.md).
+La ampliación posterior a la revisión visual añade el módulo de consulta, IP y eventos de acceso, y originalmente bloqueaba borrar físicamente un animal con traslados; la actualización de conservación sustituye ese bloqueo por archivado que mantiene sus movimientos. [Documentación del módulo](fase4-registros-auditoria.md). Verificación histórica del visor: 237 UnitTests, 169 Core.Tests, 117 Vitest y 133 Playwright aprobadas, una omisión exclusiva móvil y 48 combinaciones esenciales de axe sin infracciones, más dos detalles laterales. V8 actual: 40,04% de líneas / 24,41% de ramas globales; visor 100% / 76%. Las mediciones .NET y de cobertura anteriores citadas arriba conservan su alcance histórico. [Evidencia de la ampliación](evidence/phase4-audit-module/README.md).
+
+## Actualización: eliminación lógica y referencia automática
+
+Se incorporaron archivo/restauración administrativa, conservación de fotografías y genealogía, exclusión de rendimientos anulados en KPI, protección de asignaciones y seed sin resucitar datos archivados. Las pruebas actuales y el cierre de entrega se documentan en [conservación/BCV](fase4-conservacion-bcv.md) y su [evidencia](evidence/phase4-retention-bcv/README.md). JWT conserva memoria y renovación HttpOnly; el usuario ratificó la paleta de finca y creación de productos exclusiva de Admin.
