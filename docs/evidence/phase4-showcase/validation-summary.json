@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-08",
+  "import": {
+    "Replayed": false,
+    "AnchorDate": "2026-10-08",
+    "Farms": 3,
+    "Animals": 180,
+    "Users": 7,
+    "Weights": 1347,
+    "Production": 2163,
+    "ClinicalEvents": 369,
+    "ReproductiveEvents": 339,
+    "Movements": 360,
+    "Inventory": 36
+  },
+  "tests": {
+    "unitTests": 241,
+    "coreTests": 196,
+    "newSeedCases": 6
+  },
+  "postgresRollback": {
+    "expectedFailure": true,
+    "exitCode": 139,
+    "counts": {
+      "megaFarms": 0,
+      "demoUsers": 0,
+      "megaAnimals": 0,
+      "manifests": 0
+    }
+  },
+  "postgresReplay": {
+    "passed": true,
+    "rowsBefore": 11531,
+    "rowsAfter": 11531,
+    "tables": 42
+  },
+  "preservation": {
+    "passed": true,
+    "tablesChecked": 42,
+    "originalRows": 6451,
+    "originalRowsRetained": 6451,
+    "newTotalRows": 17430,
+    "excludedTables": [
+      "RefreshTokens",
+      "ExchangeRates"
+    ],
+    "reason": "Session activity and independent BCV synchronization"
+  },
+  "backup": {
+    "format": "PostgreSQL custom archive",
+    "bytes": 891605,
+    "indexReadable": true,
+    "storedOutsideRepository": true
+  }
+}

@@ -36,6 +36,8 @@ docker compose up --build -d --wait
 
 El comando `--seed` aplica las migraciones y carga datos de demostración de forma idempotente. La SPA estará en `http://localhost:18080`, la API en `/api` y Swagger en `http://localhost:18080/swagger`. Usuario Admin: valor de `SEED_ADMIN_USERNAME`; contraseña: valor configurado en `.env`. Employee se crea solamente si tiene contraseña configurada.
 
+Para poblar una demostración completa con siete cuentas de rol, tres fincas y 180 animales adicionales, configurar `SEED_DEMO_PASSWORD` y seguir la [guía de la semilla amplia](docs/fase4-semilla-demostracion.md). Este modo es optativo, conserva los datos existentes y no cambia credenciales al repetirlo.
+
 **Persistencia existente:** PostgreSQL 15 usa el volumen nuevo `daw-postgres15-data`. Un volumen creado con PostgreSQL 17 no se puede conectar directamente a PostgreSQL 15: se conserva y requiere exportación/importación para trasladar sus datos. La migración de producción convierte leche, lana y carne con cantidades válidas; bloquea registros de huevos por lote sin animal y datos inconsistentes. Los insumos antiguos sin precios se conservan inactivos para revisión. No ejecuta un borrado general de la base. El detalle está en [instalación y actualización](docs/setup.md).
 
 ## API y CRUD

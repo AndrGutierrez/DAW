@@ -130,6 +130,13 @@ builder.Services.AddAntiforgery(options =>
 
 var app = builder.Build();
 
+if (args.Contains("--seed-demo"))
+{
+    var result = await app.Services.SeedShowcaseAsync();
+    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(result));
+    return;
+}
+
 if (args.Contains("--seed"))
 {
     await app.Services.SeedDatabaseAsync();

@@ -37,6 +37,7 @@ services:
       - Seed__EmployeeUsername=${SEED_EMPLOYEE_USERNAME:-employee}
       - Seed__EmployeeEmail=${SEED_EMPLOYEE_EMAIL:-employee@daw.local}
       - Seed__EmployeePassword=${SEED_EMPLOYEE_PASSWORD:-}
+      - Seed__DemoPassword=${SEED_DEMO_PASSWORD:-}
       - Storage__RootPath=/app/uploads
     volumes:
       - daw-uploads:/app/uploads

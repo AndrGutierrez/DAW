@@ -109,6 +109,14 @@ public static class DependencyInjection
         services.AddScoped<ICrudService<TRequest>, CrudService<TEntity, TRequest>>();
     }
 
+    public static async Task<ShowcaseSeedResult> SeedShowcaseAsync(this IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+        return await ShowcaseSeeder.SeedAsync(scope.ServiceProvider);
+    }
+
     public static async Task SeedDatabaseAsync(this IServiceProvider services)
     {
         using var scope = services.CreateScope();
