@@ -1,6 +1,19 @@
 import { ApiError } from '../auth/session';
 export type FieldErrors = Record<string, string>;
 const messages: Record<string, string> = {
+  "Move the animals and lots out of this paddock before archiving it.": "El potrero tiene animales o lotes vinculados. Trasládalos o resuelve esas dependencias antes de archivarlo.",
+  "A Farm with the same identifying value already exists.": "Ya existe una finca con ese código. Revisa el código o restaura la finca archivada.",
+  "A Species with the same identifying value already exists.": "Ya existe una especie con ese código o nombre.",
+  "A Breed with the same identifying value already exists.": "Ya existe una raza con ese nombre para la especie seleccionada.",
+  "A Lot with the same identifying value already exists.": "Ya existe un lote con ese nombre en la finca.",
+  "Use a stock movement to change an existing balance.": "Registra una entrada o salida para cambiar el saldo, incluso si comienza en cero.",
+  "Archive the farm's animals, inventory, paddocks and lots first.": "La finca tiene registros vinculados. Resuelve o archiva primero sus animales, existencias, potreros y lotes.",
+  "This species is used by animals, breeds or lots.": "La especie tiene animales, razas o lotes vinculados. Resuelve esas dependencias antes de archivarla.",
+  "This breed is used by animals.": "Hay animales con esta raza. Revisa sus fichas antes de archivarla.",
+  "Move the animals out of this lot before archiving it.": "Traslada los animales a otro lote antes de archivar este grupo.",
+  "A breed used by animals cannot change species.": "Esta raza está asignada a animales y debe conservar su especie.",
+  "A lot used by animals cannot change species.": "Este lote contiene animales y debe conservar su especie.",
+  "The paddock belongs to a different farm.": "Selecciona un potrero de la misma finca que el lote.",
   'A Product with the same identifying value already exists.': 'Ya existe un producto con ese código SKU. Revisa el código antes de guardar.',
   'A InventoryCategory with the same identifying value already exists.': 'Ya existe una categoría con ese nombre. Revisa el nombre antes de guardar.',
   'The category is inactive.': 'Selecciona una categoría activa para este producto.',

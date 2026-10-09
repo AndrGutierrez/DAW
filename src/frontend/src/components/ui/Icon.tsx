@@ -1,3 +1,4 @@
+import { SlidersHorizontalIcon } from '@phosphor-icons/react/dist/csr/SlidersHorizontal';
 import { ArchiveIcon } from '@phosphor-icons/react/dist/csr/Archive';
 import { ClockCounterClockwiseIcon } from '@phosphor-icons/react/dist/csr/ClockCounterClockwise';
 import { ArrowsClockwiseIcon } from '@phosphor-icons/react/dist/csr/ArrowsClockwise';
@@ -35,6 +36,7 @@ import { DotsThreeIcon } from '@phosphor-icons/react/dist/csr/DotsThree';
 import type { IconProps } from '@phosphor-icons/react';
 
 const icons = {
+  filter: SlidersHorizontalIcon,
   archive: ArchiveIcon,
   audit: ClockCounterClockwiseIcon,
   refresh: ArrowsClockwiseIcon,

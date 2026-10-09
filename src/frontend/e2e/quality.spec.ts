@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-const routes = ['/dashboard', '/animals', '/weighing', '/paddocks', '/inventory', '/reports', '/monitoring', '/users', '/account', '/diagnostics', '/auditlogs', '/archive'];
+const routes = ['/dashboard', '/animals', '/weighing', '/paddocks', '/inventory', '/reports', '/monitoring', '/users', '/account', '/diagnostics', '/auditlogs', '/archive', '/management', '/management?tab=species', '/management?tab=breeds', '/management?tab=lots'];
 test('essential screens have no detected WCAG A/AA violations in both themes', async ({ page }, info) => {
  test.setTimeout(240000);
  await page.goto('/login');

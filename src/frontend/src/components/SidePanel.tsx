@@ -6,10 +6,11 @@ import { Icon } from './ui/Icon';
 export function SidePanel({ title, onRequestClose, children, eyebrow = "OCUPACIÓN DEL POTRERO", closeLabel = "Cerrar detalle del potrero" }: { title: string; onRequestClose: () => void; children: ReactNode; eyebrow?: string; closeLabel?: string }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
+  const returnFocus = useRef(document.activeElement instanceof HTMLElement ? document.activeElement : null);
   useEffect(() => {
     const element = dialog.current;
     const previousOverflow = document.body.style.overflow;
-    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const trigger = returnFocus.current;
     element?.showModal();
     document.body.style.overflow = 'hidden';
     return () => { element?.close(); document.body.style.overflow = previousOverflow; if (trigger?.isConnected) trigger.focus({ preventScroll: true }); };

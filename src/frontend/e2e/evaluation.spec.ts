@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import type { APIRequestContext, Page } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
 // These scenarios intentionally retain clinical history and synthetic rates until the disposable Compose volume is removed.
 test.skip(process.env.E2E_ISOLATED_DATABASE !== '1', 'Run only against the disposable phase4 evaluation database.');
 let headers: Record<string, string>, farmId: string, speciesId: string, prefix: string;
@@ -15,6 +17,7 @@ async function animal(request: APIRequestContext, suffix: string) {
   expect(response.status()).toBe(201); return (await response.json()).id as string;
 }
 async function period(page: Page, from: string, to: string) {
+  await page.getByRole('button', { name: 'Filtros', exact: true }).click();
   await page.getByLabel('Desde', { exact: true }).fill(from); await page.getByLabel('Hasta', { exact: true }).fill(to);
   await page.getByRole('button', { name: 'Aplicar filtros', exact: true }).click();
 }
@@ -40,7 +43,7 @@ test('an employee production write updates another session dashboard without nav
   await expect(page.getByRole('article', { name: 'Leche registrada', exact: true }).locator('strong')).toHaveText(expected, { timeout: 8000 });
   await expect(page).toHaveURL(/dashboard/); expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });
-test('pregnancy and fertility deduplicate females and disclose pending diagnoses', async ({ page, request }) => {
+test('pregnancy and fertility deduplicate females and disclose pending diagnoses', async ({ page, request }, info) => {
   const ids: string[] = []; for (const suffix of ['A', 'B', 'C']) ids.push(await animal(request, suffix));
   for (let i = 0; i < ids.length; i++) {
     for (const record of [{ kind: 'Mating', date: '2026-02-01' }, { kind: 'PregnancyCheck', date: '2026-02-10', result: ['Positive', 'Negative', 'Uncertain'][i] }]) {
@@ -52,7 +55,9 @@ test('pregnancy and fertility deduplicate females and disclose pending diagnoses
   await signIn(page); await period(page, '2026-02-01', '2026-02-10');
   await expect(page.getByRole('article', { name: 'Preñez en hembras evaluadas', exact: true }).locator('strong')).toHaveText('50%');
   await expect(page.getByText('Fertilidad de servicios evaluados', { exact: true })).toBeVisible();
-  await expect(page.getByText(/pendientes de.*hembras servidas/)).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Fertilidad de servicios evaluados', exact: true }).getByText(/^\d+ servicios? pendientes?$/)).toBeVisible();
+  await expect(page.getByText(/hembras con servicio en el período/, { exact: false })).toBeVisible();
+  if (process.env.QUALITY_EVIDENCE_DIR) { await mkdir(process.env.QUALITY_EVIDENCE_DIR, { recursive: true }); await page.locator('.reproduction-summary').screenshot({ path: join(process.env.QUALITY_EVIDENCE_DIR, 'reproduction-evaluated-' + info.project.name + '.png') }); }
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });
 test('dated BCV reference persists and changes valuation currency without modifying USD catalog prices', async ({ page, request }) => {

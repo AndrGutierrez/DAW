@@ -35,7 +35,7 @@ test('daily milk chart changes lot and preserves recorded totals and gaps', asyn
   }
   await page.goto('/login'); await page.getByLabel('Usuario o correo').fill(username); await page.getByLabel('Contraseña', { exact: true }).fill(password); await page.getByRole('button', { name: 'Entrar a mi finca' }).click(); await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
   await expect(page.getByRole('article', { name: 'Leche registrada', exact: true })).toBeVisible();
-  await page.getByLabel('Desde', { exact: true }).fill('2026-01-10'); await page.getByLabel('Hasta', { exact: true }).fill('2026-01-12'); await page.getByRole('button', { name: 'Aplicar filtros', exact: true }).click();
+  await page.getByRole('button', { name: 'Filtros', exact: true }).click(); await page.getByLabel('Desde', { exact: true }).fill('2026-01-10'); await page.getByLabel('Hasta', { exact: true }).fill('2026-01-12'); await page.getByRole('button', { name: 'Aplicar filtros', exact: true }).click();
   await expect(page.getByRole('article', { name: 'Leche registrada', exact: true }).locator('strong')).toHaveText('10,579 L');
   await page.getByLabel('Gráfico', { exact: true }).selectOption('lot-daily');
   await page.getByLabel('Lote de la curva diaria', { exact: true }).selectOption(farmId + ':' + lots[0]);
