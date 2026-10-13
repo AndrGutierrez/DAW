@@ -1,0 +1,15 @@
+{
+  "before": {
+    "animals": 8,
+    "inventory": 4,
+    "inventoryFingerprint": "30e7b9949f5d3ebd4cc9b6a6ee98a490"
+  },
+  "afterProjected": {
+    "animals": 8,
+    "inventory": 4,
+    "inventoryFingerprint": "30e7b9949f5d3ebd4cc9b6a6ee98a490"
+  },
+  "inventoryPreserved": true,
+  "animalCountPreserved": true,
+  "note": "The prior local database lacked retention metadata; the comparison excludes Version, DeletedAt, DeletedByUserId and IsDeleted added by pending migrations. It compares inventory rows and animal counts, not every table."
+}

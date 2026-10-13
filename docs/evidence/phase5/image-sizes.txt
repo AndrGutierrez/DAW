@@ -1,0 +1,2 @@
+daw-api: 58775704 bytes (limit: strictly below 120000000 bytes)
+daw-nginx: 29539876 bytes (limit: strictly below 120000000 bytes)

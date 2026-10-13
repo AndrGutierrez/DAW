@@ -1,0 +1,5 @@
+NAME                             IMAGE                  COMMAND                  SERVICE      CREATED          STATUS                      PORTS
+daw-phase5-verify-api            daw-phase5-api:local   "./Presentation.API"     blazorapp    14 minutes ago   Up 14 minutes (healthy)     127.0.0.1:18096->8080/tcp
+daw-phase5-verify-db             postgres:15-alpine     "docker-entrypoint.s…"   db           23 minutes ago   Up 23 minutes (healthy)     0.0.0.0:15495->5432/tcp, [::]:15495->5432/tcp
+daw-phase5-verify-initialize-1   daw-phase5-api:local   "./Presentation.API …"   initialize   14 minutes ago   Exited (0) 10 minutes ago
+daw-phase5-verify-spa            daw-phase5-spa:local   "/docker-entrypoint.…"   nginx        10 minutes ago   Up 10 minutes (healthy)     0.0.0.0:18095->80/tcp, [::]:18095->80/tcp

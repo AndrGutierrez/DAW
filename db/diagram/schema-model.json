@@ -1,6 +1,6 @@
 {
   "source": "db/schema.sql",
-  "sourceSha256": "bbdb3c557f6814e3b058f44b16736fff28c2cc0df28c72cd88036090b8b002b2",
+  "sourceSha256": "5598c9dfa01239be370b02c077db16bc42bae19b61c2c54ff0160aeefe21084b",
   "tableCount": 44,
   "foreignKeyCount": 72,
   "modules": [
@@ -1212,6 +1212,12 @@
           "type": "boolean",
           "nullable": false,
           "definition": "boolean DEFAULT false NOT NULL"
+        },
+        {
+          "name": "Version",
+          "type": "bigint",
+          "nullable": false,
+          "definition": "bigint DEFAULT 0 NOT NULL"
         }
       ],
       "checks": [

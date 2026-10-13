@@ -83,7 +83,7 @@ const coreFields = {
   AnimalPhotos: ['FileName', 'Url'], HealthStatusChanges: ['PreviousStatus', 'NewStatus', 'Reason'],
   WeightRecords: ['Date', 'WeightKg'], AnimalProduction: ['OperationId', 'Date', 'ProductType', 'Method', 'Quantity', 'Unit'],
   InventoryCategories: ['Name', 'IsActive'], Products: ['SKU', 'Name', 'Price', 'CostPrice', 'Unit', 'Brand', 'IsActive'],
-  FarmInventory: ['Stock', 'MinStock', 'MaxStock', 'Location']
+  FarmInventory: ['Stock', 'MinStock', 'MaxStock', 'Location', 'Version']
 };
 const foreignColumns = table => relationships.filter(relation => relation.child === table.name).flatMap(relation => relation.columns);
 const typeLabel = type => type.replace('character varying', 'varchar').replace('timestamp with time zone', 'timestamptz').replace('integer', 'int').replace('boolean', 'bool').replace('double precision', 'float8');

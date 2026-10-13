@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-12",
+  "backendUnit": 250,
+  "backendIntegration": 199,
+  "frontend": 198,
+  "browserFull": {
+    "passed": 157,
+    "skipped": 1
+  },
+  "browserLinkFollowup": 24,
+  "browserMapFollowup": 24,
+  "newman": {
+    "requests": 16,
+    "assertions": 16,
+    "failed": 0
+  },
+  "imageBytes": {
+    "api": 58775704,
+    "spa": 29539876
+  },
+  "frontendCoverage": {
+    "lines": {
+      "total": 1602,
+      "covered": 889,
+      "skipped": 0,
+      "pct": 55.49
+    },
+    "statements": {
+      "total": 3042,
+      "covered": 1433,
+      "skipped": 0,
+      "pct": 47.1
+    },
+    "functions": {
+      "total": 901,
+      "covered": 366,
+      "skipped": 0,
+      "pct": 40.62
+    },
+    "branches": {
+      "total": 3420,
+      "covered": 1353,
+      "skipped": 0,
+      "pct": 39.56
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "workflow": "actionlint passed; remote run pending publication",
+  "nfc": "NDEF simulated; physical device not verified",
+  "browserPeriodFollowup": {
+    "passed": 4,
+    "scope": "Read-only dashboard and report queries on the local demonstration; desktop/mobile; WCAG checks after animations settle."
+  }
+}
