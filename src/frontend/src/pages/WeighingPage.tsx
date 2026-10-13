@@ -8,11 +8,12 @@ import type { Animal, AnimalPageResult, CatalogItem } from '../api/livestock';
 import { useFeedback } from '../components/Feedback';
 import { Field } from '../components/Field';
 import { useSearchSelection } from '../components/useSearchSelection';
+import { AnimalScanner } from '../components/AnimalScanner';
 import { WeighingForm } from '../components/WeighingForm';
 import type { SavedWeighing } from '../components/WeighingForm';
 export function WeighingPage() {
   const { can } = useAuth();
-  const { confirm } = useFeedback();
+  const { confirm, notify } = useFeedback();
   const [blocked, setBlocked] = useState(false);
   const [skipped, setSkipped] = useState<Animal[]>([]);
   const allowed = can('weights.create') && can('animals.list') && can('animals.get');
@@ -47,7 +48,7 @@ export function WeighingPage() {
   if (!allowed) return <div className="panel empty-state"><h1>Sin acceso al pesaje consecutivo</h1><p>Necesitas permisos de consulta de animales y registro de pesos.</p><Link to="/animals">Volver a los animales</Link></div>;
   const current = queue?.[index];
   return <section><div className="page-heading"><div><span className="eyebrow">REGISTRO EN CAMPO</span><h1>Pesaje consecutivo</h1><p className="muted">Selecciona los animales y registra cada peso sin recargar la página.</p></div>{queue && <span className="tag">{saved.length} guardados · {skipped.length} omitidos · {queue.length} seleccionados</span>}</div>
-    {!queue ? <><div className="panel form-section"><div className="form-grid"><Field label="Finca"><Select value={farmId} onChange={event => { setFarmId(event.target.value); setLotId(''); setSelected([]); setPage(1); }}><option value="">Selecciona una finca</option>{farms.data?.filter(item => item.data.isActive).map(item => <option key={item.id} value={item.id}>{item.data.name}</option>)}</Select></Field><Field label="Lote"><Select value={lotId} disabled={!farmId} onChange={event => { setLotId(event.target.value); setPage(1); }}><option value="">Todos los lotes</option>{lots.data?.filter(item => item.data.farmId === farmId && item.data.isActive).map(item => <option key={item.id} value={item.id}>{item.data.name}</option>)}</Select></Field><Field label="Fecha inicial"><Input type="date" value={weighDate} max={today()} onChange={event => setWeighDate(event.target.value)} /></Field></div>
+    {!queue ? <><AnimalScanner farmId={farmId || undefined} onIdentified={animal => { if (animal.status !== "Active") { notify("Solo se pueden pesar animales activos.", "error"); return; } setFarmId(animal.farmId); setSelected(items => items.some(item => item.id === animal.id) ? items : [...items, { ...animal, coverPhotoUrl: animal.photos[0]?.url || null, photoCount: animal.photos.length }]); }} /><div className="panel form-section"><div className="form-grid"><Field label="Finca"><Select value={farmId} onChange={event => { setFarmId(event.target.value); setLotId(''); setSelected([]); setPage(1); }}><option value="">Selecciona una finca</option>{farms.data?.filter(item => item.data.isActive).map(item => <option key={item.id} value={item.id}>{item.data.name}</option>)}</Select></Field><Field label="Lote"><Select value={lotId} disabled={!farmId} onChange={event => { setLotId(event.target.value); setPage(1); }}><option value="">Todos los lotes</option>{lots.data?.filter(item => item.data.farmId === farmId && item.data.isActive).map(item => <option key={item.id} value={item.id}>{item.data.name}</option>)}</Select></Field><Field label="Fecha inicial"><Input type="date" value={weighDate} max={today()} onChange={event => setWeighDate(event.target.value)} /></Field></div>
       <form className="compact-search" onSubmit={event => { event.preventDefault(); setQuery(search.trim()); setPage(1); }}><Input aria-label="Buscar animales para pesar" value={search} maxLength={100} placeholder="Arete o nombre" onChange={event => setSearch(event.target.value)} /><Button className="button secondary" disabled={!farmId}>Buscar</Button></form></div>
       {(farms.error || lots.error || animals.error) && <div className="panel error-banner" role="alert"><p>{farms.error || lots.error || animals.error}</p><Button className="button secondary" onClick={() => { farms.reload(); lots.reload(); animals.reload(); }}>Reintentar</Button></div>}
       {animals.loading && farmId && <p role="status">Cargando animales activos…</p>}

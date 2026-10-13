@@ -3089,3 +3089,15 @@ table, .metric-grid strong, .stock-value, input[type=number] { font-variant-nume
 .transfer-record-links { display: flex; flex-wrap: wrap; gap: 8px 18px; max-height: 150px; overflow-y: auto; }
 .transfer-submit .button-row { justify-content: flex-end; }
 @media (max-width: 600px) { .selection-toolbar { align-items: stretch; } .selection-toolbar .button-row { width: 100%; } .selection-toolbar .button { flex: 1 1 100%; white-space: normal; } .transfer-destination { padding: 18px; } .transfer-capacity { flex-direction: column; } .transfer-submit .button { width: 100%; } }
+
+/* Operational notifications and animal identification. */
+.notification-trigger { position: relative; }
+.notification-count { position: absolute; top: -5px; right: -5px; min-width: 19px; padding: 1px 4px; border-radius: 99px; background: var(--danger-solid); color: white; font-size: 11px; font-weight: 700; }
+.notification-filters { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.notification-list { display: grid; gap: .8rem; padding: 0; list-style: none; }
+.notification-item { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--warning); padding: 1rem; border-radius: .6rem; overflow-wrap: anywhere; }
+.notification-item.critical { border-left-color: var(--danger); }
+.notification-item p { margin: .4rem 0; }
+.scanner-preview { width: 100%; max-height: 320px; background: #111; border-radius: .6rem; margin-top: 1rem; }
+.scanner-hidden { display: none; }
+.animal-qr { display: block; width: min(320px, 100%); margin: 1rem auto; background: white; }
