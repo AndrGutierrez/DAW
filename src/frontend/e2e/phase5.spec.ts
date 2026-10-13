@@ -23,9 +23,18 @@ async function login(page: import('@playwright/test').Page) {
 }
 test('real QR image decoder opens the authorized animal and downloads its label', async ({ page }, info) => {
   await login(page); await page.getByRole('button', { name: 'Leer QR / NFC' }).click(); const dialog = page.getByRole('dialog', { name: 'Identificar animal' });
+  // Delay scripts loaded by the upload without depending on the bundler's chunk names.
+  let decoderRequested = false;
+  const slowDecoder = async (route: import('@playwright/test').Route) => { decoderRequested = true; await new Promise(resolve => setTimeout(resolve, 6000)); await route.continue(); };
+  await page.route('**/assets/*.js', slowDecoder);
   const buffer = await QRCode.toBuffer('daw:animal:' + animalId, { width: 500, errorCorrectionLevel: 'M' });
   await dialog.getByLabel('Cargar imagen QR').setInputFiles({ name: 'animal.png', mimeType: 'image/png', buffer });
-  await expect(dialog.getByLabel('Identificación leída')).toHaveValue('daw:animal:' + animalId); await dialog.getByRole('button', { name: 'Buscar animal identificado' }).click(); await expect(page).toHaveURL(new RegExp('/animals/' + animalId + '$'));
+  const identifier = dialog.getByLabel('Identificación leída');
+  await expect(identifier).toBeDisabled();
+  await expect(identifier).toBeEnabled({ timeout: 15_000 });
+  expect(decoderRequested).toBe(true);
+  await page.unroute('**/assets/*.js', slowDecoder);
+  await expect(identifier).toHaveValue('daw:animal:' + animalId); await dialog.getByRole('button', { name: 'Buscar animal identificado' }).click(); await expect(page).toHaveURL(new RegExp('/animals/' + animalId + '$'));
   await page.getByRole('button', { name: 'Etiqueta QR / NFC' }).click(); const label = page.getByRole('dialog', { name: 'Etiqueta de ' + tag }); await expect(label.getByRole('img', { name: 'Código QR del animal ' + tag })).toBeVisible();
   const download = page.waitForEvent('download'); await label.getByRole('link', { name: 'Descargar QR' }).click(); expect((await download).suggestedFilename()).toBe('animal-' + tag + '.png');
   const dir = join(tmpdir(), 'daw-phase5-evidence'); await mkdir(dir, { recursive: true }); await page.screenshot({ path: join(dir, 'qr-' + info.project.name + '.png') });
