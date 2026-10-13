@@ -3101,3 +3101,9 @@ table, .metric-grid strong, .stock-value, input[type=number] { font-variant-nume
 .scanner-preview { width: 100%; max-height: 320px; background: #111; border-radius: .6rem; margin-top: 1rem; }
 .scanner-hidden { display: none; }
 .animal-qr { display: block; width: min(320px, 100%); margin: 1rem auto; background: white; }
+.transfer-flow { padding: 1rem; background: var(--soft); border-radius: .6rem; font-weight: 600; }
+.plan-paddock[aria-disabled="true"] { cursor: default; opacity: .7; }
+
+.paddock-plan-panel { padding: 24px; margin-block: 20px; }
+.paddock-plan-panel > h2 { margin-top: 0; }
+@media (max-width: 600px) { .paddock-plan-panel { padding: 18px; } }

@@ -9,6 +9,7 @@ import { useResource } from '../api/useResource';
 import type { CatalogItem } from '../api/livestock';
 import type { CarePage } from '../api/care';
 import { date, number } from '../api/livestock';
+import { useOperationalRefresh } from '../api/useOperationalRefresh';
 import { PaddockPlan } from '../components/PaddockPlan';
 import { occupancyState, stayDays, permanenceState } from '../api/paddocks';
 import type { PaddockData, PaddockSnapshot, Resident } from '../api/paddocks';
@@ -86,6 +87,7 @@ export function PaddocksPage() {
   const plan = useResource<PaddockSnapshot[]>('/api/paddocks/map?farmId=' + farm, !!farm && can('paddocks.list'));
   const chosen = paddocks.data?.items.find(p => p.id === selected) || plan.data?.find(p => p.id === selected);
   function reloadPaddocks() { paddocks.reload(); plan.reload(); }
+  useOperationalRefresh(reloadPaddocks, !!farm && !editor && !archiveBusy && !selected);
   async function archivePaddock(item: PaddockSnapshot) {
     if (archiveBusy || !await confirm('¿Archivar «' + item.data.name + '»? Sus datos se conservarán en Papelera. Resuelve primero los animales y lotes vinculados.', { destructive: true, confirmLabel: 'Archivar potrero' })) return;
     setArchiveBusy(item.id); setArchiveError('');
