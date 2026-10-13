@@ -22,7 +22,8 @@ async function period(page: Page, from: string, to: string) {
   await page.getByRole('button', { name: 'Aplicar filtros', exact: true }).click();
 }
 test.beforeEach(async ({ request }, info) => {
-  expect(info.project.use.baseURL).toBe('http://localhost:18089');
+  expect(process.env.E2E_ISOLATED_DATABASE).toBe('1');
+  expect(['localhost', '127.0.0.1']).toContain(new URL(info.project.use.baseURL!).hostname);
   prefix = 'P4-EVAL-' + randomUUID().slice(0, 8).toUpperCase();
   const auth = await request.post('/api/auth/login', { data: { username: process.env.E2E_ADMIN_USERNAME, password: process.env.E2E_ADMIN_PASSWORD } });
   expect(auth.status()).toBe(200); headers = { Authorization: 'Bearer ' + (await auth.json()).accessToken };

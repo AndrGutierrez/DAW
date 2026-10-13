@@ -1,104 +1,130 @@
 name: CI
-
 on:
+  push:
+    branches: [main]
   pull_request:
+    branches: [main]
   workflow_dispatch:
-
+permissions:
+  contents: read
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   unit-tests:
-    name: Unit and integration tests
+    name: Backend tests and coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-
-      - name: Restore
-        run: dotnet restore DAW.slnx
-
-      - name: Test
-        run: dotnet test DAW.slnx --no-restore --configuration Release
-
-  postman-tests:
-    name: Postman tests (Newman)
+      - run: dotnet restore DAW.slnx
+      - run: dotnet test DAW.slnx --no-restore -c Release --collect:"XPlat Code Coverage" --logger trx --results-directory artifacts/backend-tests
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-results
+          path: artifacts/backend-tests
+  frontend-tests:
+    name: SPA build and component coverage
     runs-on: ubuntu-latest
-    needs: unit-tests
+    defaults:
+      run:
+        working-directory: src/frontend
+        shell: bash
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Start PostgreSQL
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run test:coverage
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage
+          path: src/frontend/coverage
+  stack-tests:
+    name: PostgreSQL 15, browser and HTTP contracts
+    runs-on: ubuntu-latest
+    needs: [unit-tests, frontend-tests]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Configure disposable stack
+        shell: bash
         run: |
-          PG_PASSWORD="$(openssl rand -hex 16)"
-          echo "PG_PASSWORD=$PG_PASSWORD" >> "$GITHUB_ENV"
-          docker run -d --name postgres \
-            -e POSTGRES_DB=daw \
-            -e POSTGRES_USER=daw \
-            -e POSTGRES_PASSWORD="$PG_PASSWORD" \
-            -p 5432:5432 postgres:17-alpine
-          for _ in $(seq 1 30); do
-            if docker exec postgres pg_isready -U daw -d daw >/dev/null 2>&1; then
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "PostgreSQL did not become ready in time" >&2
-          exit 1
-
-      - name: Configure runtime environment
+          set -euo pipefail
+          admin_password="$(openssl rand -base64 24)Aa1!"
+          employee_password="$(openssl rand -base64 24)Aa1!"
+          echo "::add-mask::$admin_password"
+          echo "::add-mask::$employee_password"
+          cp .env.example .env
+          cat >> .env <<EOF
+          COMPOSE_PROJECT_NAME=daw-ci
+          POSTGRES_PASSWORD=$(openssl rand -hex 24)
+          JWT_KEY=$(openssl rand -hex 48)
+          SEED_ADMIN_PASSWORD=$admin_password
+          SEED_EMPLOYEE_PASSWORD=$employee_password
+          BCV_AUTO_SYNC=false
+          NGINX_HTTP_PORT=18086
+          API_HTTP_PORT=5000
+          EOF
+          echo "E2E_ADMIN_PASSWORD=$admin_password" >> "$GITHUB_ENV"
+          echo "E2E_EMPLOYEE_PASSWORD=$employee_password" >> "$GITHUB_ENV"
+      - name: Build and start healthy stack
+        run: docker compose up --build -d --wait --wait-timeout 180
+      - name: Enforce image budget
+        run: bash scripts/verify-image-size.sh daw-ci-api daw-ci-nginx
+      - name: HTTP contracts
         run: |
-          echo "ASPNETCORE_ENVIRONMENT=Development" >> "$GITHUB_ENV"
-          echo "DisableHttpsRedirection=true" >> "$GITHUB_ENV"
-          echo "Jwt__Key=$(openssl rand -base64 48)" >> "$GITHUB_ENV"
-          echo "Seed__AdminPassword=$(openssl rand -base64 24)Aa1!" >> "$GITHUB_ENV"
-          echo "ConnectionStrings__Default=Host=localhost;Port=5432;Database=daw;Username=daw;Password=$PG_PASSWORD" >> "$GITHUB_ENV"
-
-      - name: Restore
-        run: dotnet restore DAW.slnx
-
-      - name: Migrations and seed
-        run: |
-          dotnet tool restore
-          dotnet ef database update --project src/Infrastructure --startup-project src/Presentation.API
-          dotnet run --project src/Presentation.API --no-launch-profile -- --seed
-
-      - name: Run API and Postman collection
-        run: |
-          dotnet run --project src/Presentation.API --no-launch-profile --urls http://127.0.0.1:5000 > /tmp/app.log 2>&1 &
-          APP_PID=$!
-          for _ in $(seq 1 60); do
-            code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:5000/api/auth/me || true)
-            if [ "$code" != "000" ]; then
-              break
-            fi
-            sleep 1
-          done
-
-          set +e
           npx --yes newman run postman/Cattle-Management.postman_collection.json \
             -e postman/Daw.postman_environment.json \
             --env-var baseUrl=http://127.0.0.1:5000 \
-            --env-var adminPassword="$Seed__AdminPassword"
-          STATUS=$?
-          set -e
-
-          if [ "$STATUS" -ne 0 ]; then
-            echo "----- API log -----"
-            tail -n 100 /tmp/app.log || true
-          fi
-
-          kill "$APP_PID" 2>/dev/null || true
-          exit "$STATUS"
+            --env-var adminPassword="$E2E_ADMIN_PASSWORD"
+      - name: Browser regression
+        working-directory: src/frontend
+        env:
+          E2E_BASE_URL: http://127.0.0.1:18086
+          E2E_ADMIN_USERNAME: admin
+          E2E_EMPLOYEE_USERNAME: employee
+          E2E_ISOLATED_DATABASE: '1'
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+      - name: Preserve sanitized diagnostics
+        if: failure()
+        run: docker compose ps -a
+      - name: Stop disposable stack
+        if: always()
+        run: docker compose down -v
+  delivery:
+    name: Publish verified artifacts
+    runs-on: ubuntu-latest
+    needs: [unit-tests, frontend-tests, stack-tests]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: dotnet publish src/Presentation.API/Presentation.API.csproj -c Release -o artifacts/backend
+      - working-directory: src/frontend
+        run: npm ci && npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-backend
+          path: artifacts/backend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-frontend
+          path: src/frontend/dist

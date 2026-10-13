@@ -96,6 +96,8 @@ test('admin and employee maintain assigned paddocks while deletion remains restr
   await page.getByRole('button', { name: 'Salir', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Inicia sesión' })).toBeVisible();
   await login(page, true);
+  await page.getByLabel('Buscar potrero').fill(prefix);
+  await page.getByRole('button', { name: 'Buscar', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Registrar potrero', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Editar ' + prefix + '-EDIT', exact: true }).click();
   await page.getByLabel('Capacidad máxima (animales)').fill('5');
