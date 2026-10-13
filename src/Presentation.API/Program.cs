@@ -14,7 +14,15 @@ using Presentation.API.Components;
 using Presentation.API.Middleware;
 using Presentation.API.Validation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.WebUtilities;
+
+if (args.Contains("--healthcheck"))
+{
+    try { using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(4) }; using var response = await client.GetAsync("http://127.0.0.1:8080/health/ready"); Environment.Exit(response.IsSuccessStatusCode ? 0 : 1); }
+    catch { Environment.Exit(1); }
+    return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -185,6 +193,11 @@ app.UseSwaggerUI(options =>
 
 app.UseMiddleware<Presentation.API.Realtime.AnalyticsChangeMiddleware>();
 app.UseAntiforgery();
+app.MapGet("/health/ready", async (Infrastructure.Persistence.AppDbContext db, CancellationToken ct) =>
+{
+    try { return await db.Database.CanConnectAsync(ct) ? Results.Ok(new { status = "healthy" }) : Results.StatusCode(503); }
+    catch { return Results.StatusCode(503); }
+}).AllowAnonymous();
 app.MapControllers();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
