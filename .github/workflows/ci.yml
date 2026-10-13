@@ -81,7 +81,9 @@ jobs:
       - name: Build and start healthy stack
         run: docker compose up --build -d --wait --wait-timeout 180
       - name: Enforce image budget
-        run: bash scripts/verify-image-size.sh daw-ci-api daw-ci-nginx
+        run: |
+          bash scripts/tests/verify-image-size.test.sh
+          bash scripts/verify-image-size.sh daw-ci-api daw-ci-nginx
       - name: HTTP contracts
         run: |
           npx --yes newman run postman/Cattle-Management.postman_collection.json \

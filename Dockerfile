@@ -7,7 +7,7 @@ COPY ["src/Presentation.API/Presentation.API.csproj", "src/Presentation.API/"]
 RUN case "$(uname -m)" in x86_64) printf linux-musl-x64 > /tmp/runtime-id ;; aarch64) printf linux-musl-arm64 > /tmp/runtime-id ;; *) exit 1 ;; esac \
     && dotnet restore src/Presentation.API/Presentation.API.csproj -r "$(cat /tmp/runtime-id)" -p:ProductionContainer=true
 COPY src/ ./src/
-RUN dotnet publish src/Presentation.API/Presentation.API.csproj -c Release -r "$(cat /tmp/runtime-id)" --self-contained true --no-restore -p:ProductionContainer=true -p:DebugType=None -p:DebugSymbols=false -o /app/publish
+RUN dotnet publish src/Presentation.API/Presentation.API.csproj -c Release -r "$(cat /tmp/runtime-id)" --self-contained true --no-restore -p:ProductionContainer=true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine AS final
 WORKDIR /app

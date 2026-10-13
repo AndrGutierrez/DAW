@@ -15,8 +15,8 @@
     "failed": 0
   },
   "imageBytes": {
-    "api": 58775704,
-    "spa": 29539876
+    "api": 68464640,
+    "spa": 74764288
   },
   "frontendCoverage": {
     "lines": {
@@ -55,5 +55,16 @@
   "browserPeriodFollowup": {
     "passed": 4,
     "scope": "Read-only dashboard and report queries on the local demonstration; desktop/mobile; WCAG checks after animations settle."
+  },
+  "imageMeasurement": "Sum of uncompressed final-image layer bytes from docker history --human=false",
+  "imageBudgetCorrection": {
+    "date": "2026-10-13",
+    "failedRun": 38338153291,
+    "failedApiBytes": 132954585,
+    "previousLocalInspectBytes": {
+      "api": 58775704,
+      "spa": 29539876
+    },
+    "note": "Previous inspect sizes underreported uncompressed layers with the local containerd image store; those numbers do not prove the image budget."
   }
 }

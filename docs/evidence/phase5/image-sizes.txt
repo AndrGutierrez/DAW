@@ -1,2 +1,2 @@
-daw-api: 58775704 bytes (limit: strictly below 120000000 bytes)
-daw-nginx: 29539876 bytes (limit: strictly below 120000000 bytes)
+daw-ci-fix-api:local: 68464640 uncompressed layer bytes (limit: strictly below 120000000 bytes)
+daw-nginx: 74764288 uncompressed layer bytes (limit: strictly below 120000000 bytes)

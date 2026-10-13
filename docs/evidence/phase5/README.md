@@ -15,7 +15,7 @@ Fecha: 12 de octubre de 2026. Proyecto ganadero del grupo 3. Las pruebas con esc
 | Filtros por mes, año y últimos días | 4 aprobadas | Dashboard/reportes en escritorio y móvil; consultas de la demostración local sin crear registros de negocio, con accesibilidad y ausencia de desbordamiento horizontal |
 | HTTP/EF, revisión posterior | 3 aprobadas | Endpoints de identificación y notificaciones después de ajustar el enlace del producto |
 | Newman | 16 solicitudes y 16 aserciones, cero fallos | Colección Cattle-Management con las credenciales temporales fuera del Git |
-| Docker | API 58,8 MB; SPA 29,5 MB | Tamaños locales completos, ambos inferiores a 120000000 bytes |
+| Docker, corrección del 13 de octubre | API 68,5 MB; SPA 74,8 MB | Suma de capas descomprimidas; API autocontenida con compresión single-file. La medición anterior de 58,8/29,5 MB no acreditaba este límite |
 | Compose | DB, API y SPA saludables; initialize terminado con éxito | Base nueva, migraciones y siembra anteriores al arranque HTTP |
 | Workflow | actionlint aprobado | Comprobación local. Ejecución remota del cambio pendiente de publicar la rama/PR |
 | Esquema y diccionario | 44 tablas, 507 columnas, 72 FK | Exportación física PostgreSQL, diagramas y diccionario regenerados |

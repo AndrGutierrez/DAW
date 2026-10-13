@@ -37,9 +37,9 @@ El [diccionario de datos](../db/data-dictionary.md) incluye todas las columnas f
 
 La exigencia se encuentra en 03_Tarea_Asignacion_Fase5_y_Rubrica.pdf: página 2, requisito 2; se repite en la rúbrica de la página 8. El material teórico la desarrolla en la sección 5.2, página 4. Son documentos originales de Classroom, conservados fuera del Git.
 
-El backend se publica autocontenido para Linux musl, con el runtime incluido y sin herramientas de diseño EF en producción. El contenedor final utiliza runtime-deps Alpine. No se aplica trimming ni Native AOT a los controladores o EF. La compilación selecciona x64 o arm64 según la arquitectura del contenedor de construcción; esta verificación utiliza x64.
+El backend se publica autocontenido para Linux musl, con el runtime incluido y sin herramientas de diseño EF en producción. El contenedor final utiliza runtime-deps Alpine. No se aplica trimming ni Native AOT a los controladores o EF. La compilación selecciona x64 o arm64 según la arquitectura del contenedor de construcción; esta verificación utiliza x64. La publicación autocontenida utiliza PublishSingleFile y EnableCompressionInSingleFile para comprimir el ejecutable sin eliminar código por trimming. La [documentación de .NET](https://learn.microsoft.com/en-us/dotnet/core/deploying/single-file/overview) explica el costo de descompresión al arrancar; se verifica su arranque y las operaciones HTTP con PostgreSQL.
 
-La SPA se compila con Node 24 y se sirve con Nginx. La comprobación usa el tamaño local completo informado por Docker, en bytes: cada imagen debe ser estrictamente menor que 120000000 bytes. No se confunde el tamaño comprimido de un registro con el tamaño local de la imagen.
+La SPA se compila con Node 24 y se sirve con Nginx. La comprobación suma los tamaños descomprimidos de las capas de la imagen final mediante docker history --human=false: cada imagen debe ser estrictamente menor que 120000000 bytes. docker image inspect .Size no sirve como medida uniforme entre almacenes clásicos y containerd; en la instalación local reportaba contenido comprimido y omitía el tamaño descomprimido. La [documentación de Docker](https://docs.docker.com/engine/release-notes/29/) registra esta diferencia.
 
 ~~~bash
 bash scripts/compose.sh up --build -d --wait
