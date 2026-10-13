@@ -2,7 +2,7 @@ import type { CarePage } from './care';
 export type ProductData = { sku: string; name: string; categoryId: string; price: number; costPrice: number; unit: string; brand: string; withdrawalDays: number | null; requiresPrescription: boolean; isActive: boolean };
 export type ProductRow = { id: string; data: ProductData };
 export type CategoryRow = { id: string; data: { name: string; description: string | null; isActive: boolean } };
-export type InventoryData = { farmId: string; productId: string; stock: number; minStock: number; maxStock: number; location: string };
+export type InventoryData = { farmId: string; productId: string; stock: number; minStock: number; maxStock: number; location: string; version?: number };
 export type InventoryRow = { id: string; data: InventoryData; farm: string; product: string; sku: string; category: string; unit: string; productActive: boolean };
 export type StockRecord = { id: string; date: string; type: string; quantity: number; reason: string | null; animalId: string | null; openingBalance: boolean };
 export type SeriesPoint = { label: string; value: number; count: number };

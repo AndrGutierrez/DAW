@@ -20,7 +20,7 @@ public sealed class OperationsReader(AppDbContext db) : IOperationsReader
         if (q.State == "Normal") rows = rows.Where(i => i.Stock > i.MinStock && i.Stock < i.MaxStock);
         var total = await rows.CountAsync(ct);
         var items = await rows.OrderBy(i => i.Product.Name).ThenBy(i => i.Farm.Name).ThenBy(i => i.Id).Skip((q.Page - 1) * q.PageSize).Take(q.PageSize)
-            .Select(i => new InventoryRow(i.Id, new InventoryRequest(i.FarmId, i.ProductId, i.Stock, i.MinStock, i.MaxStock, i.Location), i.Farm.Name, i.Product.Name, i.Product.SKU, i.Product.InventoryCategory.Name, i.Product.Unit, i.Product.IsActive)).ToListAsync(ct);
+            .Select(i => new InventoryRow(i.Id, new InventoryRequest(i.FarmId, i.ProductId, i.Stock, i.MinStock, i.MaxStock, i.Location, i.Version), i.Farm.Name, i.Product.Name, i.Product.SKU, i.Product.InventoryCategory.Name, i.Product.Unit, i.Product.IsActive)).ToListAsync(ct);
         return new(items, total, q.Page, q.PageSize);
     }
     public async Task<CarePage<ResourceResult<ProductRequest>>> ProductsAsync(ProductQuery q, CancellationToken ct)

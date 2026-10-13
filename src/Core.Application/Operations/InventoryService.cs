@@ -28,7 +28,7 @@ public sealed class InventoryService(IManagementRepository repository, IFarmAcce
                 throw new ConflictException("The submission identifier belongs to a different stock movement.");
             return new CareSubmission<StockRecord>(existing.Id, true, Read(existing));
         }
-        if (e.Stock != q.ExpectedStock) throw new ConflictException("The stock changed. Refresh the balance before recording a movement.");
+        if (e.Stock != q.ExpectedStock || q.ExpectedVersion.HasValue && e.Version != q.ExpectedVersion) throw new ConflictException("The stock changed. Refresh the balance before recording a movement.");
         var product = await repository.GetAsync<Product>(e.ProductId, ct: ct);
         var farm = await repository.GetAsync<Farm>(e.FarmId, ct: ct);
         if (product is not { IsActive: true } || farm is not { IsActive: true }) throw new ConflictException("The farm or product is inactive.");
@@ -44,7 +44,7 @@ public sealed class InventoryService(IManagementRepository repository, IFarmAcce
         if (!await repository.ExistsAsync<StockMovement>(m => m.FarmId == e.FarmId && m.ProductId == e.ProductId && m.ReferenceType == "OpeningBalance", ct))
             repository.Add(new StockMovement { FarmId = e.FarmId, ProductId = e.ProductId, Type = StockMovementType.Adjustment, Quantity = e.Stock, Date = today, Reason = "Opening balance for traced movements", ReferenceType = "OpeningBalance", ReferenceId = e.Id, UserId = user.UserId });
         var movement = new StockMovement(q.SubmissionId) { FarmId = e.FarmId, ProductId = e.ProductId, Type = q.Type, Quantity = q.Quantity, Date = today, Reason = q.Reason, ReferenceType = reference, ReferenceId = referenceId, UserId = user.UserId };
-        e.Stock = next; repository.Add(movement); await repository.SaveAsync(ct);
+        e.Stock = next; e.Version++; repository.Add(movement); await repository.SaveAsync(ct);
         return new CareSubmission<StockRecord>(movement.Id, false, Read(movement));
     }, ct);
     private static StockRecord Read(StockMovement m) => new(m.Id, m.Date, m.Type, m.Quantity, m.Reason, m.ReferenceType == "Animal" ? m.ReferenceId : null, m.UserId, m.ReferenceType == "OpeningBalance");

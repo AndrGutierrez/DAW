@@ -48,6 +48,23 @@ public sealed class InventoryServiceTests
         repository.Verify(r => r.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
     [Fact]
+    public async Task VersionRejectsAnABAChangeEvenWhenTheBalanceMatches()
+    {
+        inventory.Version = 2;
+        await Assert.ThrowsAsync<ConflictException>(() => Service.RecordAsync(inventory.Id, Request with { ExpectedVersion = 0 }));
+        repository.Verify(r => r.Add(It.IsAny<StockMovement>()), Times.Never);
+        Assert.Equal(20.1234m, inventory.Stock);
+    }
+    [Fact]
+    public async Task IdempotentReplayAcceptsAnOldVersionWithoutWritingAgain()
+    {
+        var request = Request with { ExpectedVersion = 0 };
+        var existing = new StockMovement(request.SubmissionId) { FarmId = inventory.FarmId, ProductId = inventory.ProductId, UserId = author, Type = request.Type, Quantity = request.Quantity, Reason = request.Reason.Trim(), ReferenceType = "Inventory", ReferenceId = inventory.Id };
+        repository.Setup(r => r.GetAsync<StockMovement>(existing.Id, false, It.IsAny<CancellationToken>())).ReturnsAsync(existing); inventory.Version = 2;
+        Assert.True((await Service.RecordAsync(inventory.Id, request)).Replayed);
+        repository.Verify(r => r.SaveAsync(It.IsAny<CancellationToken>()), Times.Never);
+    }
+    [Fact]
     public async Task AnotherAuthorsSubmissionCannotBeReplayed()
     {
         var q = Request; repository.Setup(r => r.GetAsync<StockMovement>(q.SubmissionId, false, It.IsAny<CancellationToken>())).ReturnsAsync(new StockMovement(q.SubmissionId) { UserId = Guid.NewGuid() });

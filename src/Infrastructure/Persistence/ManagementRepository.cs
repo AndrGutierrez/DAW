@@ -86,6 +86,10 @@ public sealed class ManagementRepository(AppDbContext db, ICurrentUser user) : I
         {
             throw new ConflictException("A concurrent operation changed this data. Refresh and retry the request.");
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new ConflictException("The stock changed. Refresh the balance before recording a movement.");
+        }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
         {
             throw new ConflictException("The record conflicts with an existing unique value.");
