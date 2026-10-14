@@ -839,6 +839,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric(14,4)")
                         .HasDefaultValue(0m);
 
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");

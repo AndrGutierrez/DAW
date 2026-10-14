@@ -58,3 +58,25 @@ it('cancels a filter draft without requesting data and reopens the applied value
  expect(trigger).toHaveFocus(); expect(auth.request.mock.calls.filter(([path]) => path.startsWith('/api/analytics/overview?'))).toHaveLength(before);
  await user.click(trigger); expect(screen.getByLabelText('Desde')).toHaveValue(original);
 });
+
+it('queries an entire chosen year only after applying the filter', async () => {
+ const user = userEvent.setup(); show(); await screen.findByRole('article', { name: 'Leche registrada' });
+ const before = auth.request.mock.calls.filter(([path]) => path.startsWith('/api/analytics/overview?')).length;
+ await user.click(screen.getByRole('button', { name: 'Filtros' }));
+ await user.selectOptions(screen.getByLabelText('Período'), 'year');
+ fireEvent.change(screen.getByLabelText('Año'), { target: { value: '2025' } });
+ expect(auth.request.mock.calls.filter(([path]) => path.startsWith('/api/analytics/overview?'))).toHaveLength(before);
+ await user.click(screen.getByRole('button', { name: 'Aplicar filtros' }));
+ await waitFor(() => expect(auth.request.mock.calls.some(([path]) => path.includes('from=2025-01-01') && path.includes('to=2025-12-31'))).toBe(true));
+ expect(screen.queryByRole('dialog', { name: 'Filtros del dashboard' })).not.toBeInTheDocument();
+});
+it('discards a preset selection when the dashboard panel is cancelled', async () => {
+ const user = userEvent.setup(); show(); await screen.findByRole('article', { name: 'Leche registrada' });
+ await user.click(screen.getByRole('button', { name: 'Filtros' }));
+ const original = (screen.getByLabelText('Desde') as HTMLInputElement).value;
+ await user.selectOptions(screen.getByLabelText('Período'), 'recent');
+ await user.selectOptions(screen.getByLabelText('Últimos días'), '7');
+ await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+ await user.click(screen.getByRole('button', { name: 'Filtros' }));
+ expect(screen.getByLabelText('Desde')).toHaveValue(original);
+});

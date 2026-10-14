@@ -278,3 +278,7 @@ src/frontend/test-results/
 # Local coverage and diagnostic results
 src/frontend/coverage/
 .test-results/
+
+# Generated local phase verification results
+artifacts/
+graphify-out/

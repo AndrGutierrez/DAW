@@ -67,6 +67,10 @@ public static class DependencyInjection
         services.AddScoped<AnimalMovementService>();
         services.AddScoped<PaddockService>();
         services.AddScoped<InventoryService>();
+        services.AddScoped<NotificationService>();
+        services.AddScoped<INotificationReader, NotificationReader>();
+        services.AddScoped<AnimalIdentificationService>();
+        services.AddScoped<IAnimalIdentificationReader, AnimalIdentificationReader>();
         services.AddScoped<AnalyticsService>();
         services.AddScoped<ExchangeRateService>();
         services.Configure<BcvSyncOptions>(configuration.GetSection("BcvSync"));

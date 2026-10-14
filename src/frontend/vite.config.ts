@@ -10,5 +10,5 @@ export default defineConfig({
       '/api': { target: env.API_PROXY_TARGET || 'http://127.0.0.1:8080', changeOrigin: true },
     },
   },
-  test: { include: ['src/**/*.test.{ts,tsx}'], environment: 'node', setupFiles: ['./src/test/setup.ts'], coverage: { provider: 'v8', reporter: ['text', 'json-summary', 'lcov', 'html'], include: ['src/**/*.{ts,tsx}'], exclude: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/main.tsx', 'src/vite-env.d.ts'] } },
+  test: { include: ['src/**/*.test.{ts,tsx}'], environment: 'node', setupFiles: ['./src/test/setup.ts'], coverage: { thresholds: { lines: 50, statements: 43, functions: 38, branches: 35, 'src/api/identification.ts': { lines: 100, branches: 90 }, 'src/components/AnimalScanner.tsx': { lines: 100, branches: 75 }, 'src/components/AnimalLabel.tsx': { lines: 100, branches: 70 }, 'src/components/NotificationCenter.tsx': { lines: 85, branches: 75 } }, provider: 'v8', reporter: ['text', 'json-summary', 'lcov', 'html'], include: ['src/**/*.{ts,tsx}'], exclude: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/main.tsx', 'src/vite-env.d.ts'] } },
 });

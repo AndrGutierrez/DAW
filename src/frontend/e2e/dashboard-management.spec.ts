@@ -31,7 +31,7 @@ test('dashboard filters restore focus, discard drafts and keep mobile indicators
   if (process.env.QUALITY_EVIDENCE_DIR) { await mkdir(process.env.QUALITY_EVIDENCE_DIR, { recursive: true }); await page.screenshot({ path: join(process.env.QUALITY_EVIDENCE_DIR, 'dashboard-empty-' + info.project.name + '.png') }); await page.locator('.reproduction-summary').screenshot({ path: join(process.env.QUALITY_EVIDENCE_DIR, 'reproduction-empty-' + info.project.name + '.png') }); }
 });
 test('administrator manages farms, species, breeds, lots and paddock dependencies from the SPA', async ({ page, request }, info) => {
-  expect(info.project.use.baseURL).toBe('http://localhost:18089'); const prefix = 'P4-MGT-' + randomUUID().slice(0, 8).toUpperCase();
+  expect(process.env.E2E_ISOLATED_DATABASE).toBe('1'); expect(['localhost', '127.0.0.1']).toContain(new URL(info.project.use.baseURL!).hostname); const prefix = 'P4-MGT-' + randomUUID().slice(0, 8).toUpperCase();
   await login(page); if (info.project.name === 'mobile') await page.getByRole('button', { name: 'Más secciones', exact: true }).click();
   await page.getByRole('link', { name: 'Fincas y catálogos', exact: true }).click(); await expect(page.getByRole('heading', { name: 'Fincas y catálogos', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Nueva finca', exact: true }).click(); let dialog = page.getByRole('dialog', { name: 'Nueva finca', exact: true });

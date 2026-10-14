@@ -93,6 +93,7 @@ public sealed class InventoryCategory : BaseEntity
 
 public sealed class FarmInventory : BaseEntity
 {
+    public long Version { get; set; }
     public Guid FarmId { get; set; }
     public Farm Farm { get; set; } = null!;
     public Guid ProductId { get; set; }

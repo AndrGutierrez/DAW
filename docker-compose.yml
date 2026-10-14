@@ -23,6 +23,14 @@ services:
     container_name: blazorapp
     expose:
       - "8080"
+    ports:
+      - "127.0.0.1:${API_HTTP_PORT:-5000}:8080"
+    healthcheck:
+      test: ["CMD", "./Presentation.API", "--healthcheck"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     environment: &api-environment
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=false
@@ -70,8 +78,14 @@ services:
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
       - ./db/diagram:/usr/share/nginx/html/erd:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/health/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
     depends_on:
-      - blazorapp
+      blazorapp:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

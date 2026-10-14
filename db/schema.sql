@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict Vfnm5D7kQ0Ua6RJptACQ0oRjnNygN3XHL6y21PJZqobRXc9yhkXdOMLBdW8K1Fe
+\restrict yXtwQKs2lwVhOVTCk1P5bbF1CL3g5XELh4FHGAsJ1uzjr8Q9eMEEtVd0edgeKdI
 
 -- Dumped from database version 15.19
 -- Dumped by pg_dump version 15.19
@@ -274,6 +274,7 @@ CREATE TABLE public."FarmInventory" (
     "DeletedAt" timestamp with time zone,
     "DeletedByUserId" uuid,
     "IsDeleted" boolean DEFAULT false NOT NULL,
+    "Version" bigint DEFAULT 0 NOT NULL,
     CONSTRAINT "CK_FarmInventory_Stock" CHECK ((("Stock" >= (0)::numeric) AND ("MinStock" >= (0)::numeric) AND ("MaxStock" > "MinStock")))
 );
 
@@ -2711,4 +2712,4 @@ ALTER TABLE ONLY public."WeightRecords"
 -- PostgreSQL database dump complete
 --
 
-\unrestrict Vfnm5D7kQ0Ua6RJptACQ0oRjnNygN3XHL6y21PJZqobRXc9yhkXdOMLBdW8K1Fe
+\unrestrict yXtwQKs2lwVhOVTCk1P5bbF1CL3g5XELh4FHGAsJ1uzjr8Q9eMEEtVd0edgeKdI

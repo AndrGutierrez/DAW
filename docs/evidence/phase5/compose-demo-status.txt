@@ -1,0 +1,5 @@
+NAME               IMAGE                COMMAND                  SERVICE      CREATED         STATUS                     PORTS
+blazor-nginx       daw-nginx            "/docker-entrypoint.…"   nginx        5 minutes ago   Up 4 minutes (healthy)     0.0.0.0:18080->80/tcp, [::]:18080->80/tcp
+blazorapp          daw-api              "./Presentation.API"     blazorapp    5 minutes ago   Up 4 minutes (healthy)     127.0.0.1:5000->8080/tcp
+daw-initialize-1   daw-api              "./Presentation.API …"   initialize   5 minutes ago   Exited (0) 4 minutes ago
+daw-postgres       postgres:15-alpine   "docker-entrypoint.s…"   db           6 minutes ago   Up 6 minutes (healthy)     0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp

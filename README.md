@@ -139,3 +139,7 @@ La [conservación y tasa BCV](docs/fase4-conservacion-bcv.md) incorpora papelera
 La SPA incluye **Fincas y catálogos** para administrar fincas, especies, razas y lotes. En móvil se encuentra en **Más**. Dashboard abre sus filtros desde un botón; [gestión, interacción y permisos](docs/fase4-dashboard-catalogos.md) documenta los accesos y la evidencia actual.
 
 La SPA incluye **Traslados** para mover animales o lotes completos entre potreros de una misma finca, y selección de todas las páginas de una búsqueda en **Pesaje**. [Uso, permisos y garantías](docs/fase4-traslados-pesaje.md).
+
+## Fase 5
+
+La [implementación y verificación de Fase 5](docs/fase5-implementacion-y-verificacion.md) relaciona las observaciones del grupo 3 con avisos por permisos/finca, inventario versionado, destinos visuales y QR/NFC. Incluye despliegue, CI, evidencia y límites de la demostración. Consultar también el [diccionario relacional completo](db/data-dictionary.md) y la [evidencia](docs/evidence/phase5/README.md).

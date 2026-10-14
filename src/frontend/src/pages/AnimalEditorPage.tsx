@@ -1,7 +1,7 @@
 import { Button, Input, Select, Textarea } from '../components/ui/Controls';
 import { useEffect, useState } from 'react';
 import type { FormEvent, InputHTMLAttributes } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useResource } from '../api/useResource';
 import { labels, today } from '../api/livestock';
@@ -32,7 +32,8 @@ function AnimalEditor({ animal }: { animal?: AnimalDetail }) {
   const { request, can } = useAuth();
   const { notify, confirm } = useFeedback();
   const navigate = useNavigate();
-  const [values, setValues] = useState<Values>(() => animal ? Object.fromEntries(Object.keys(empty).map(key => [key, String(animal[key as keyof AnimalDetail] ?? '')])) as Values : { ...empty });
+  const [params] = useSearchParams();
+  const [values, setValues] = useState<Values>(() => animal ? Object.fromEntries(Object.keys(empty).map(key => [key, String(animal[key as keyof AnimalDetail] ?? '')])) as Values : { ...empty, farmId: params.get("farm") || "", rfid: (params.get("rfid") || "").slice(0, 50) });
   const [errors, setErrors] = useState<FieldErrors>({});
   const [error, setError] = useState('');
   const [dirty, setDirty] = useState(false);

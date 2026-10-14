@@ -206,7 +206,7 @@ public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefin
     public override Guid? FarmId(FarmInventory e) => e.FarmId;
     public override Guid? FarmId(InventoryRequest q) => q.FarmId;
     public override Expression<Func<FarmInventory, bool>> Scope(IReadOnlyCollection<Guid> ids) => e => ids.Contains(e.FarmId);
-    public override InventoryRequest Read(FarmInventory e) => new(e.FarmId, e.ProductId, e.Stock, e.MinStock, e.MaxStock, e.Location);
+    public override InventoryRequest Read(FarmInventory e) => new(e.FarmId, e.ProductId, e.Stock, e.MinStock, e.MaxStock, e.Location, e.Version);
     public override void Apply(FarmInventory e, InventoryRequest q)
     {
         e.FarmId = q.FarmId;
@@ -215,6 +215,7 @@ public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefin
         e.MinStock = q.MinStock;
         e.MaxStock = q.MaxStock;
         e.Location = Clean(q.Location);
+        e.Version++;
     }
 
     public override async Task CheckAsync(FarmInventory e, InventoryRequest q, CancellationToken ct)
@@ -222,6 +223,8 @@ public sealed class InventoryDefinition(IManagementRepository r) : ResourceDefin
         await Require<Farm>(q.FarmId, ct);
         Check((await Require<Product>(q.ProductId, ct)).IsActive, "The product is inactive.");
         Check(e.ProductId == Guid.Empty || e.ProductId == q.ProductId, "An inventory record cannot change product.");
+        if (q.Version.HasValue && q.Version != e.Version)
+            throw new ConflictException("The stock changed. Refresh the balance before recording a movement.");
         if (e.ProductId != Guid.Empty && e.Stock != q.Stock)
             throw new ConflictException("Use a stock movement to change an existing balance.");
         await Unique<FarmInventory>(x => x.Id != e.Id && x.FarmId == q.FarmId && x.ProductId == q.ProductId, ct);

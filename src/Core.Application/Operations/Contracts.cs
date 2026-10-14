@@ -7,7 +7,7 @@ namespace Core.Application.Operations;
 public sealed record InventoryQuery(int Page = 1, int PageSize = 12, Guid? FarmId = null, string? Search = null, string? State = null);
 public sealed record InventoryRow(Guid Id, InventoryRequest Data, string Farm, string Product, string SKU, string Category, MeasurementUnit Unit, bool ProductActive);
 public sealed record ProductQuery(int Page = 1, int PageSize = 12, string? Search = null, Guid? CategoryId = null, bool? IsActive = null);
-public sealed record StockRequest(Guid SubmissionId, StockMovementType Type, decimal Quantity, decimal ExpectedStock, string Reason, Guid? AnimalId = null);
+public sealed record StockRequest(Guid SubmissionId, StockMovementType Type, decimal Quantity, decimal ExpectedStock, string Reason, Guid? AnimalId = null, long? ExpectedVersion = null);
 public sealed record StockRecord(Guid Id, DateOnly Date, StockMovementType Type, decimal Quantity, string? Reason, Guid? AnimalId, Guid? UserId, bool OpeningBalance);
 public sealed record PeriodQuery(DateOnly From, DateOnly To, Guid? FarmId = null);
 public sealed record ReportQuery(DateOnly From, DateOnly To, Guid? FarmId = null, int Page = 1, int PageSize = 100);

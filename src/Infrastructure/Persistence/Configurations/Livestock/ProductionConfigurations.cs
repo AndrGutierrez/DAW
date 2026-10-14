@@ -59,6 +59,7 @@ public sealed class FarmInventoryConfiguration : IEntityTypeConfiguration<FarmIn
 {
     public void Configure(EntityTypeBuilder<FarmInventory> b)
     {
+        b.Property(x => x.Version).IsConcurrencyToken().HasDefaultValue(0L);
         b.ToTable("FarmInventory", t => t.HasCheckConstraint("CK_FarmInventory_Stock", "\"Stock\" >= 0 AND \"MinStock\" >= 0 AND \"MaxStock\" > \"MinStock\""));
         b.HasKey(x => x.Id);
         b.HasIndex(x => new { x.FarmId, x.ProductId }).IsUnique();

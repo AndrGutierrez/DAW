@@ -160,6 +160,9 @@ export class SessionClient {
       return this.request<T>(path, init, false, responseType);
     }
     if (response.status === 401) this.clearLocalSession('expired');
-    return this.read<T>(response, responseType);
+    const result = await this.read<T>(response, responseType);
+    if (!["GET", "HEAD"].includes((init.method || "GET").toUpperCase()) && typeof window !== "undefined")
+      window.dispatchEvent(new Event("daw:data-changed"));
+    return result;
   };
 }
