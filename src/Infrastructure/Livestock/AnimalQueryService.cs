@@ -20,6 +20,7 @@ public sealed class AnimalQueryService(AppDbContext db, IAnimalWeightReader weig
         if (request.ExcludeId.HasValue) query = query.Where(animal => animal.Id != request.ExcludeId.Value);
         if (request.DamId.HasValue) query = query.Where(animal => animal.DamId == request.DamId.Value);
         if (request.LotId.HasValue) query = query.Where(animal => animal.LotId == request.LotId.Value);
+        if (request.PaddockId.HasValue) query = query.Where(animal => animal.PaddockId == request.PaddockId.Value);
         if (request.Status.HasValue) query = query.Where(animal => animal.Status == request.Status.Value);
         var search = request.Search?.Trim().ToLowerInvariant();
         if (!string.IsNullOrEmpty(search))

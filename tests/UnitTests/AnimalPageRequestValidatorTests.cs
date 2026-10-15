@@ -30,4 +30,11 @@ public sealed class AnimalPageRequestValidatorTests
     [Fact]
     public void EmptyFarmIsRejected() =>
         Assert.False(validator.Validate(new AnimalPageRequest(FarmId: Guid.Empty)).IsValid);
+
+    [Fact]
+    public void PaddockFilterRequiresANonEmptyIdentifier()
+    {
+        Assert.False(validator.Validate(new AnimalPageRequest(PaddockId: Guid.Empty)).IsValid);
+        Assert.True(validator.Validate(new AnimalPageRequest(PaddockId: Guid.NewGuid())).IsValid);
+    }
 }

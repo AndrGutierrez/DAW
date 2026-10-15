@@ -1,5 +1,6 @@
 using Core.Domain.Livestock;
 using Core.Application.Security;
+using Core.Application.Livestock;
 using Infrastructure.Livestock;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -91,6 +92,40 @@ public sealed class AnimalQueryServiceTests
         var item = Assert.Single(stale);
         Assert.Equal("OLD-1", item.InternalTag);
         Assert.DoesNotContain(stale, candidate => candidate.Id == freshId);
+    }
+
+    [Fact]
+    public async Task PaddockFilterPaginatesWithinAccessibleFarms()
+    {
+        await using var db = CreateContext();
+        var (firstId, _) = await SeedAnimalAsync(db);
+        var (secondId, _) = await SeedAnimalAsync(db);
+        var (outsideId, _) = await SeedAnimalAsync(db);
+        var first = await db.Animals.Include(a => a.Farm).SingleAsync(a => a.Id == firstId);
+        var second = await db.Animals.SingleAsync(a => a.Id == secondId);
+        var outside = await db.Animals.SingleAsync(a => a.Id == outsideId);
+        var source = new Paddock { Farm = first.Farm, Name = "Source" };
+        var foreign = new Paddock { FarmId = outside.FarmId, Name = "Other farm" };
+        db.Paddocks.AddRange(source, foreign);
+        first.InternalTag = "A"; first.Paddock = source;
+        second.InternalTag = "B"; second.Farm = first.Farm; second.FarmId = first.FarmId; second.Paddock = source;
+        outside.Paddock = foreign;
+        await db.SaveChangesAsync();
+        var service = new AnimalQueryService(db, new AnimalWeightReader(db), new OnlyFarmAccess(first.FarmId));
+
+        var page = await service.PageAsync(new AnimalPageRequest(PageSize: 1, PaddockId: source.Id));
+        Assert.Equal(2, page.Total);
+        Assert.Equal(firstId, Assert.Single(page.Items).Id);
+        var next = await service.PageAsync(new AnimalPageRequest(Page: 2, PageSize: 1, PaddockId: source.Id));
+        Assert.Equal(secondId, Assert.Single(next.Items).Id);
+        Assert.Empty((await service.PageAsync(new AnimalPageRequest(PaddockId: foreign.Id))).Items);
+        Assert.Empty((await service.PageAsync(new AnimalPageRequest(FarmId: outside.FarmId, PaddockId: source.Id))).Items);
+    }
+
+    private sealed class OnlyFarmAccess(Guid farmId) : IFarmAccess
+    {
+        public Task<bool> CanAccessAsync(Guid candidate, CancellationToken cancellationToken = default) => Task.FromResult(candidate == farmId);
+        public Task<IReadOnlyCollection<Guid>> GetAccessibleFarmIdsAsync(CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyCollection<Guid>>([farmId]);
     }
 
     private static async Task<(Guid AnimalId, DateOnly BirthDate)> SeedAnimalAsync(AppDbContext db)
