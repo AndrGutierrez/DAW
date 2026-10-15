@@ -133,8 +133,9 @@ jobs:
   deploy:
     name: Deploy to AWS (ARM CodeBuild + SSM)
     runs-on: ubuntu-latest
-    # Only deploy after every test job succeeds, and only for pushes to main.
-    needs: [unit-tests, frontend-tests, stack-tests]
+    # Only deploy after the tests and the verified-artifact build succeed, and
+    # only for pushes to main.
+    needs: [unit-tests, frontend-tests, stack-tests, delivery]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: production
     permissions:
