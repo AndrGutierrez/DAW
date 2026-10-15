@@ -128,3 +128,10 @@ The strict uncompressed image measurements remained API 68,464,640 bytes and SPA
 The final resumed browser run passed all 54 desktop/mobile cases in five minutes with retries disabled, including the editor/save/reload position regression, real saved movements, capacity and concurrency guards, uncertain-response replay, graphics fallback and SPA navigation. The previously failing QR case also passed unchanged in this complete run; the earlier intermittent failure remains recorded above. The disposable PostgreSQL stack was then removed after checking its Compose ownership, while the primary application remained healthy.
 
 Integration with the current main branch retains its newer QR test: it observes the lazy decoder request without an artificial delay, uses a 600-pixel QR image and asserts the exact decoded value within 20 seconds. The explicit farm selection from this feature is retained. The earlier cold-load results above describe the pre-integration test.
+
+
+## Monitoring regression alignment (2026-10-15)
+
+The complete GitHub browser run exposed a legacy monitoring assertion that still required SVG classes and a rectangle inside a paddock button. The monitoring case now waits for the animated canvas, checks capacity and estimated grazing through the current control, selects with Enter and verifies the resident panel. Invalid geometry rejection and mobile overflow checks remain. A separate forced-fallback case compares the persisted rectangle with independently specified projected polygon vertices, then repeats the check after a full reload. It does not use the production projection function to calculate its expected result.
+
+Validation against the current backend and PostgreSQL 15 passed the four focused desktop/mobile cases, followed by the complete unfiltered browser suite: `npm run test:e2e -- --max-failures=1`, 191 passed and one expected desktop skip for the mobile-only navigation test, in 6.8 minutes with retries disabled. This is local evidence; the new GitHub Actions run must be checked separately.

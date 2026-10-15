@@ -54,7 +54,7 @@ test('farm and animal GDP goals persist, recalculate alerts and preserve automat
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
   } finally { expect((await request.put('/api/farms/' + farmId + '/growth-policy', { headers, data: { dailyGainKg: oldGoal } })).status()).toBe(200); }
 });
-test('spatial paddock plan uses stored geometry and opens the resident side panel', async ({ page, request }) => {
+test('animated paddock plan exposes capacity and opens the resident side panel', async ({ page, request }) => {
   const invalid = await request.post('/api/paddocks', { headers, data: { farmId, name: prefix, mapX: 95, mapY: 0, mapWidth: 10, mapHeight: 40 } });
   expect(invalid.status()).toBe(400);
   const response = await request.post('/api/paddocks', { headers, data: { farmId, name: prefix, capacity: 1, maxStayDays: 10, mapX: 5, mapY: 5, mapWidth: 40, mapHeight: 50 } });
@@ -63,10 +63,38 @@ test('spatial paddock plan uses stored geometry and opens the resident side pane
   await signIn(page, '/paddocks?farm=' + farmId + '&search=not-a-card-match');
   const plan = page.getByRole('group', { name: 'Plano interactivo de potreros' });
   const item = plan.getByRole('button', { name: new RegExp(prefix) });
-  await expect(item).toHaveAttribute('class', /fill-critical border-positive/);
-  await expect(item.locator('rect')).toHaveAttribute('x', '5');
+  await expect(page.locator('.farm-viewer')).toHaveAttribute('data-scene-state', 'ready', { timeout: 15_000 });
+  await expect(page.locator('.farm-canvas-host canvas')).toBeVisible();
+  await expect(item).toHaveAccessibleName(new RegExp('^' + prefix + ': 1 animales; Capacidad completa;'));
+  await expect(item).toHaveClass(/\bcritical\b/);
+  await expect(item).toContainText('Dentro del período previsto');
+  await expect(item).toHaveAttribute('aria-pressed', 'false');
   await item.focus(); await page.keyboard.press('Enter');
-  await expect(page.getByRole('dialog', { name: prefix })).toBeVisible();
-  await expect(page.getByRole('table', { name: 'Animales presentes en el potrero' })).toContainText(prefix);
+  await expect(item).toHaveAttribute('aria-pressed', 'true');
+  const residents = page.getByRole('dialog', { name: prefix });
+  await expect(residents).toBeVisible();
+  await expect(residents.getByRole('table', { name: 'Animales presentes en el potrero' })).toContainText(prefix);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+});
+
+
+test('static paddock plan projects persisted geometry after graphics failure and reload', async ({ page, request }) => {
+  const response = await request.post('/api/paddocks', { headers, data: { farmId, name: prefix, capacity: 1, maxStayDays: 10, mapX: 5, mapY: 5, mapWidth: 40, mapHeight: 50 } });
+  expect(response.status()).toBe(201); const paddock = (await response.json()).id; paddocks.push(paddock);
+  const persisted = await request.get('/api/paddocks/' + paddock, { headers });
+  expect(persisted.status()).toBe(200);
+  expect((await persisted.json()).data).toMatchObject({ mapX: 5, mapY: 5, mapWidth: 40, mapHeight: 50, maxStayDays: 10 });
+
+  await page.route(/(renderer-[\w-]+\.js|paddock-scene\/renderer\.ts)/, route => route.abort('failed'));
+  await signIn(page, '/paddocks?farm=' + farmId + '&search=not-a-card-match');
+  const viewer = page.locator('.farm-viewer');
+  const shape = page.locator('.farm-static-plan g').filter({ hasText: prefix }).locator('polygon');
+  // Independent projection of the stored (5, 5, 40, 50) rectangle, without the production model as an oracle.
+  const projectedCorners = '0,35 280,175 -70,350 -350,210';
+  await expect(viewer).toHaveAttribute('data-scene-state', 'fallback', { timeout: 15_000 });
+  await expect(shape).toHaveAttribute('points', projectedCorners);
+  await page.reload();
+  await expect(viewer).toHaveAttribute('data-scene-state', 'fallback', { timeout: 15_000 });
+  await expect(shape).toHaveAttribute('points', projectedCorners);
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });
