@@ -86,8 +86,8 @@ Amazon ECR                         EC2 (t4g.micro, ARM64)
 ## Host specifics (important)
 
 The EC2 host already runs a **system nginx** (Ubuntu package) on ports 80/443
-for another site, so our stack **cannot bind port 80**. The production compose
-publishes the app's nginx on **host port 8080**:
+for another site (`cs.andresgutierrez.me`), so our stack **cannot bind port 80**
+directly. The production compose publishes the app's nginx on **host port 8080**:
 
 ```yaml
 # docker-compose.prod.yml
@@ -96,11 +96,18 @@ nginx:
     - "${APP_HTTP_PORT:-8080}:80"
 ```
 
-CloudFront (`daw.andresgutierez.me`) therefore uses a **custom origin port
-8080** (HTTP). The origin request policy must forward `CloudFront-Forwarded-Proto`
-(e.g. `Managed-AllViewerAndCloudFrontHeaders-2022-06`) so nginx emits
-`X-Forwarded-Proto: https`; the API trusts the Docker network for that header
-(`Program.cs`), which is required for the cookie-based session to accept HTTPS.
+The host's system nginx then reverse-proxies **port 80 → 127.0.0.1:8080** via
+`nginx/host-daw.conf` (installed at `/etc/nginx/sites-available/daw`). That file
+is a `default_server` for the `daw.andresgutierez.me` host (and any unmatched
+host), so CloudFront can use the standard **HTTP port 80** origin. The
+`cs.andresgutierrez.me` site is unaffected.
+
+CloudFront (`daw.andresgutierez.me`) therefore uses an **HTTP origin on port
+80**. The origin request policy must forward `CloudFront-Forwarded-Proto`
+(e.g. `Managed-AllViewerAndCloudFrontHeaders-2022-06`); the host nginx passes it
+through, the container nginx turns it into `X-Forwarded-Proto: https`, and the
+API trusts the Docker network for that header (`Program.cs`) — required for the
+cookie-based session to accept HTTPS.
 
 ## Runtime configuration on the instance
 
