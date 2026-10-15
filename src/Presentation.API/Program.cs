@@ -83,6 +83,11 @@ builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>
     options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
         Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
     options.ForwardLimit = 1;
+    // TLS terminates at the edge (CloudFront/ingress) and nginx forwards the
+    // request over the private Docker network. Trust that network so the
+    // forwarded X-Forwarded-Proto is honored and Request.IsHttps is correct.
+    options.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(
+        System.Net.IPAddress.Parse("172.16.0.0"), 12));
     foreach (var proxy in builder.Configuration.GetSection("ReverseProxy:KnownProxies").GetChildren())
         if (!string.IsNullOrWhiteSpace(proxy.Value))
             options.KnownProxies.Add(System.Net.IPAddress.Parse(proxy.Value));
