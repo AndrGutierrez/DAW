@@ -1,0 +1,9 @@
+services:
+  db:
+    container_name: daw-e2e-postgres
+  blazorapp:
+    container_name: daw-e2e-app
+  initialize:
+    container_name: daw-e2e-initialize
+  nginx:
+    container_name: daw-e2e-nginx
