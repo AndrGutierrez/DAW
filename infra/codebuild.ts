@@ -22,6 +22,12 @@ export const connection = new aws.codestarconnections.Connection(`${name}-github
   tags,
 });
 
+export const logGroup = new aws.cloudwatch.LogGroup(`${name}-build-logs`, {
+  name: `/aws/codebuild/${name}-build`,
+  retentionInDays: 30,
+  tags,
+});
+
 const role = new aws.iam.Role(`${name}-codebuild-role`, {
   assumeRolePolicy: JSON.stringify({
     Version: "2012-10-17",
@@ -48,6 +54,14 @@ new aws.iam.RolePolicy(`${name}-codebuild-policy`, {
       JSON.stringify({
         Version: "2012-10-17",
         Statement: [
+          {
+            Effect: "Allow",
+            Action: ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
+            Resource: [
+              `arn:aws:logs:${region}:${accountId}:log-group:/aws/codebuild/${name}-build`,
+              `arn:aws:logs:${region}:${accountId}:log-group:/aws/codebuild/${name}-build:*`,
+            ],
+          },
           { Effect: "Allow", Action: ["ecr:GetAuthorizationToken"], Resource: "*" },
           {
             Effect: "Allow",
@@ -120,7 +134,8 @@ export const project = new aws.codebuild.Project(`${name}-build`, {
   },
   logsConfig: {
     cloudwatchLogs: {
-      status: "DISABLED",
+      groupName: logGroup.name,
+      status: "ENABLED",
     },
   },
   source: {

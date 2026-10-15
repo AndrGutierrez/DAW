@@ -15,11 +15,15 @@ const provider = new aws.iam.OpenIdConnectProvider(`${name}-github-oidc`, {
   tags,
 });
 
-// Allow pushes to the deploy branch and jobs bound to the configured
-// GitHub environment (the workflow's deploy job sets `environment: production`).
+// GitHub issues the OIDC `sub` either in the classic form
+// (repo:owner/repo:...) or the immutable form
+// (repo:owner@<ownerId>/repo@<repoId>:...). Accept both; the numeric ids are
+// matched with a wildcard so the stack does not depend on them.
 const subjects = [
   `repo:${githubOwner}/${githubRepo}:ref:refs/heads/${githubBranch}`,
   `repo:${githubOwner}/${githubRepo}:environment:${githubEnvironment}`,
+  `repo:${githubOwner}@*/${githubRepo}@*:ref:refs/heads/${githubBranch}`,
+  `repo:${githubOwner}@*/${githubRepo}@*:environment:${githubEnvironment}`,
 ];
 
 export const deployRole = new aws.iam.Role(`${name}-github-deploy`, {

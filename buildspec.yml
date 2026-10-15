@@ -71,6 +71,7 @@ phases:
 
         path = os.environ["DEPLOY_PATH"]
         region = os.environ["AWS_DEFAULT_REGION"]
+        app_port = os.environ.get("APP_HTTP_PORT", "8080")
         compose_b64 = os.environ["COMPOSE_B64"]
         env_b64 = os.environ["ENV_B64"]
 
@@ -89,7 +90,7 @@ phases:
             f"aws ecr get-login-password --region {region} | docker login --username AWS --password-stdin $ECR_REGISTRY",
             f"{compose_cmd} pull",
             f"{compose_cmd} up -d --remove-orphans",
-            f"for i in $(seq 1 30); do curl -fsS http://127.0.0.1/health/ready && exit 0; sleep 5; done; {compose_cmd} ps -a; exit 1",
+            f"for i in $(seq 1 30); do curl -fsS http://127.0.0.1:{app_port}/health/ready && exit 0; sleep 5; done; {compose_cmd} ps -a; exit 1",
         ]
 
         payload = json.dumps({"commands": commands})

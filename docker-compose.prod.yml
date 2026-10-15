@@ -76,7 +76,7 @@ services:
     image: ${NGINX_IMAGE:?NGINX_IMAGE is required}
     container_name: blazor-nginx
     ports:
-      - "80:80"
+      - "${APP_HTTP_PORT:-8080}:80"
     environment:
       - UPSTREAM=${UPSTREAM:-blazorapp:8080}
     healthcheck:
