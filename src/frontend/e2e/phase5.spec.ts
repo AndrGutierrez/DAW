@@ -1,3 +1,4 @@
+import { chooseTransferOrigin, chooseTransferDestination, reviewTransfer } from './helpers/transfers';
 import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import QRCode from 'qrcode';
@@ -23,6 +24,9 @@ async function login(page: import('@playwright/test').Page) {
 }
 test('real QR image decoder opens the authorized animal and downloads its label', async ({ page }, info) => {
   await login(page); await page.getByRole('button', { name: 'Leer QR / NFC' }).click(); const dialog = page.getByRole('dialog', { name: 'Identificar animal' });
+  const scannerFarm = dialog.getByLabel('Finca de la etiqueta');
+  if (await scannerFarm.isEnabled()) await scannerFarm.selectOption(farmId);
+  await expect(scannerFarm).toHaveValue(farmId);
   // The decoder chunk is fetched on demand; observe that request without
   // delaying it (a long delay widens the window for a visibility change to
   // cancel the in-flight decode). Assert the decoded value, not just the UI state.
@@ -65,10 +69,10 @@ test('the transfer map projects occupancy and commits the selected visual destin
   async function paddock(name: string, x: number) { const result = await request.post('/api/paddocks', { headers, data: { farmId, name, capacity: 2, mapX: x, mapY: 88, mapWidth: 15, mapHeight: 10 } }); expect(result.status()).toBe(201); const id = (await result.json()).id; paddocksCreated.push(id); return id; }
   const source = await paddock(tag + ' Origen', 3), target = await paddock(tag + ' Destino', 45);
   expect((await request.post('/api/animal-movements/batch', { headers, data: { farmId, toPaddockId: source, reason: 'Initial fixture location', animals: [{ animalId, submissionId: randomUUID(), expectedFromPaddockId: null, expectedFromLotId: null }] } })).status()).toBe(201);
-  await login(page); await page.goto('/transfers'); await page.getByLabel('Finca', { exact: true }).selectOption(farmId); await page.getByLabel('Buscar animales para trasladar').fill(tag); await page.getByRole('button', { name: 'Buscar', exact: true }).click(); await page.getByLabel('Seleccionar ' + tag, { exact: true }).check();
-  const map = page.getByRole('group', { name: 'Plano interactivo de potreros' }); await map.getByRole('button', { name: new RegExp('^' + tag + ' Destino:') }).click(); await expect(page.getByLabel('Potrero de destino *')).toHaveValue(target); await expect(page.getByLabel('Ruta del traslado')).toContainText(tag + ' Origen → ' + tag + ' Destino'); await expect(map.getByRole('button', { name: new RegExp('^' + tag + ' Destino: 1 animales;') })).toHaveAttribute('aria-pressed', 'true');
+  await login(page); await page.goto('/transfers'); await page.getByLabel('Finca', { exact: true }).selectOption(farmId); await chooseTransferOrigin(page); await page.getByLabel('Buscar animales para trasladar').fill(tag); await page.getByRole('button', { name: 'Buscar', exact: true }).click(); await page.getByLabel('Seleccionar ' + tag, { exact: true }).check(); await chooseTransferDestination(page);
+  const map = page.getByRole('group', { name: 'Plano interactivo de potreros' }); await map.getByRole('button', { name: new RegExp('^' + tag + ' Destino:') }).click(); await expect(page.getByLabel('Potrero de destino *')).toHaveValue(target); await expect(map.getByRole('button', { name: new RegExp('^' + tag + ' Destino: 1 animales;') })).toHaveAttribute('aria-pressed', 'true');
   const dir = join(tmpdir(), 'daw-phase5-evidence'); await mkdir(dir, { recursive: true }); await page.screenshot({ path: join(dir, 'transfer-map-' + info.project.name + '.png'), fullPage: true });
-  await page.getByLabel('Motivo del traslado *').fill('Visual destination selection'); await page.getByRole('button', { name: 'Trasladar 1 animales', exact: true }).click(); await page.getByRole('button', { name: 'Confirmar traslado', exact: true }).click(); await expect(page.getByRole('heading', { name: '1 animales trasladados' })).toBeVisible(); expect((await (await request.get('/api/animals/' + animalId, { headers })).json()).paddockId).toBe(target);
+  await page.getByLabel('Motivo del traslado *').fill('Visual destination selection'); await reviewTransfer(page); await expect(page.getByLabel('Ruta del traslado')).toContainText(tag + ' Origen'); await expect(page.getByLabel('Ruta del traslado')).toContainText(tag + ' Destino'); await page.getByRole('button', { name: 'Confirmar traslado', exact: true }).click(); await expect(page.getByRole('heading', { name: '1 animal trasladado' })).toBeVisible(); expect((await (await request.get('/api/animals/' + animalId, { headers })).json()).paddockId).toBe(target);
 });
 
 test('an inventory notification replaces stale filters on an already open inventory page', async ({ page, request }) => {

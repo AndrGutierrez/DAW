@@ -8,6 +8,7 @@ export default defineConfig({
   timeout: 30_000,
   reporter: 'list',
   use: {
+    launchOptions: { args: ['--enable-unsafe-swiftshader'] },
     baseURL: process.env.E2E_BASE_URL || 'http://localhost:18086',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

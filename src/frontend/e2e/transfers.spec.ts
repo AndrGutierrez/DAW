@@ -1,3 +1,4 @@
+import { chooseTransferOrigin, chooseTransferDestination, reviewTransfer } from './helpers/transfers';
 import { test, expect } from '@playwright/test';
 import type { APIRequestContext } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -51,14 +52,14 @@ test('weighing selects a whole search and the transfer module moves a complete l
   const f = await fixture(request, 14, 40);
   await page.goto('/login'); await page.getByLabel('Usuario o correo').fill(process.env.E2E_ADMIN_USERNAME!); await page.getByLabel('Contraseña', { exact: true }).fill(process.env.E2E_ADMIN_PASSWORD!);
   await page.getByRole('button', { name: 'Entrar a mi finca' }).click(); await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
-  await page.goto('/weighing'); await page.getByLabel('Lote', { exact: true }).selectOption(f.lot);
+  await page.goto('/weighing'); await page.getByLabel('Finca', { exact: true }).selectOption(f.farmId); await page.getByLabel('Lote', { exact: true }).selectOption(f.lot);
   await expect(page.getByRole('checkbox')).toHaveCount(12);
   await page.getByRole('button', { name: 'Seleccionar todos los resultados (14)' }).click(); await expect(page.getByText('14 animales seleccionados')).toBeVisible();
   await page.getByRole('button', { name: 'Limpiar selección' }).click(); await expect(page.getByRole('button', { name: 'Comenzar pesaje' })).toBeDisabled();
-  await page.goto('/transfers'); await page.getByLabel('Lote de origen').selectOption(f.lot);
+  await page.goto('/transfers'); await page.getByLabel('Finca', { exact: true }).selectOption(f.farmId); await chooseTransferOrigin(page); await page.getByLabel('Lote de origen').selectOption(f.lot);
   await expect(page.getByRole('checkbox')).toHaveCount(12); await page.getByRole('button', { name: 'Seleccionar todos los resultados (14)' }).click();
-  await expect(page.getByRole('heading', { name: 'Trasladar 14 animales', exact: true })).toBeVisible(); await page.getByLabel('Potrero de destino *').selectOption(f.target);
-  await page.getByLabel('Motivo del traslado *').fill('Rotación de pastoreo'); await expect(page.getByText('0 presentes + 14 entradas = 14 animales / 40 de capacidad')).toBeVisible();
+  await chooseTransferDestination(page); await page.getByLabel('Potrero de destino *').selectOption(f.target);
+  await page.getByLabel('Motivo del traslado *').fill('Rotación de pastoreo'); await reviewTransfer(page); await expect(page.getByText('0 presentes + 14 entradas = 14 animales / 40 de capacidad')).toBeVisible();
   await page.evaluate(async () => { await document.fonts.ready; });
   const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze(); expect(axe.violations).toEqual([]);
   await page.getByRole('button', { name: 'Activar tema oscuro' }).click();
@@ -66,8 +67,8 @@ test('weighing selects a whole search and the transfer module moves a complete l
   await page.getByRole('button', { name: 'Activar tema claro' }).click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   if (process.env.QUALITY_EVIDENCE_DIR) { await mkdir(process.env.QUALITY_EVIDENCE_DIR, { recursive: true }); await page.screenshot({ path: join(process.env.QUALITY_EVIDENCE_DIR, 'transfers-' + info.project.name + '.png'), fullPage: true }); }
-  await page.getByRole('button', { name: 'Trasladar 14 animales', exact: true }).click(); const saved = page.waitForResponse(response => response.url().endsWith('/api/animal-movements/batch') && response.request().method() === 'POST');
-  await page.getByRole('dialog', { name: 'Confirmar acción' }).getByRole('button', { name: 'Confirmar traslado' }).click(); expect((await saved).status()).toBe(201);
+   const saved = page.waitForResponse(response => response.url().endsWith('/api/animal-movements/batch') && response.request().method() === 'POST');
+  await page.getByRole('button', { name: 'Confirmar traslado', exact: true }).click(); expect((await saved).status()).toBe(201);
   await expect(page.getByRole('heading', { name: '14 animales trasladados', exact: true })).toBeVisible();
   for (const id of f.animals) { const detail = await (await request.get('/api/animals/' + id, { headers: f.headers })).json(); expect(detail.paddockId).toBe(f.target); expect(detail.lotId).toBe(f.lot); }
 });

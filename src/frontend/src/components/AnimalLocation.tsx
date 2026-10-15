@@ -11,13 +11,14 @@ import { Field } from './Field';
 import { CareFormResult, CarePagination, useCareSubmission } from './CareForm';
 
 export type MovableAnimal = Pick<AnimalDetail, 'id' | 'farmId' | 'speciesId' | 'internalTag' | 'paddockId' | 'lotId'>;
-export function MovementForm({ animal, onSaved }: { animal: MovableAnimal; onSaved: () => void }) {
+export type SavedMovement = { fromPaddockId: string | null; toPaddockId: string | null };
+export function MovementForm({ animal, onSaved }: { animal: MovableAnimal; onSaved: (movement?: SavedMovement) => void }) {
   const [paddock, setPaddock] = useState(animal.paddockId || '');
   const [lot, setLot] = useState(animal.lotId || '');
   const { can } = useAuth();
   const paddocks = useResource<CatalogItem[]>('/api/paddocks', can('paddocks.list'));
   const lots = useResource<CatalogItem[]>('/api/lots', can('lots.list'));
-  const state = useCareSubmission('/api/animals/' + animal.id + '/movements', onSaved);
+  const state = useCareSubmission('/api/animals/' + animal.id + '/movements', () => onSaved({ fromPaddockId: animal.paddockId, toPaddockId: paddock || null }));
   function submit(event: FormEvent<HTMLFormElement>) {
     const values = new FormData(event.currentTarget);
     void state.submit(event, { toPaddockId: paddock || null, toLotId: lot || null,
@@ -32,7 +33,7 @@ export function MovementForm({ animal, onSaved }: { animal: MovableAnimal; onSav
       <Field label="Lote de destino" error={state.errors.tolotid} hint="Selecciona el grupo explícitamente; no se cambia al elegir un potrero."><Select value={lot} onChange={e => setLot(e.target.value)}><option value="">Sin lote asignado</option>{lots.data?.filter(l => l.data.farmId === animal.farmId && l.data.speciesId === animal.speciesId && l.data.isActive).map(l => <option key={l.id} value={l.id}>{l.data.name}</option>)}</Select></Field>
     </div><Field label="Motivo del traslado *" error={state.errors.reason}><Textarea name="reason" required maxLength={300} rows={2} /></Field></fieldset>
     <CareFormResult state={state} label="Confirmar traslado" />
-    {state.error.includes("Otro usuario cambió la ubicación") && <Button className="button secondary" type="button" onClick={onSaved}>Actualizar ubicación</Button>}
+    {state.error.includes("Otro usuario cambió la ubicación") && <Button className="button secondary" type="button" onClick={() => onSaved()}>Actualizar ubicación</Button>}
   </form>;
 }
 export function AnimalLocation({ animal, onUpdated }: { animal: AnimalDetail; onUpdated: () => void }) {
