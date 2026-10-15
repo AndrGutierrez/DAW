@@ -81,7 +81,7 @@ phases:
         compose_cmd = f"docker compose --env-file {path}/.env --env-file image.env -f docker-compose.prod.yml"
 
         commands = [
-            "set -euo pipefail",
+            "set -eu",
             f"mkdir -p {compose_dir}",
             "printf '%s' '" + compose_b64 + "' | base64 -d > " + compose,
             "printf '%s' '" + env_b64 + "' | base64 -d > " + envfile,
