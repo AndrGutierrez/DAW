@@ -1,0 +1,134 @@
+version: 0.2
+
+# AWS CodeBuild spec: build the DAW container images natively on ARM64
+# (Graviton), push them to Amazon ECR, and roll the stack out to the EC2
+# instance via AWS Systems Manager (SSM) Run Command. No CodeDeploy is used.
+#
+# Required CodeBuild project configuration:
+#   * Source: this GitHub repository (via a CodeStar Connections connection).
+#     GitHub Actions starts the build with --source-version <commit>.
+#   * Environment image: aws/codebuild/amazonlinux2-aarch64-standard:3.0 (ARM64)
+#   * Privileged mode: ENABLED (Docker-in-Docker)
+#   * Compute: any ARM compute type (e.g. BUILD_GENERAL1_SMALL)
+#   * No repository variables are required. ECR repository names and the SSM
+#     target instance id are defined below in env.variables.
+#   * IMAGE_TAG is injected by GitHub Actions and equals the Git commit SHA.
+#
+# The compose file and image tag are embedded in the SSM Run Command as base64
+# (no S3 bucket is used). CodeBuild service role needs: ECR push,
+# ssm:SendCommand and ssm:ListCommandInvocations. The EC2 instance needs the
+# SSM agent, an instance profile with AmazonSSMManagedInstanceCore, ECR read
+# access, plus Docker and the compose plugin.
+
+env:
+  variables:
+    # ECR repositories (created by the infrastructure) and SSM deploy target.
+    API_IMAGE_REPO: daw-api
+    NGINX_IMAGE_REPO: daw-nginx
+    DEPLOY_PATH: /opt/daw
+    EC2_INSTANCE_IDS: i-0019eb40449414d15
+
+phases:
+  pre_build:
+    commands:
+      - |
+        set -eu
+        AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+        ECR_REGISTRY="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+        IMAGE_TAG="${IMAGE_TAG:-$(echo "$CODEBUILD_RESOLVED_SOURCE_VERSION" | cut -c1-40)}"
+        API_IMAGE="$ECR_REGISTRY/$API_IMAGE_REPO:$IMAGE_TAG"
+        NGINX_IMAGE="$ECR_REGISTRY/$NGINX_IMAGE_REPO:$IMAGE_TAG"
+        {
+          echo "ECR_REGISTRY=$ECR_REGISTRY"
+          echo "IMAGE_TAG=$IMAGE_TAG"
+          echo "API_IMAGE=$API_IMAGE"
+          echo "NGINX_IMAGE=$NGINX_IMAGE"
+        } > /tmp/image.env
+        aws ecr get-login-password --region "$AWS_DEFAULT_REGION" \
+          | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+        echo "Building for $(uname -m): $API_IMAGE and $NGINX_IMAGE"
+  build:
+    commands:
+      - set -eu; . /tmp/image.env; docker build --pull -f Dockerfile -t "$API_IMAGE" .
+      - set -eu; . /tmp/image.env; docker build --pull -f src/frontend/Dockerfile -t "$NGINX_IMAGE" .
+  post_build:
+    commands:
+      - |
+        set -eu
+        . /tmp/image.env
+        docker push "$API_IMAGE"
+        docker push "$NGINX_IMAGE"
+      - |
+        set -eu
+        . /tmp/image.env
+
+        export DEPLOY_PATH ECR_REGISTRY IMAGE_TAG AWS_DEFAULT_REGION
+        export COMPOSE_B64="$(base64 -w0 docker-compose.prod.yml)"
+        export ENV_B64="$(base64 -w0 /tmp/image.env)"
+
+        python3 <<'PY'
+        import json, os
+
+        path = os.environ["DEPLOY_PATH"]
+        region = os.environ["AWS_DEFAULT_REGION"]
+        compose_b64 = os.environ["COMPOSE_B64"]
+        env_b64 = os.environ["ENV_B64"]
+
+        compose_dir = f"{path}/current"
+        compose = f"{compose_dir}/docker-compose.prod.yml"
+        envfile = f"{compose_dir}/image.env"
+        compose_cmd = f"docker compose --env-file {path}/.env --env-file image.env -f docker-compose.prod.yml"
+
+        commands = [
+            "set -euo pipefail",
+            f"mkdir -p {compose_dir}",
+            "printf '%s' '" + compose_b64 + "' | base64 -d > " + compose,
+            "printf '%s' '" + env_b64 + "' | base64 -d > " + envfile,
+            f"cd {compose_dir}",
+            "set -a; . ./image.env; set +a",
+            f"aws ecr get-login-password --region {region} | docker login --username AWS --password-stdin $ECR_REGISTRY",
+            f"{compose_cmd} pull",
+            f"{compose_cmd} up -d --remove-orphans",
+            f"for i in $(seq 1 30); do curl -fsS http://127.0.0.1/health/ready && exit 0; sleep 5; done; {compose_cmd} ps -a; exit 1",
+        ]
+
+        payload = json.dumps({"commands": commands})
+        with open("/tmp/ssm-params.json", "w") as fh:
+            fh.write(payload)
+        print(f"SSM payload: {len(payload)} chars, {len(commands)} commands")
+        PY
+
+        if [ -n "${EC2_INSTANCE_IDS:-}" ]; then
+          IFS=',' read -r -a target_ids <<< "$EC2_INSTANCE_IDS"
+        else
+          echo "EC2_INSTANCE_IDS is not set" >&2
+          exit 1
+        fi
+        target_args=(--instance-ids "${target_ids[@]}")
+
+        command_id="$(aws ssm send-command \
+          --document-name "AWS-RunShellScript" \
+          --comment "DAW deploy $IMAGE_TAG" \
+          "${target_args[@]}" \
+          --parameters file:///tmp/ssm-params.json \
+          --query 'Command.CommandId' --output text)"
+        echo "SSM command: $command_id"
+
+        status="Pending"
+        for i in $(seq 1 60); do
+          status="$(aws ssm list-command-invocations --command-id "$command_id" \
+            --query 'CommandInvocations[0].Status' --output text 2>/dev/null || true)"
+          echo "SSM status: $status"
+          case "$status" in
+            Success) break ;;
+            Cancelled|TimedOut|Failed|Cancelling)
+              echo "deployment failed; run: aws ssm get-command-invocation --command-id $command_id --instance-id <id>" >&2
+              exit 1 ;;
+            *) sleep 10 ;;
+          esac
+        done
+        if [ "$status" != "Success" ]; then
+          echo "deployment did not succeed in time" >&2
+          exit 1
+        fi
+        echo "Deployed $IMAGE_TAG"

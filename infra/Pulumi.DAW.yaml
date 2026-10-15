@@ -1,0 +1,11 @@
+config:
+  daw-infra:githubOwner: AndrGutierrez
+  daw-infra:githubRepo: DAW
+  aws:region: us-east-1
+  aws:profile: personal
+  daw-infra:postgresPassword:
+    secure: AAABAEBqM1hOyWsKXSJydv9tSs2oEuzq+yWChRhovov/XCe3YQ3a23c++rdDhN5kogLUzeWMB8jp5xRvHdng6w==
+  daw-infra:jwtKey:
+    secure: AAABAMGYD+thioZ98OPB5ojtPJNZZgFQiWu55oeei0GN6XR4Q+jy4Bn2vE2MdtTint3SukQ3pRGiWVFv75lIBpPgKi9R9MZ9uhffWtBLRzRrXRLc8mfpft7DNY4NDq4j
+  daw-infra:seedAdminPassword:
+    secure: AAABAOW3lFiR3kehkZbg4LlEaqWuOLkAIZJzzrJM529HRs/3OsjNp23IDQRzIUUcTEJwhg==

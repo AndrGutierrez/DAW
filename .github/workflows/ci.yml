@@ -130,3 +130,52 @@ jobs:
         with:
           name: verified-frontend
           path: src/frontend/dist
+  deploy:
+    name: Deploy to AWS (ARM CodeBuild + SSM)
+    runs-on: ubuntu-latest
+    # Only deploy after every test job succeeds, and only for pushes to main.
+    needs: [unit-tests, frontend-tests, stack-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      AWS_REGION: us-east-1
+      CODEBUILD_PROJECT: ${{ vars.CODEBUILD_PROJECT }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Build ARM64 images and roll out via CodeBuild
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_id="$(aws codebuild start-build \
+            --project-name "$CODEBUILD_PROJECT" \
+            --source-version "$GITHUB_SHA" \
+            --environment-variables-override \
+              "name=IMAGE_TAG,value=$GITHUB_SHA,type=PLAINTEXT" \
+            --query 'build.id' --output text)"
+          echo "CodeBuild started: $build_id"
+          status="IN_PROGRESS"
+          for _ in $(seq 1 180); do
+            status="$(aws codebuild batch-get-builds --ids "$build_id" \
+              --query 'builds[0].buildStatus' --output text)"
+            echo "CodeBuild status: $status"
+            if [ "$status" = "SUCCEEDED" ]; then
+              break
+            fi
+            if [ "$status" != "IN_PROGRESS" ]; then
+              echo "CodeBuild failed with status $status" >&2
+              exit 1
+            fi
+            sleep 10
+          done
+          if [ "$status" != "SUCCEEDED" ]; then
+            echo "CodeBuild did not succeed in time" >&2
+            exit 1
+          fi

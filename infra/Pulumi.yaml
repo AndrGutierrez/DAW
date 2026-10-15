@@ -1,0 +1,6 @@
+name: daw-infra
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: DAW production infrastructure on AWS (EC2 + CodeBuild + ECR + SSM)
